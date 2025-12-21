@@ -605,3 +605,65 @@ textarea {
   font-size: 12px;
   color: var(--muted);
 }
+
+/* =========================
+   CREATE FORM – CHIPS
+========================= */
+
+select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: none;
+  font-size: 16px;
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: rgba(79,124,255,0.15);
+  color: #c7d2fe;
+  border: none;
+  cursor: pointer;
+}
+
+.chip.muted {
+  background: rgba(255,255,255,0.08);
+  color: var(--muted);
+}
+
+.chip.active {
+  background: var(--accent);
+  color: white;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.checkbox-row input {
+  margin-right: 6px;
+}
+
+.submit-btn {
+  margin-top: 24px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+}
