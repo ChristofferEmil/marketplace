@@ -12,12 +12,17 @@ export default function ListingDetailPage() {
   const [text, setText] = useState('')
   const [user, setUser] = useState(null)
   const bottomRef = useRef(null)
+
   const primaryActionLabel = () => {
-  if (listing?.allow_claim && listing?.allow_auction) return 'Claim or Bid'
-  if (listing?.allow_claim) return 'Claim'
-  if (listing?.allow_auction) return 'Place bid'
+  if (!listing) return null
+  if (listing.allow_claim && listing.allow_auction) return 'Claim or Bid'
+  if (listing.allow_claim) return 'Claim'
+  if (listing.allow_auction) return 'Place bid'
   return null
 }
+
+const [showChat, setShowChat] = useState(false)
+
 
 
   useEffect(() => {
@@ -159,7 +164,9 @@ export default function ListingDetailPage() {
       </section>
 
       {/* STICKY INPUT */}
-      <div className="chat-input chat-input-fixed">
+      {showChat && (
+  <div className="chat-input chat-input-fixed">
+
         <input
           value={text}
           onChange={e => setText(e.target.value)}
@@ -170,19 +177,28 @@ export default function ListingDetailPage() {
         <button onClick={send} disabled={!user || !text}>
           Send
         </button>
+  
       </div>
+)}
+
       {/* STICKY ACTION BAR (MOBILE) */}
-{primaryActionLabel() && (
+{!showChat && primaryActionLabel() && (
   <div className="action-bar">
-    <button
-      className="action-btn secondary"
-      onClick={() => {
-        // Scroll til chat
-        document.querySelector('.chat-card')?.scrollIntoView({ behavior: 'smooth' })
-      }}
-    >
-      Chat
-    </button>
+
+   <button
+  className="action-btn secondary"
+  onClick={() => {
+    setShowChat(true)
+    setTimeout(() => {
+      document
+        .querySelector('.chat-input')
+        ?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+  }}
+>
+  Chat
+</button>
+
 
     <button
       className="action-btn primary"
