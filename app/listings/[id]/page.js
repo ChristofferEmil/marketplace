@@ -21,7 +21,9 @@ export default function ListingDetailPage() {
   return null
 }
 
-const [showChat, setShowChat] = useState(false)
+const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 769
+const [showChat, setShowChat] = useState(isDesktop)
+
 
 
 
@@ -77,7 +79,8 @@ const [showChat, setShowChat] = useState(false)
   }
 
   return (
-    <main className="page page-detail">
+    <main className="page page-detail hide-bottom-nav">
+
 
       {/* IMAGE HERO */}
       {listing.image_url && (

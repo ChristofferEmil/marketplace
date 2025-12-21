@@ -711,3 +711,9 @@ select {
     display: none;
   }
 }
+
+/* Hide bottom nav on detail pages */
+.hide-bottom-nav ~ .bottom-nav,
+.page-detail ~ .bottom-nav {
+  display: none;
+}
