@@ -12,6 +12,13 @@ export default function ListingDetailPage() {
   const [text, setText] = useState('')
   const [user, setUser] = useState(null)
   const bottomRef = useRef(null)
+  const primaryActionLabel = () => {
+  if (listing?.allow_claim && listing?.allow_auction) return 'Claim or Bid'
+  if (listing?.allow_claim) return 'Claim'
+  if (listing?.allow_auction) return 'Place bid'
+  return null
+}
+
 
   useEffect(() => {
     if (!id) return
@@ -164,6 +171,31 @@ export default function ListingDetailPage() {
           Send
         </button>
       </div>
+      {/* STICKY ACTION BAR (MOBILE) */}
+{primaryActionLabel() && (
+  <div className="action-bar">
+    <button
+      className="action-btn secondary"
+      onClick={() => {
+        // Scroll til chat
+        document.querySelector('.chat-card')?.scrollIntoView({ behavior: 'smooth' })
+      }}
+    >
+      Chat
+    </button>
+
+    <button
+      className="action-btn primary"
+      onClick={() => {
+        // Foreløbig handling – logik kommer senere
+        alert(primaryActionLabel())
+      }}
+    >
+      {primaryActionLabel()}
+    </button>
+  </div>
+)}
+
     </main>
   )
 }
