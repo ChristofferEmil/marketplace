@@ -515,3 +515,43 @@ textarea {
     padding: 0;
   }
 }
+
+/* =========================
+   LISTING DETAIL PAGE
+========================= */
+
+.page-detail {
+  padding-top: 16px;
+}
+
+/* Image hero */
+.detail-image {
+  width: 100%;
+  height: 260px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Content */
+.detail-content {
+  margin-bottom: 28px;
+}
+
+.detail-content h1 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  line-height: 1.35;
+}
+
+.detail-description {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--muted);
+}

@@ -65,66 +65,65 @@ export default function ListingDetailPage() {
   }
 
   return (
-    <main className="page">
+    <main className="page page-detail">
 
-      {/* LISTING */}
-      <div className="card card-detail">
-        {listing.image_url && (
-          <div className="card-image">
-            <img src={listing.image_url} alt={listing.title} />
-          </div>
-        )}
-
-        <div className="card-body">
-          <h1>{listing.title}</h1>
-
-          {listing.description && (
-            <p>{listing.description}</p>
-          )}
+      {/* IMAGE HERO */}
+      {listing.image_url && (
+        <div className="detail-image">
+          <img src={listing.image_url} alt={listing.title} />
         </div>
-      </div>
+      )}
+
+      {/* DETAILS */}
+      <section className="detail-content">
+        <h1>{listing.title}</h1>
+
+        {listing.description && (
+          <p className="detail-description">
+            {listing.description}
+          </p>
+        )}
+      </section>
 
       {/* CHAT */}
-<div className="card card-detail chat-card">
-  <strong>Chat</strong>
+      <section className="card card-detail chat-card">
+        <strong>Chat with seller</strong>
 
-  <div className="chat chat-scroll">
-    {messages.length === 0 && (
-      <p className="chat-empty">
-        No messages yet. Start the conversation 👋
-      </p>
-    )}
+        <div className="chat chat-scroll">
+          {messages.length === 0 && (
+            <p className="chat-empty">
+              No messages yet. Start the conversation 👋
+            </p>
+          )}
 
-    {messages.map(m => (
-      <div
-        key={m.id}
-        className={`bubble ${
-          m.sender_id === user?.id ? 'me' : 'them'
-        }`}
-      >
-        {m.content}
+          {messages.map(m => (
+            <div
+              key={m.id}
+              className={`bubble ${
+                m.sender_id === user?.id ? 'me' : 'them'
+              }`}
+            >
+              {m.content}
+            </div>
+          ))}
+
+          <div ref={bottomRef} />
+        </div>
+      </section>
+
+      {/* STICKY INPUT */}
+      <div className="chat-input chat-input-fixed">
+        <input
+          value={text}
+          onChange={e => setText(e.target.value)}
+          placeholder={user ? 'Write a message…' : 'Log in to chat'}
+          disabled={!user}
+        />
+
+        <button onClick={send} disabled={!user || !text}>
+          Send
+        </button>
       </div>
-    ))}
-
-    <div ref={bottomRef} />
-  </div>
-</div>
-
-{/* STICKY INPUT */}
-<div className="chat-input chat-input-fixed">
-  <input
-    value={text}
-    onChange={e => setText(e.target.value)}
-    placeholder={user ? 'Write a message…' : 'Log in to chat'}
-    disabled={!user}
-  />
-
-  <button onClick={send} disabled={!user || !text}>
-    Send
-  </button>
-</div>
-
-
     </main>
   )
 }
