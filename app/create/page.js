@@ -62,7 +62,7 @@ export default function CreatePage() {
       const fileName = `${crypto.randomUUID()}.${fileExt}`
 
       const { error } = await supabase.storage
-        .from('images')
+        .from('listings')
         .upload(fileName, image)
 
       if (error) {
@@ -71,7 +71,7 @@ export default function CreatePage() {
       }
 
       const { data } = supabase.storage
-        .from('images')
+        .from('listings')
         .getPublicUrl(fileName)
 
       image_url = data.publicUrl
