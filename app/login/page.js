@@ -1,12 +1,14 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
+  // Hvis user allerede findes → videre
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
@@ -16,9 +18,23 @@ export default function LoginPage() {
   }, [router])
 
   const login = async () => {
+    setLoading(true)
+
     const { error } = await supabase.auth.signInAnonymously()
-    if (!error) {
+
+    if (error) {
+      console.error(error)
+      alert('Login failed')
+      setLoading(false)
+      return
+    }
+
+    // 👇 DOBBELT-SIKRING
+    const { data } = await supabase.auth.getUser()
+    if (data.user) {
       router.push('/')
+    } else {
+      setLoading(false)
     }
   }
 
@@ -28,6 +44,7 @@ export default function LoginPage() {
 
       <button
         onClick={login}
+        disabled={loading}
         style={{
           padding: '14px',
           borderRadius: 12,
@@ -36,9 +53,10 @@ export default function LoginPage() {
           color: 'white',
           fontWeight: 500,
           cursor: 'pointer',
+          opacity: loading ? 0.6 : 1,
         }}
       >
-        Continue
+        {loading ? 'Signing in…' : 'Continue'}
       </button>
     </main>
   )

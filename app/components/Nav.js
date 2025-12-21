@@ -3,49 +3,45 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation'
 
 export default function Nav() {
   const [user, setUser] = useState(null)
-  const router = useRouter()
 
   useEffect(() => {
-    // Get current user
+    // Get initial user
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
     })
 
     // Listen for auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-      }
-    )
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
 
-    return () => {
-      listener.subscription.unsubscribe()
-    }
+    return () => subscription.unsubscribe()
   }, [])
 
   const logout = async () => {
     await supabase.auth.signOut()
-    router.push('/login')
   }
 
   return (
     <nav className="nav">
       <div className="nav-inner">
         <Link href="/" className="nav-logo">
-          Marketplace
+          CardSwap
         </Link>
 
         <div className="nav-links">
           <Link href="/listings">Listings</Link>
-
-          {user && <Link href="/create">Create</Link>}
+          <Link href="/create">Create</Link>
 
           {!user ? (
-            <Link href="/login">Login</Link>
+            <Link href="/login" style={{ opacity: 0.8 }}>
+              Guest · Login
+            </Link>
           ) : (
             <button
               onClick={logout}
@@ -54,7 +50,6 @@ export default function Nav() {
                 border: 'none',
                 color: 'var(--muted)',
                 cursor: 'pointer',
-                fontSize: 14,
               }}
             >
               Logout
