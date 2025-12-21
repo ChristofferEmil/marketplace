@@ -462,3 +462,15 @@ textarea {
     display: none;
   }
 }
+
+.tab svg {
+  color: var(--muted);
+}
+
+.tab.active svg {
+  color: white;
+}
+
+.tab-create svg {
+  color: white;
+}

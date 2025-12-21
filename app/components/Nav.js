@@ -62,48 +62,143 @@ export default function Nav() {
       </nav>
 
       {/* BOTTOM NAV (MOBILE) */}
-      <nav className="bottom-nav">
-        <Link
-          href="/"
-          className={`tab ${pathname === '/' ? 'active' : ''}`}
-        >
-          <span>🏠</span>
-        </Link>
+     {/* BOTTOM NAV (MOBILE) */}
+<nav className="bottom-nav">
+  <Link href="/" className={`tab ${pathname === '/' ? 'active' : ''}`}>
+    <HomeIcon />
+  </Link>
 
-        <Link
-          href="/search"
-          className={`tab ${pathname === '/search' ? 'active' : ''}`}
-        >
-          <span>🔍</span>
-        </Link>
+  <Link
+    href="/search"
+    className={`tab ${pathname === '/search' ? 'active' : ''}`}
+  >
+    <SearchIcon />
+  </Link>
 
-        {/* CREATE (CENTER) */}
-        <Link href="/create" className="tab tab-create">
-          <span>＋</span>
-        </Link>
+  {/* CREATE */}
+  <Link href="/create" className="tab tab-create">
+    <PlusIcon />
+  </Link>
 
-        <Link
-          href="/listings"
-          className={`tab ${
-            pathname.startsWith('/listings') ? 'active' : ''
-          }`}
-        >
-          <span>🗂</span>
-        </Link>
+  <Link
+    href="/listings"
+    className={`tab ${
+      pathname.startsWith('/listings') ? 'active' : ''
+    }`}
+  >
+    <GridIcon />
+  </Link>
 
-        {!user ? (
-          <Link
-            href="/login"
-            className={`tab ${pathname === '/login' ? 'active' : ''}`}
-          >
-            <span>👤</span>
-          </Link>
-        ) : (
-          <button onClick={logout} className="tab">
-            <span>🚪</span>
-          </button>
-        )}
-      </nav>
+  {!user ? (
+    <Link
+      href="/login"
+      className={`tab ${pathname === '/login' ? 'active' : ''}`}
+    >
+      <UserIcon />
+    </Link>
+  ) : (
+    <button onClick={logout} className="tab">
+      <LogoutIcon />
+    </button>
+  )}
+</nav>
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+      <path
+        d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+      <circle
+        cx="11"
+        cy="11"
+        r="7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M20 20l-3.5-3.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+      <path
+        d="M12 5v14M5 12h14"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function GridIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  )
+}
+
+function UserIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8" />
+      <path
+        d="M4 21c1.5-4 14.5-4 16 0"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function LogoutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+      <path
+        d="M10 17l5-5-5-5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15 12H3"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M21 3v18"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        opacity="0.4"
+      />
+    </svg>
+  )
+}
+
     </>
   )
 }
