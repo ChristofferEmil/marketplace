@@ -85,42 +85,45 @@ export default function ListingDetailPage() {
       </div>
 
       {/* CHAT */}
-      <div className="card card-detail" style={{ marginTop: 24 }}>
-        <strong>Chat</strong>
+<div className="card card-detail chat-card">
+  <strong>Chat</strong>
 
-        <div className="chat">
-          {messages.map(m => (
-            <div
-              key={m.id}
-              className={`bubble ${
-                m.sender_id === user?.id ? 'me' : 'them'
-              }`}
-            >
-              {m.content}
-            </div>
-          ))}
+  <div className="chat chat-scroll">
+    {messages.length === 0 && (
+      <p className="chat-empty">
+        No messages yet. Start the conversation 👋
+      </p>
+    )}
 
-          <div ref={bottomRef} />
-        </div>
-
-        <div className="chat-input">
-          <input
-            value={text}
-            onChange={e => setText(e.target.value)}
-            placeholder={
-              user ? 'Write a message…' : 'Log in to chat'
-            }
-            disabled={!user}
-          />
-
-          <button
-            onClick={send}
-            disabled={!user || !text}
-          >
-            Send
-          </button>
-        </div>
+    {messages.map(m => (
+      <div
+        key={m.id}
+        className={`bubble ${
+          m.sender_id === user?.id ? 'me' : 'them'
+        }`}
+      >
+        {m.content}
       </div>
+    ))}
+
+    <div ref={bottomRef} />
+  </div>
+</div>
+
+{/* STICKY INPUT */}
+<div className="chat-input chat-input-fixed">
+  <input
+    value={text}
+    onChange={e => setText(e.target.value)}
+    placeholder={user ? 'Write a message…' : 'Log in to chat'}
+    disabled={!user}
+  />
+
+  <button onClick={send} disabled={!user || !text}>
+    Send
+  </button>
+</div>
+
 
     </main>
   )

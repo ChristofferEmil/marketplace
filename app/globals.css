@@ -474,3 +474,41 @@ textarea {
 .tab-create svg {
   color: white;
 }
+
+/* =========================
+   CHAT – MOBILE UX
+========================= */
+
+.chat-card {
+  padding-bottom: 12px;
+}
+
+.chat-scroll {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-bottom: 12px;
+}
+
+.chat-empty {
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+/* Sticky input */
+.chat-input-fixed {
+  position: sticky;
+  bottom: 76px; /* højde på bottom-nav */
+  background: var(--bg);
+  padding: 12px 0 6px;
+  z-index: 5;
+}
+
+/* Desktop override */
+@media (min-width: 769px) {
+  .chat-input-fixed {
+    position: static;
+    padding: 0;
+  }
+}
