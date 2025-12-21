@@ -59,11 +59,14 @@ export default function CreatePage() {
 
     if (image) {
       const fileExt = image.name.split('.').pop()
-      const fileName = `${crypto.randomUUID()}.${fileExt}`
+      const fileName = `${Date.now()}-${image.name}`
 
-      const { error } = await supabase.storage
-        .from('listings')
-        .upload(fileName, image)
+    const { error } = await supabase.storage
+  .from('listings')
+  .upload(fileName, image, {
+    contentType: image.type,
+  })
+
 
       if (error) {
         alert('Image upload failed')
@@ -93,7 +96,10 @@ export default function CreatePage() {
 
     allow_auction: allowAuction,
     starting_bid: allowAuction ? Number(startingBid) : null,
-    auction_ends_at: allowAuction ? auctionEnd : null,
+    auction_ends_at: allowAuction
+  ? new Date(auctionEnd).toISOString()
+  : null,
+
   })
   .select()
   .single()
