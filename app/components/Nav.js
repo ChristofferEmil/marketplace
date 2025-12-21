@@ -29,7 +29,7 @@ export default function Nav() {
 
   return (
     <>
-      {/* TOP NAV (DESKTOP) */}
+      {/* ================= TOP NAV (DESKTOP) ================= */}
       <nav className="nav nav-top">
         <div className="nav-inner">
           <Link href="/" className="nav-logo">
@@ -61,47 +61,51 @@ export default function Nav() {
         </div>
       </nav>
 
-      {/* BOTTOM NAV (MOBILE) */}
-     {/* BOTTOM NAV (MOBILE) */}
-<nav className="bottom-nav">
-  <Link href="/" className={`tab ${pathname === '/' ? 'active' : ''}`}>
-    <HomeIcon />
-  </Link>
+      {/* ================= BOTTOM NAV (MOBILE) ================= */}
+      <nav className="bottom-nav">
+        <Link href="/" className={`tab ${pathname === '/' ? 'active' : ''}`}>
+          <HomeIcon />
+        </Link>
 
-  <Link
-    href="/search"
-    className={`tab ${pathname === '/search' ? 'active' : ''}`}
-  >
-    <SearchIcon />
-  </Link>
+        <Link
+          href="/search"
+          className={`tab ${pathname === '/search' ? 'active' : ''}`}
+        >
+          <SearchIcon />
+        </Link>
 
-  {/* CREATE */}
-  <Link href="/create" className="tab tab-create">
-    <PlusIcon />
-  </Link>
+        <Link href="/create" className="tab tab-create">
+          <PlusIcon />
+        </Link>
 
-  <Link
-    href="/listings"
-    className={`tab ${
-      pathname.startsWith('/listings') ? 'active' : ''
-    }`}
-  >
-    <GridIcon />
-  </Link>
+        <Link
+          href="/listings"
+          className={`tab ${
+            pathname.startsWith('/listings') ? 'active' : ''
+          }`}
+        >
+          <GridIcon />
+        </Link>
 
-  {!user ? (
-    <Link
-      href="/login"
-      className={`tab ${pathname === '/login' ? 'active' : ''}`}
-    >
-      <UserIcon />
-    </Link>
-  ) : (
-    <button onClick={logout} className="tab">
-      <LogoutIcon />
-    </button>
-  )}
-</nav>
+        {!user ? (
+          <Link
+            href="/login"
+            className={`tab ${pathname === '/login' ? 'active' : ''}`}
+          >
+            <UserIcon />
+          </Link>
+        ) : (
+          <button onClick={logout} className="tab">
+            <LogoutIcon />
+          </button>
+        )}
+      </nav>
+    </>
+  )
+}
+
+/* ================= ICONS ================= */
+
 function HomeIcon() {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
@@ -189,16 +193,6 @@ function LogoutIcon() {
         strokeWidth="1.8"
         strokeLinecap="round"
       />
-      <path
-        d="M21 3v18"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        opacity="0.4"
-      />
     </svg>
-  )
-}
-
-    </>
   )
 }
