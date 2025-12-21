@@ -74,16 +74,56 @@ export default function ListingDetailPage() {
         </div>
       )}
 
-      {/* DETAILS */}
-      <section className="detail-content">
-        <h1>{listing.title}</h1>
+     {/* DETAILS */}
+<section className="detail-content">
+  <h1>{listing.title}</h1>
 
-        {listing.description && (
-          <p className="detail-description">
-            {listing.description}
-          </p>
-        )}
-      </section>
+  {/* TAGS */}
+  <div className="detail-tags">
+    {listing.series && <span className="tag">{listing.series}</span>}
+    {listing.condition && <span className="tag">{listing.condition}</span>}
+
+    {Array.isArray(listing.tags) &&
+      listing.tags.map(tag => (
+        <span key={tag} className="tag tag-muted">
+          {tag}
+        </span>
+      ))}
+  </div>
+
+  {/* SALES INFO */}
+  <div className="sale-box">
+    {listing.claim_price && (
+      <div className="sale-item">
+        <span className="sale-label">Claim price</span>
+        <strong>{listing.claim_price} kr</strong>
+      </div>
+    )}
+
+    {listing.starting_bid && (
+      <div className="sale-item">
+        <span className="sale-label">Starting bid</span>
+        <strong>{listing.starting_bid} kr</strong>
+      </div>
+    )}
+
+    {listing.auction_ends_at && (
+      <div className="sale-item">
+        <span className="sale-label">Auction ends</span>
+        <strong>
+          {new Date(listing.auction_ends_at).toLocaleString()}
+        </strong>
+      </div>
+    )}
+  </div>
+
+  {listing.description && (
+    <p className="detail-description">
+      {listing.description}
+    </p>
+  )}
+</section>
+
 
       {/* CHAT */}
       <section className="card card-detail chat-card">
