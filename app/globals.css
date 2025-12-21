@@ -279,3 +279,115 @@ textarea {
   color: white;
   font-weight: 500;
 }
+
+/* =========================
+   APP HERO (HOME)
+========================= */
+
+.page-home {
+  padding-top: 20px;
+}
+
+.app-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(59,130,246,0.35),
+    rgba(59,130,246,0.12)
+  );
+}
+
+.app-hero h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.app-hero p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.hero-cta {
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: white;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* =========================
+   SECTION HEADER
+========================= */
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.section-header a {
+  font-size: 14px;
+  color: var(--accent);
+}
+
+/* =========================
+   FEED GRID (MOBILE FIRST)
+========================= */
+
+.feed-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* Desktop */
+@media (min-width: 720px) {
+  .feed-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+/* =========================
+   SKELETONS
+========================= */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.08),
+    rgba(255,255,255,0.16),
+    rgba(255,255,255,0.08)
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
+}
+
+.skeleton.line {
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.skeleton.line.short {
+  width: 70%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

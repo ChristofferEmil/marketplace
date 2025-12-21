@@ -18,91 +18,59 @@ export default function HomePage() {
   }, [])
 
   return (
-   <main className="page">
+    <main className="page page-home">
 
-      {/* HERO (mobil feed-style) */}
-      <section
-        style={{
-          marginBottom: 24,
-          padding: 20,
-          borderRadius: 20,
-          background:
-            'linear-gradient(135deg, rgba(37,99,235,0.25), rgba(37,99,235,0.08))',
-        }}
-      >
-        <h1 style={{ fontSize: 28, marginBottom: 6 }}>
-          Hello 👋
-        </h1>
-        <p style={{ color: '#9aa0b2', marginBottom: 14 }}>
-          Do you have something to sell?
-        </p>
+      {/* APP HERO */}
+      <section className="app-hero">
+        <div>
+          <h1>Hello 👋</h1>
+          <p>Do you have something to sell?</p>
+        </div>
 
-        <Link
-          href="/create"
-          style={{
-            display: 'inline-block',
-            padding: '10px 16px',
-            borderRadius: 14,
-            background: '#2563eb',
-            color: 'white',
-            textDecoration: 'none',
-            fontWeight: 500,
-          }}
-        >
-          + New Listing
+        <Link href="/create" className="hero-cta">
+          + New listing
         </Link>
       </section>
 
+      {/* SECTION HEADER */}
+      <div className="section-header">
+        <h2>Top listings</h2>
+        <Link href="/listings">See more</Link>
+      </div>
+
       {/* FEED */}
-      <section>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: 20,
-          }}
-        >
-
-          {/* Skeletons */}
-          {loading &&
-            Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="card">
-                <div className="card-image skeleton" />
-                <div className="card-body">
-                  <div className="skeleton" style={{ height: 18, width: '70%', marginBottom: 8 }} />
-                  <div className="skeleton" style={{ height: 14, width: '90%' }} />
-                </div>
+      <section className="feed-grid">
+        {loading &&
+          Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="card">
+              <div className="card-image skeleton" />
+              <div className="card-body">
+                <div className="skeleton line" />
+                <div className="skeleton line short" />
               </div>
-            ))}
-
-          {/* Listings */}
-          {listings.map(l => (
-            <Link
-              key={l.id}
-              href={`/listings/${l.id}`}
-              style={{ textDecoration: 'none' }}
-            >
-              <div className="card">
-                <div className="card-image">
-                  {l.image_url && (
-                    <img src={l.image_url} alt={l.title} />
-                  )}
-                </div>
-
-                <div className="card-body">
-                  <h3 style={{ marginBottom: 6 }}>{l.title}</h3>
-                  {l.description && (
-                    <p style={{ color: '#9aa0b2', fontSize: 14 }}>
-                      {l.description.length > 80
-                        ? `${l.description.slice(0, 80)}…`
-                        : l.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </Link>
+            </div>
           ))}
-        </div>
+
+        {listings.map(l => (
+          <Link key={l.id} href={`/listings/${l.id}`}>
+            <article className="card">
+              <div className="card-image">
+                {l.image_url && <img src={l.image_url} alt={l.title} />}
+              </div>
+
+              <div className="card-body">
+                <h3>{l.title}</h3>
+                {l.description && (
+                  <p>
+                    {l.description.length > 70
+                      ? `${l.description.slice(0, 70)}…`
+                      : l.description}
+                  </p>
+                )}
+              </div>
+            </article>
+          </Link>
+        ))}
       </section>
     </main>
   )
