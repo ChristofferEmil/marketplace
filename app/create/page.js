@@ -80,7 +80,7 @@ export default function CreatePage() {
       image_url = data.publicUrl
     }
 
-    const { data, error } = await supabase
+const { data, error } = await supabase
   .from('listings')
   .insert({
     title,
@@ -97,12 +97,14 @@ export default function CreatePage() {
     allow_auction: allowAuction,
     starting_bid: allowAuction ? Number(startingBid) : null,
     auction_ends_at: allowAuction
-  ? new Date(auctionEnd).toISOString()
-  : null,
+      ? new Date(auctionEnd).toISOString()
+      : null,
 
+    user_id: user.id, // 👈 DETTE ER FIXET
   })
   .select()
   .single()
+
 
 
     if (error) {
