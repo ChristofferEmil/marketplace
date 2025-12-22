@@ -30,7 +30,7 @@ a {
 .page {
   max-width: 860px;               /* ⬅️ mere luft */
   margin: 0 auto;
-  padding: 32px 20px 48px;        /* ⬅️ bedre top/bund-rytme */
+  padding: 32px 20px 100px;        /* ⬅️ bedre top/bund-rytme */
 }
 
 /* =========================
@@ -676,7 +676,7 @@ select {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 76px; /* plads til bottom-nav */
+  bottom: 0px; /* plads til bottom-nav */
   display: grid;
   grid-template-columns: 1fr 1.2fr;
   gap: 12px;
