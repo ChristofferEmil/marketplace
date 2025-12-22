@@ -8,6 +8,9 @@ import { supabase } from '@/lib/supabaseClient'
 export default function Nav() {
   const [user, setUser] = useState(null)
   const pathname = usePathname()
+  const isListingDetail =
+  pathname.startsWith('/listings/') && pathname !== '/listings'
+
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -62,6 +65,7 @@ export default function Nav() {
       </nav>
 
       {/* ================= BOTTOM NAV (MOBILE) ================= */}
+      {!isListingDetail && (
       <nav className="bottom-nav">
         <Link href="/" className={`tab ${pathname === '/' ? 'active' : ''}`}>
           <HomeIcon />
@@ -100,6 +104,7 @@ export default function Nav() {
           </button>
         )}
       </nav>
+      )}
     </>
   )
 }
