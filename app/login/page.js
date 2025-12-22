@@ -1,63 +1,92 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/'
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Hvis user allerede findes → videre
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) {
-        router.push('/')
-      }
-    })
-  }, [router])
-
-  const login = async () => {
+  async function emailPasswordLogin(e) {
+    e.preventDefault()
     setLoading(true)
+    setError('')
 
-    const { error } = await supabase.auth.signInAnonymously()
+    // prøv login
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
+    // hvis user ikke findes → opret
     if (error) {
-      console.error(error)
-      alert('Login failed')
-      setLoading(false)
-      return
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+
+      if (signUpError) {
+        setError(signUpError.message)
+        setLoading(false)
+        return
+      }
     }
 
-    // 👇 DOBBELT-SIKRING
-    const { data } = await supabase.auth.getUser()
-    if (data.user) {
-      router.push('/')
-    } else {
-      setLoading(false)
-    }
+    window.location.href = redirectTo
+  }
+
+  async function oauthLogin(provider) {
+    await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${location.origin}${redirectTo}`,
+      },
+    })
   }
 
   return (
-    <main className="page">
-      <h1 style={{ marginBottom: 16 }}>Welcome</h1>
+    <main className="page" style={{ padding: 24 }}>
+      <h1>Log ind</h1>
 
-      <button
-        onClick={login}
-        disabled={loading}
-        style={{
-          padding: '14px',
-          borderRadius: 12,
-          border: 'none',
-          background: 'var(--accent)',
-          color: 'white',
-          fontWeight: 500,
-          cursor: 'pointer',
-          opacity: loading ? 0.6 : 1,
-        }}
-      >
-        {loading ? 'Signing in…' : 'Continue'}
+      <button onClick={() => oauthLogin('google')}>
+        Fortsæt med Google
       </button>
+
+      <button onClick={() => oauthLogin('facebook')}>
+        Fortsæt med Facebook
+      </button>
+
+      <hr style={{ margin: '24px 0' }} />
+
+      <form onSubmit={emailPasswordLogin}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+
+        <input
+          type="password"
+          placeholder="Adgangskode"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logger ind…' : 'Log ind / Opret konto'}
+        </button>
+
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+      </form>
     </main>
   )
 }
