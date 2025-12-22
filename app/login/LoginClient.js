@@ -10,19 +10,21 @@ export default function LoginClient() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  async function emailPasswordLogin(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
     setError('')
 
+    // Prøv login
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
 
+    // Hvis user ikke findes → opret
     if (error) {
       const { error: signUpError } = await supabase.auth.signUp({
         email,
@@ -39,30 +41,11 @@ export default function LoginClient() {
     window.location.href = redirectTo
   }
 
-  async function oauthLogin(provider) {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${location.origin}${redirectTo}`,
-      },
-    })
-  }
-
   return (
     <main className="page" style={{ padding: 24 }}>
       <h1>Log ind</h1>
 
-      <button onClick={() => oauthLogin('google')}>
-        Fortsæt med Google
-      </button>
-
-      <button onClick={() => oauthLogin('facebook')}>
-        Fortsæt med Facebook
-      </button>
-
-      <hr style={{ margin: '24px 0' }} />
-
-      <form onSubmit={emailPasswordLogin}>
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
           placeholder="Email"
