@@ -2,26 +2,27 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
 export default function HomePage() {
-  const router = useRouter()
   const [listings, setListings] = useState([])
   const loading = listings.length === 0
 
   /**
-   * 🔑 SUPABASE PASSWORD RESET / RECOVERY
+   * 🔑 SUPABASE PASSWORD RECOVERY
    * Supabase reset-links lander ALTID på `/`
    * med token i URL-hash (#access_token=...&type=recovery)
-   * Her fanger vi det og sender brugeren videre til /reset-password
+   *
+   * Next.js router kan IKKE håndtere dette korrekt.
+   * Derfor bruger vi window.location.replace (det virker).
    */
   useEffect(() => {
-    const handleRecovery = async () => {
-      if (typeof window === 'undefined') return
-      if (!window.location.hash.includes('type=recovery')) return
+    if (typeof window === 'undefined') return
 
-      // Opret recovery-session fra URL-hash
+    if (!window.location.hash.includes('type=recovery')) return
+
+    const runRecovery = async () => {
+      // 1️⃣ Opret session fra hash
       const { error } = await supabase.auth.getSessionFromUrl({
         storeSession: true,
       })
@@ -31,12 +32,14 @@ export default function HomePage() {
         return
       }
 
-      // Redirect til reset-password (bevarer token i hash)
-      router.replace(`/reset-password${window.location.hash}`)
+      // 2️⃣ HARD redirect til reset-password (bevar hash)
+      window.location.replace(
+        `/reset-password${window.location.hash}`
+      )
     }
 
-    handleRecovery()
-  }, [router])
+    runRecovery()
+  }, [])
 
   /**
    * 📦 HENT LISTINGS (din eksisterende logik)
