@@ -25,6 +25,9 @@ export const viewport = {
 }
 
 
+import AuthRecoveryRedirect from '@/app/components/AuthRecoveryRedirect'
+
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
