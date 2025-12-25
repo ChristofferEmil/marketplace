@@ -154,6 +154,28 @@ export default function ListingDetailPage() {
         )}
       </section>
 
+
+
+{isDesktop && (
+  <div style={{ marginBottom: 12 }}>
+    <button
+      className="action-btn primary"
+      onClick={handleClaim}
+      disabled={isOwner || isClaimed || claimLoading}
+    >
+      {isOwner
+        ? 'Dit opslag'
+        : isClaimed
+        ? 'Allerede claimed'
+        : claimLoading
+        ? 'Claimer…'
+        : 'Claim'}
+    </button>
+  </div>
+)}
+
+
+
       {/* CHAT */}
       <section className="card card-detail chat-card">
         <strong>Chat with seller</strong>
