@@ -8,22 +8,40 @@ import ListingsSearchUI from './ListingsSearchUI'
 export default function ListingsPage() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [query, setQuery] = useState('')
 
-  useEffect(() => {
-    supabase
-      .from('listings')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setListings(data || [])
-        setLoading(false)
-      })
-  }, [])
+
+ useEffect(() => {
+  setLoading(true)
+
+  let q = supabase
+    .from('listings')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (query && query.trim().length > 0) {
+    q = q.or(
+      `title.ilike.%${query}%,description.ilike.%${query}%`
+    )
+  }
+
+  q.then(({ data, error }) => {
+    if (error) {
+      console.error(error)
+      setListings([])
+    } else {
+      setListings(data || [])
+    }
+    setLoading(false)
+  })
+}, [query])
+
 
   return (
     <main className="page">
       {/* SEARCH + FILTER UI */}
-      <ListingsSearchUI />
+     <ListingsSearchUI onSearch={setQuery} />
+
 
       {/* LISTINGS GRID */}
       <section className="feed-grid">

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-export default function ListingsSearchUI() {
+export default function ListingsSearchUI({ onSearch }) {
   /* =========================
      STATE – SEARCH & FILTER UI
      ========================= */
@@ -30,10 +30,14 @@ export default function ListingsSearchUI() {
         <span className="search-icon">🔍</span>
 
         <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search Pokémon cards…"
-        />
+        placeholder="Search Pokémon cards…"
+        value={search}
+        onChange={(e) => {
+          const v = e.target.value
+          setSearch(v)
+          onSearch(v) // 🔔 send søgetekst op
+        }}
+      />
 
         <button
           className="filter-btn"
