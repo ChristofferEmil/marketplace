@@ -6,27 +6,23 @@ import { supabase } from '@/lib/supabaseClient'
 
 export default function ListingDetailPage() {
   const { id } = useParams()
+  const bottomRef = useRef(null)
 
   const [listing, setListing] = useState(null)
   const [messages, setMessages] = useState([])
   const [text, setText] = useState('')
   const [user, setUser] = useState(null)
-  const bottomRef = useRef(null)
 
-  const primaryActionLabel = () => {
-  if (!listing) return null
-  if (listing.allow_claim && listing.allow_auction) return 'Claim or Bid'
-  if (listing.allow_claim) return 'Claim'
-  if (listing.allow_auction) return 'Place bid'
-  return null
-}
+  const [isClaimed, setIsClaimed] = useState(false)
+  const [claimLoading, setClaimLoading] = useState(false)
 
-const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 769
-const [showChat, setShowChat] = useState(isDesktop)
+  const isOwner = user && listing && user.id === listing.user_id
 
+  const isDesktop =
+    typeof window !== 'undefined' && window.innerWidth >= 769
+  const [showChat, setShowChat] = useState(isDesktop)
 
-
-
+  /* ---------- LOAD DATA ---------- */
   useEffect(() => {
     if (!id) return
 
@@ -47,13 +43,23 @@ const [showChat, setShowChat] = useState(isDesktop)
       .eq('listing_id', id)
       .order('created_at', { ascending: true })
       .then(({ data }) => setMessages(data || []))
+
+    supabase
+      .from('claims')
+      .select('id')
+      .eq('listing_id', id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setIsClaimed(true)
+      })
   }, [id])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const send = async () => {
+  /* ---------- CHAT ---------- */
+  async function send() {
     if (!user || !text) return
 
     const { data } = await supabase
@@ -70,6 +76,32 @@ const [showChat, setShowChat] = useState(isDesktop)
     setText('')
   }
 
+  /* ---------- CLAIM ---------- */
+  async function handleClaim() {
+    if (!user) {
+      alert('Du skal være logget ind for at claime')
+      return
+    }
+
+    setClaimLoading(true)
+
+    const { error } = await supabase
+      .from('claims')
+      .insert({
+        listing_id: id,
+        claimer_id: user.id,
+      })
+
+    if (error) {
+      alert(error.message)
+    } else {
+      setIsClaimed(true)
+      alert('Kortet er nu claimed. Skriv til sælgeren i chatten.')
+    }
+
+    setClaimLoading(false)
+  }
+
   if (!listing) {
     return (
       <main className="page">
@@ -81,7 +113,6 @@ const [showChat, setShowChat] = useState(isDesktop)
   return (
     <main className="page page-detail hide-bottom-nav">
 
-
       {/* IMAGE HERO */}
       {listing.image_url && (
         <div className="detail-image">
@@ -89,56 +120,39 @@ const [showChat, setShowChat] = useState(isDesktop)
         </div>
       )}
 
-     {/* DETAILS */}
-<section className="detail-content">
-  <h1>{listing.title}</h1>
+      {/* DETAILS */}
+      <section className="detail-content">
+        <h1>{listing.title}</h1>
 
-  {/* TAGS */}
-  <div className="detail-tags">
-    {listing.series && <span className="tag">{listing.series}</span>}
-    {listing.condition && <span className="tag">{listing.condition}</span>}
+        <div className="detail-tags">
+          {listing.series && <span className="tag">{listing.series}</span>}
+          {listing.condition && (
+            <span className="tag">{listing.condition}</span>
+          )}
 
-    {Array.isArray(listing.tags) &&
-      listing.tags.map(tag => (
-        <span key={tag} className="tag tag-muted">
-          {tag}
-        </span>
-      ))}
-  </div>
+          {Array.isArray(listing.tags) &&
+            listing.tags.map(tag => (
+              <span key={tag} className="tag tag-muted">
+                {tag}
+              </span>
+            ))}
+        </div>
 
-  {/* SALES INFO */}
-  <div className="sale-box">
-    {listing.claim_price && (
-      <div className="sale-item">
-        <span className="sale-label">Claim price</span>
-        <strong>{listing.claim_price} kr</strong>
-      </div>
-    )}
+        <div className="sale-box">
+          {listing.claim_price && (
+            <div className="sale-item">
+              <span className="sale-label">Claim price</span>
+              <strong>{listing.claim_price} kr</strong>
+            </div>
+          )}
+        </div>
 
-    {listing.starting_bid && (
-      <div className="sale-item">
-        <span className="sale-label">Starting bid</span>
-        <strong>{listing.starting_bid} kr</strong>
-      </div>
-    )}
-
-    {listing.auction_ends_at && (
-      <div className="sale-item">
-        <span className="sale-label">Auction ends</span>
-        <strong>
-          {new Date(listing.auction_ends_at).toLocaleString()}
-        </strong>
-      </div>
-    )}
-  </div>
-
-  {listing.description && (
-    <p className="detail-description">
-      {listing.description}
-    </p>
-  )}
-</section>
-
+        {listing.description && (
+          <p className="detail-description">
+            {listing.description}
+          </p>
+        )}
+      </section>
 
       {/* CHAT */}
       <section className="card card-detail chat-card">
@@ -166,55 +180,47 @@ const [showChat, setShowChat] = useState(isDesktop)
         </div>
       </section>
 
-      {/* STICKY INPUT */}
+      {/* CHAT INPUT */}
       {showChat && (
-  <div className="chat-input chat-input-fixed">
+        <div className="chat-input chat-input-fixed">
+          <input
+            value={text}
+            onChange={e => setText(e.target.value)}
+            placeholder={user ? 'Write a message…' : 'Log in to chat'}
+            disabled={!user}
+          />
 
-        <input
-          value={text}
-          onChange={e => setText(e.target.value)}
-          placeholder={user ? 'Write a message…' : 'Log in to chat'}
-          disabled={!user}
-        />
+          <button onClick={send} disabled={!user || !text}>
+            Send
+          </button>
+        </div>
+      )}
 
-        <button onClick={send} disabled={!user || !text}>
-          Send
-        </button>
-  
-      </div>
-)}
+      {/* ACTION BAR */}
+      {!showChat && (
+        <div className="action-bar">
+          <button
+            className="action-btn secondary"
+            onClick={() => setShowChat(true)}
+          >
+            Chat
+          </button>
 
-      {/* STICKY ACTION BAR (MOBILE) */}
-{!showChat && primaryActionLabel() && (
-  <div className="action-bar">
-
-   <button
-  className="action-btn secondary"
-  onClick={() => {
-    setShowChat(true)
-    setTimeout(() => {
-      document
-        .querySelector('.chat-input')
-        ?.scrollIntoView({ behavior: 'smooth' })
-    }, 100)
-  }}
->
-  Chat
-</button>
-
-
-    <button
-      className="action-btn primary"
-      onClick={() => {
-        // Foreløbig handling – logik kommer senere
-        alert(primaryActionLabel())
-      }}
-    >
-      {primaryActionLabel()}
-    </button>
-  </div>
-)}
-
+          <button
+            className="action-btn primary"
+            onClick={handleClaim}
+            disabled={isOwner || isClaimed || claimLoading}
+          >
+            {isOwner
+              ? 'Dit opslag'
+              : isClaimed
+              ? 'Allerede claimed'
+              : claimLoading
+              ? 'Claimer…'
+              : 'Claim'}
+          </button>
+        </div>
+      )}
     </main>
   )
 }
