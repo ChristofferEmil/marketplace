@@ -9,6 +9,8 @@ export default function ListingsPage() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
+  const [series, setSeries] = useState(null)
+
 
 
  useEffect(() => {
@@ -19,10 +21,16 @@ export default function ListingsPage() {
     .select('*')
     .order('created_at', { ascending: false })
 
-  if (query && query.trim().length > 0) {
+  // 🔍 SEARCH (title + description)
+  if (query && query.trim() !== '') {
     q = q.or(
       `title.ilike.%${query}%,description.ilike.%${query}%`
     )
+  }
+
+  // 🧩 SERIES FILTER
+  if (series) {
+    q = q.eq('series', series)
   }
 
   q.then(({ data, error }) => {
@@ -34,13 +42,18 @@ export default function ListingsPage() {
     }
     setLoading(false)
   })
-}, [query])
+}, [query, series])
+
 
 
   return (
     <main className="page">
       {/* SEARCH + FILTER UI */}
-     <ListingsSearchUI onSearch={setQuery} />
+     <ListingsSearchUI
+  onSearch={setQuery}
+  onSeries={setSeries}
+/>
+
 
 
       {/* LISTINGS GRID */}
