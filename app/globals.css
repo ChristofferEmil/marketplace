@@ -719,104 +719,185 @@ select {
 }
 
 
-/* =========================
-   SEARCH BAR
-   ========================= */
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #1c1c2b;
-  border-radius: 999px;
-  padding: 12px 16px;
-  margin-bottom: 12px;
+/* =========================================================
+   SEARCH & FILTER (LISTINGS ONLY)
+   Safe to append – no overrides elsewhere
+========================================================= */
+
+/* Wrapper */
+.search-ui {
+  margin-bottom: 24px;
 }
 
-.search-icon {
-  font-size: 16px;
+/* -------------------------
+   SEARCH BAR
+------------------------- */
+.search-ui .search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+
+  background: rgba(255,255,255,0.06);
+  border-radius: 999px;
+}
+
+.search-ui .search-icon {
+  font-size: 15px;
   opacity: 0.6;
 }
 
-.search-bar input {
+.search-ui input {
   flex: 1;
   background: none;
   border: none;
-  color: #fff;
-  font-size: 14px;
   outline: none;
+
+  color: var(--text);
+  font-size: 15px;
 }
 
-.filter-btn {
+.search-ui .filter-btn {
   background: none;
   border: none;
-  color: #fff;
+  color: var(--text);
   font-size: 18px;
   cursor: pointer;
 }
 
-/* =========================
-   CHIPS
-   ========================= */
-.chip-row {
+/* -------------------------
+   CHIPS (SEARCH ONLY)
+------------------------- */
+.search-ui .chip-row {
   display: flex;
   gap: 10px;
+  margin-top: 14px;
   overflow-x: auto;
-  padding-bottom: 6px;
-  margin-bottom: 16px;
+  padding-bottom: 4px;
 }
 
-.chip {
-  white-space: nowrap;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: #26263b;
-  color: #aaa;
-  border: none;
+.search-ui .chip {
+  padding: 8px 14px;
   font-size: 13px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: var(--muted);
+  border: none;
+  white-space: nowrap;
   cursor: pointer;
 }
 
-.chip.active {
-  background: linear-gradient(135deg, #ff7a9d, #7b7cff);
-  color: #fff;
+.search-ui .chip.active {
+  background: var(--accent);
+  color: white;
 }
 
-/* =========================
+/* -------------------------
    FILTER OVERLAY
-   ========================= */
-.filter-overlay {
+------------------------- */
+.search-ui .filter-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.45);
-  z-index: 40;
+  z-index: 90;
 }
 
-/* =========================
-   FILTER PANEL – FIXED & CLEAN
-   ========================= */
-.filter-panel {
+/* -------------------------
+   FILTER PANEL (SLIDE LEFT)
+------------------------- */
+.search-ui .filter-panel {
   position: fixed;
   top: 0;
   left: 0;
-  width: 85%;
+
+  width: 86%;
   max-width: 360px;
   height: 100vh;
 
-  background: #141423;
-  z-index: 100;
+  background: var(--bg);
+  border-right: 1px solid rgba(255,255,255,0.08);
 
-  /* IMPORTANT: fully hidden off-canvas */
-  transform: translateX(-110%);
+  transform: translateX(-100%);
   transition: transform 0.3s ease;
 
   display: flex;
   flex-direction: column;
-
-  /* IMPORTANT: scroll inside panel */
   overflow-y: auto;
-  overscroll-behavior: contain;
+
+  z-index: 100;
 }
 
-.filter-panel.open {
+.search-ui .filter-panel.open {
   transform: translateX(0);
+}
+
+/* Header */
+.search-ui .filter-header {
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px;
+  background: var(--bg);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.search-ui .filter-header button {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 18px;
+}
+
+/* Sections */
+.search-ui .filter-section {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.search-ui .filter-section h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Checkboxes */
+.search-ui .checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Footer */
+.search-ui .filter-footer {
+  position: sticky;
+  bottom: 0;
+
+  padding: 16px;
+  background: var(--bg);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.search-ui .apply-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+}
+
+/* -------------------------
+   BODY SCROLL LOCK
+------------------------- */
+body.filter-open {
+  overflow: hidden;
 }
