@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
+import ListingsSearchUI from './ListingsSearchUI'
 
 export default function ListingsPage() {
   const [listings, setListings] = useState([])
@@ -21,11 +22,10 @@ export default function ListingsPage() {
 
   return (
     <main className="page">
+      {/* SEARCH + FILTER UI */}
+      <ListingsSearchUI />
 
-      <div className="section-header">
-        <h2>Listings</h2>
-      </div>
-
+      {/* LISTINGS GRID */}
       <section className="feed-grid">
         {loading &&
           Array.from({ length: 6 }).map((_, i) => (
@@ -43,7 +43,9 @@ export default function ListingsPage() {
             <Link key={l.id} href={`/listings/${l.id}`}>
               <article className="card">
                 <div className="card-image">
-                  {l.image_url && <img src={l.image_url} alt={l.title} />}
+                  {l.image_url && (
+                    <img src={l.image_url} alt={l.title} />
+                  )}
                 </div>
 
                 <div className="card-body">
@@ -61,142 +63,5 @@ export default function ListingsPage() {
           ))}
       </section>
     </main>
-  )
-}
-
-'use client'
-
-import { useState } from 'react'
-
-export default function ListingsSearchUI() {
-  /* =========================
-     STATE – SEARCH & FILTER UI
-     ========================= */
-  const [search, setSearch] = useState('')
-  const [activeChip, setActiveChip] = useState('All')
-  const [filtersOpen, setFiltersOpen] = useState(false)
-
-  const chips = [
-    'All',
-    'Base Set',
-    'Jungle',
-    'Fossil',
-    'Neo',
-    'Modern',
-    'PSA',
-    'Sealed',
-  ]
-
-  return (
-    <>
-      {/* =========================
-          TOP SEARCH BAR
-         ========================= */}
-      <div className="search-bar">
-        <span className="search-icon">🔍</span>
-
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search Pokémon cards…"
-        />
-
-        {/* FILTER BUTTON */}
-        <button
-          className="filter-btn"
-          onClick={() => setFiltersOpen(true)}
-        >
-          ☰
-        </button>
-      </div>
-
-      {/* =========================
-          CHIPS / TAGS
-         ========================= */}
-      <div className="chip-row">
-        {chips.map(chip => (
-          <button
-            key={chip}
-            className={`chip ${
-              activeChip === chip ? 'active' : ''
-            }`}
-            onClick={() => setActiveChip(chip)}
-          >
-            {chip}
-          </button>
-        ))}
-      </div>
-
-      {/* =========================
-          OVERLAY (background)
-         ========================= */}
-      {filtersOpen && (
-        <div
-          className="filter-overlay"
-          onClick={() => setFiltersOpen(false)}
-        />
-      )}
-
-      {/* =========================
-          SLIDE-IN FILTER (LEFT)
-         ========================= */}
-      <aside className={`filter-panel ${filtersOpen ? 'open' : ''}`}>
-        {/* HEADER */}
-        <div className="filter-header">
-          <strong>Filters</strong>
-          <button onClick={() => setFiltersOpen(false)}>✕</button>
-        </div>
-
-        {/* PRICE (UI ONLY) */}
-        <section className="filter-section">
-          <h4>Price range</h4>
-          <div className="price-placeholder">
-            <span>Min</span>
-            <span>—</span>
-            <span>Max</span>
-          </div>
-        </section>
-
-        {/* SERIES */}
-        <section className="filter-section">
-          <h4>Series</h4>
-          {['Base Set', 'Jungle', 'Fossil', 'Neo', 'Modern'].map(s => (
-            <label key={s} className="checkbox">
-              <input type="checkbox" />
-              {s}
-            </label>
-          ))}
-        </section>
-
-        {/* CONDITION */}
-        <section className="filter-section">
-          <h4>Condition</h4>
-          {['NM', 'EX', 'VG', 'LP'].map(c => (
-            <label key={c} className="checkbox">
-              <input type="checkbox" />
-              {c}
-            </label>
-          ))}
-        </section>
-
-        {/* STATUS */}
-        <section className="filter-section">
-          <h4>Status</h4>
-          {['Claim', 'Auction'].map(s => (
-            <label key={s} className="checkbox">
-              <input type="checkbox" />
-              {s}
-            </label>
-          ))}
-        </section>
-
-        {/* APPLY */}
-        <div className="filter-footer">
-          <button className="apply-btn">
-            Apply filters
-          </button>
-        </div>
-      </aside>
-    </>
   )
 }
