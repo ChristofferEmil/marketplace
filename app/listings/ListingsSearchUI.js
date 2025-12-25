@@ -1,71 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { supabase } from '@/lib/supabaseClient'
-
-export default function ListingsPage() {
-  const [listings, setListings] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    supabase
-      .from('listings')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setListings(data || [])
-        setLoading(false)
-      })
-  }, [])
-
-  return (
-    <main className="page">
-
-      <div className="section-header">
-        <h2>Listings</h2>
-      </div>
-
-      <section className="feed-grid">
-        {loading &&
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="card">
-              <div className="card-image skeleton" />
-              <div className="card-body">
-                <div className="skeleton line" />
-                <div className="skeleton line short" />
-              </div>
-            </div>
-          ))}
-
-        {!loading &&
-          listings.map(l => (
-            <Link key={l.id} href={`/listings/${l.id}`}>
-              <article className="card">
-                <div className="card-image">
-                  {l.image_url && <img src={l.image_url} alt={l.title} />}
-                </div>
-
-                <div className="card-body">
-                  <h3>{l.title}</h3>
-                  {l.description && (
-                    <p>
-                      {l.description.length > 70
-                        ? `${l.description.slice(0, 70)}…`
-                        : l.description}
-                    </p>
-                  )}
-                </div>
-              </article>
-            </Link>
-          ))}
-      </section>
-    </main>
-  )
-}
-
-'use client'
-
 import { useState } from 'react'
 
 export default function ListingsSearchUI() {
@@ -90,7 +24,7 @@ export default function ListingsSearchUI() {
   return (
     <>
       {/* =========================
-          TOP SEARCH BAR
+          SEARCH BAR
          ========================= */}
       <div className="search-bar">
         <span className="search-icon">🔍</span>
@@ -101,7 +35,6 @@ export default function ListingsSearchUI() {
           placeholder="Search Pokémon cards…"
         />
 
-        {/* FILTER BUTTON */}
         <button
           className="filter-btn"
           onClick={() => setFiltersOpen(true)}
@@ -111,15 +44,13 @@ export default function ListingsSearchUI() {
       </div>
 
       {/* =========================
-          CHIPS / TAGS
+          CHIPS
          ========================= */}
       <div className="chip-row">
         {chips.map(chip => (
           <button
             key={chip}
-            className={`chip ${
-              activeChip === chip ? 'active' : ''
-            }`}
+            className={`chip ${activeChip === chip ? 'active' : ''}`}
             onClick={() => setActiveChip(chip)}
           >
             {chip}
@@ -128,7 +59,7 @@ export default function ListingsSearchUI() {
       </div>
 
       {/* =========================
-          OVERLAY (background)
+          OVERLAY
          ========================= */}
       {filtersOpen && (
         <div
@@ -138,16 +69,14 @@ export default function ListingsSearchUI() {
       )}
 
       {/* =========================
-          SLIDE-IN FILTER (LEFT)
+          FILTER PANEL (LEFT)
          ========================= */}
       <aside className={`filter-panel ${filtersOpen ? 'open' : ''}`}>
-        {/* HEADER */}
         <div className="filter-header">
           <strong>Filters</strong>
           <button onClick={() => setFiltersOpen(false)}>✕</button>
         </div>
 
-        {/* PRICE (UI ONLY) */}
         <section className="filter-section">
           <h4>Price range</h4>
           <div className="price-placeholder">
@@ -157,7 +86,6 @@ export default function ListingsSearchUI() {
           </div>
         </section>
 
-        {/* SERIES */}
         <section className="filter-section">
           <h4>Series</h4>
           {['Base Set', 'Jungle', 'Fossil', 'Neo', 'Modern'].map(s => (
@@ -168,7 +96,6 @@ export default function ListingsSearchUI() {
           ))}
         </section>
 
-        {/* CONDITION */}
         <section className="filter-section">
           <h4>Condition</h4>
           {['NM', 'EX', 'VG', 'LP'].map(c => (
@@ -179,7 +106,6 @@ export default function ListingsSearchUI() {
           ))}
         </section>
 
-        {/* STATUS */}
         <section className="filter-section">
           <h4>Status</h4>
           {['Claim', 'Auction'].map(s => (
@@ -190,7 +116,6 @@ export default function ListingsSearchUI() {
           ))}
         </section>
 
-        {/* APPLY */}
         <div className="filter-footer">
           <button className="apply-btn">
             Apply filters
