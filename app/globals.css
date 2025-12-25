@@ -717,3 +717,148 @@ select {
 .page-detail ~ .bottom-nav {
   display: none;
 }
+
+
+/* =========================
+   SEARCH BAR
+   ========================= */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1c1c2b;
+  border-radius: 999px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.search-icon {
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+
+.filter-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* =========================
+   CHIPS
+   ========================= */
+.chip-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  white-space: nowrap;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #26263b;
+  color: #aaa;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.chip.active {
+  background: linear-gradient(135deg, #ff7a9d, #7b7cff);
+  color: #fff;
+}
+
+/* =========================
+   FILTER OVERLAY
+   ========================= */
+.filter-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 40;
+}
+
+/* =========================
+   FILTER PANEL (SLIDE LEFT)
+   ========================= */
+.filter-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 85%;
+  max-width: 340px;
+  height: 100%;
+  background: #141423;
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-panel.open {
+  transform: translateX(0);
+}
+
+.filter-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #2a2a3d;
+}
+
+.filter-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+}
+
+.filter-section {
+  padding: 16px;
+  border-bottom: 1px solid #1f1f33;
+}
+
+.filter-section h4 {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.filter-footer {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid #2a2a3d;
+}
+
+.apply-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  background: #4ade80;
+  color: #000;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
