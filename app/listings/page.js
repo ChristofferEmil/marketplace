@@ -28,10 +28,11 @@ export default function ListingsPage() {
     )
   }
 
-  // 🧩 SERIES FILTER
-  if (series) {
-    q = q.eq('series', series)
-  }
+ // 🧩 SERIES FILTER (robust match)
+if (series) {
+  q = q.ilike('series', series)
+}
+
 
   q.then(({ data, error }) => {
     if (error) {
