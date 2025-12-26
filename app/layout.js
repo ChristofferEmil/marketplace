@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Nav from './components/Nav'
-
+import Nav from "./components/Nav";
+import AuthRecoveryRedirect from "@/app/components/AuthRecoveryRedirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,37 +19,29 @@ export const metadata = {
 };
 
 export const viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-}
-
-
-import AuthRecoveryRedirect from '@/app/components/AuthRecoveryRedirect'
-
+};
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-  <div className="app-shell">
-    {/* DESKTOP SIDEBAR */}
-    <aside className="app-sidebar">
-      <Nav /> {/* 👈 dit eksisterende desktop-nav */}
-    </aside>
+        <AuthRecoveryRedirect />
 
-    {/* MAIN CONTENT */}
-    <main className="app-content">
-      {children}
-    </main>
-  </div>
+        <div className="app-shell">
+          {/* NAVIGATION */}
+          <aside className="app-sidebar">
+            <Nav />
+          </aside>
 
-  {/* MOBILE BOTTOM NAV */}
-  <BottomNav />
-</body>
-
-
+          {/* PAGE CONTENT */}
+          <main className="app-content">
+            {children}
+          </main>
+        </div>
+      </body>
     </html>
   );
-  
 }
