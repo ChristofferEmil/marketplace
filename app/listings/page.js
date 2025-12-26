@@ -10,6 +10,8 @@ export default function ListingsPage() {
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [series, setSeries] = useState(null)
+  const [claimOnly, setClaimOnly] = useState(false);
+
   
 
 
@@ -34,6 +36,12 @@ export default function ListingsPage() {
     q = q.contains('series', [series])
   }
 
+    // ✅ CLAIM FILTER
+  if (claimOnly) {
+    q = q.eq('allow_claim', true)
+  }
+
+
   q.then(({ data, error }) => {
     if (error) {
       console.error(error)
@@ -43,7 +51,8 @@ export default function ListingsPage() {
     }
     setLoading(false)
   })
-}, [query, series])
+}, [query, series, claimOnly])
+
 
 
 
@@ -55,7 +64,10 @@ export default function ListingsPage() {
      <ListingsSearchUI
   onSearch={setQuery}
   onSeries={setSeries}
+  claimOnly={claimOnly}
+  onClaimChange={setClaimOnly}
 />
+
 
 
 

@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 
-export default function ListingsSearchUI({ onSearch, onSeries }) {
+export default function ListingsSearchUI({
+  onSearch,
+  onSeries,
+  claimOnly,
+  onClaimChange,
+}) {
+
   /* =========================
      STATE – SEARCH & FILTER UI
      ========================= */
@@ -120,14 +126,18 @@ export default function ListingsSearchUI({ onSearch, onSeries }) {
         </section>
 
         <section className="filter-section">
-          <h4>Status</h4>
-          {['Claim', 'Auction'].map(s => (
-            <label key={s} className="checkbox">
-              <input type="checkbox" disabled />
-              {s}
-            </label>
-          ))}
-        </section>
+  <h4>Status</h4>
+
+  <label className="checkbox">
+    <input
+      type="checkbox"
+      checked={claimOnly}
+      onChange={(e) => onClaimChange(e.target.checked)}
+    />
+    Claim
+  </label>
+</section>
+
 
         <div className="filter-footer">
           <button className="apply-btn" disabled>
