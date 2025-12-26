@@ -11,6 +11,7 @@ export default function ListingsPage() {
   const [query, setQuery] = useState('')
   const [series, setSeries] = useState(null)
   const [claimOnly, setClaimOnly] = useState(false);
+  const [auctionOnly, setAuctionOnly] = useState(false);
 
   
 
@@ -41,6 +42,12 @@ export default function ListingsPage() {
     q = q.eq('allow_claim', true)
   }
 
+    // ✅ AUCTION FILTER
+  if (auctionOnly) {
+    q = q.eq('allow_auction', true)
+  }
+
+
 
   q.then(({ data, error }) => {
     if (error) {
@@ -51,7 +58,8 @@ export default function ListingsPage() {
     }
     setLoading(false)
   })
-}, [query, series, claimOnly])
+}, [query, series, claimOnly, auctionOnly])
+
 
 
 
@@ -61,11 +69,13 @@ export default function ListingsPage() {
   return (
     <main className="page">
       {/* SEARCH + FILTER UI */}
-     <ListingsSearchUI
+   <ListingsSearchUI
   onSearch={setQuery}
   onSeries={setSeries}
   claimOnly={claimOnly}
   onClaimChange={setClaimOnly}
+  auctionOnly={auctionOnly}
+  onAuctionChange={setAuctionOnly}
 />
 
 

@@ -7,7 +7,10 @@ export default function ListingsSearchUI({
   onSeries,
   claimOnly,
   onClaimChange,
+  auctionOnly,
+  onAuctionChange,
 }) {
+
 
   /* =========================
      STATE – SEARCH & FILTER UI
@@ -125,7 +128,7 @@ export default function ListingsSearchUI({
           ))}
         </section>
 
-        <section className="filter-section">
+     <section className="filter-section">
   <h4>Status</h4>
 
   <label className="checkbox">
@@ -136,7 +139,17 @@ export default function ListingsSearchUI({
     />
     Claim
   </label>
+
+  <label className="checkbox">
+    <input
+      type="checkbox"
+      checked={auctionOnly}
+      onChange={(e) => onAuctionChange(e.target.checked)}
+    />
+    Auction
+  </label>
 </section>
+
 
 
         <div className="filter-footer">
