@@ -168,10 +168,28 @@ export default function ListingsSearchUI({
 
 
         <div className="filter-footer">
-          <button className="apply-btn" disabled>
-            Apply filters
-          </button>
-        </div>
+  <button
+    className="apply-btn"
+    onClick={() => setFiltersOpen(false)}
+  >
+    Vis resultater
+  </button>
+
+  <button
+    className="reset-btn"
+    onClick={() => {
+      onSearch('')
+      onSeries(null)
+      onClaimChange(false)
+      onAuctionChange(false)
+      onConditionsChange([])
+      setFiltersOpen(false)
+    }}
+  >
+    Nulstil filtre
+  </button>
+</div>
+
       </aside>
     </>
   )

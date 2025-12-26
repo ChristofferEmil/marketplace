@@ -903,6 +903,12 @@ select {
   font-weight: bold;
 }
 
+.apply-btn {
+  background: #fff;
+  color: #000;
+}
+
+
 
 /* =====================================================
    DESKTOP OVERRIDE
@@ -927,4 +933,19 @@ select {
   .filter-panel.open {
     display: block;
   }
+}
+
+
+/* -----------------------------------------------------
+   RESET FILTER BUTTON
+----------------------------------------------------- */
+.reset-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 999px;
+  border: 1px solid #333;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
 }
