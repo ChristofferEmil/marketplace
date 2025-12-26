@@ -10,6 +10,7 @@ export default function ListingsPage() {
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [series, setSeries] = useState(null)
+  
 
 
 
@@ -21,16 +22,16 @@ export default function ListingsPage() {
     .select('*')
     .order('created_at', { ascending: false })
 
-  // 🔍 SEARCH (title + description)
+  // 🔍 SEARCH I TITLE + DESCRIPTION
   if (query && query.trim() !== '') {
     q = q.or(
       `title.ilike.%${query}%,description.ilike.%${query}%`
     )
   }
 
-  // 🧩 SERIES FILTER (KORREKT)
+  // 🧩 SERIES FILTER (ARRAY / text[])
   if (series) {
-    q = q.ilike('series', `%${series}%`)
+    q = q.contains('series', [series])
   }
 
   q.then(({ data, error }) => {
@@ -43,6 +44,7 @@ export default function ListingsPage() {
     setLoading(false)
   })
 }, [query, series])
+
 
 
 
