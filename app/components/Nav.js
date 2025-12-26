@@ -8,9 +8,9 @@ import { supabase } from '@/lib/supabaseClient'
 export default function Nav() {
   const [user, setUser] = useState(null)
   const pathname = usePathname()
-  const isListingDetail =
-  pathname.startsWith('/listings/') && pathname !== '/listings'
 
+  const isListingDetail =
+    pathname.startsWith('/listings/') && pathname !== '/listings'
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -32,80 +32,81 @@ export default function Nav() {
 
   return (
     <>
-      {/* ================= TOP NAV (DESKTOP) ================= */}
-      <nav className="nav nav-top">
-        <div className="nav-inner">
-          <Link href="/" className="nav-logo">
-            CardSwap
-          </Link>
+      {/* ================= SIDEBAR NAV (DESKTOP) ================= */}
+      <nav className="sidebar-nav">
+        <Link href="/" className="sidebar-logo">
+          CardSwap
+        </Link>
 
-          <div className="nav-links">
-            <Link href="/listings">Listings</Link>
-            <Link href="/create">Create</Link>
+        <ul className="sidebar-list">
+          <li>
+            <Link href="/listings" className={pathname === '/listings' ? 'active' : ''}>
+              Listings
+            </Link>
+          </li>
 
-            {!user ? (
-              <Link href="/login" style={{ opacity: 0.8 }}>
-                Guest · Login
-              </Link>
-            ) : (
-              <button
-                onClick={logout}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--muted)',
-                  cursor: 'pointer',
-                }}
-              >
+          <li>
+            <Link href="/create" className={pathname === '/create' ? 'active' : ''}>
+              Create
+            </Link>
+          </li>
+
+          <li className="sidebar-spacer" />
+
+          {!user ? (
+            <li>
+              <Link href="/login">Login</Link>
+            </li>
+          ) : (
+            <li>
+              <button onClick={logout} className="sidebar-logout">
                 Logout
               </button>
-            )}
-          </div>
-        </div>
+            </li>
+          )}
+        </ul>
       </nav>
 
       {/* ================= BOTTOM NAV (MOBILE) ================= */}
       {!isListingDetail && (
-      <nav className="nav">
-  <ul className="nav-list">
-        <Link href="/" className={`tab ${pathname === '/' ? 'active' : ''}`}>
-          <HomeIcon />
-        </Link>
-
-        <Link
-          href="/search"
-          className={`tab ${pathname === '/search' ? 'active' : ''}`}
-        >
-          <SearchIcon />
-        </Link>
-
-        <Link href="/create" className="tab tab-create">
-          <PlusIcon />
-        </Link>
-
-        <Link
-          href="/listings"
-          className={`tab ${
-            pathname.startsWith('/listings') ? 'active' : ''
-          }`}
-        >
-          <GridIcon />
-        </Link>
-
-        {!user ? (
-          <Link
-            href="/login"
-            className={`tab ${pathname === '/login' ? 'active' : ''}`}
-          >
-            <UserIcon />
+        <nav className="bottom-nav">
+          <Link href="/" className={`tab ${pathname === '/' ? 'active' : ''}`}>
+            <HomeIcon />
           </Link>
-        ) : (
-          <button onClick={logout} className="tab">
-            <LogoutIcon />
-          </button>
-        )}
-         </ul>
-      </nav>
+
+          <Link
+            href="/search"
+            className={`tab ${pathname === '/search' ? 'active' : ''}`}
+          >
+            <SearchIcon />
+          </Link>
+
+          <Link href="/create" className="tab tab-create">
+            <PlusIcon />
+          </Link>
+
+          <Link
+            href="/listings"
+            className={`tab ${
+              pathname.startsWith('/listings') ? 'active' : ''
+            }`}
+          >
+            <GridIcon />
+          </Link>
+
+          {!user ? (
+            <Link
+              href="/login"
+              className={`tab ${pathname === '/login' ? 'active' : ''}`}
+            >
+              <UserIcon />
+            </Link>
+          ) : (
+            <button onClick={logout} className="tab">
+              <LogoutIcon />
+            </button>
+          )}
+        </nav>
       )}
     </>
   )
@@ -129,13 +130,7 @@ function HomeIcon() {
 function SearchIcon() {
   return (
     <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
-      <circle
-        cx="11"
-        cy="11"
-        r="7"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
       <path
         d="M20 20l-3.5-3.5"
         stroke="currentColor"
