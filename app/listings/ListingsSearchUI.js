@@ -146,24 +146,31 @@ export default function ListingsSearchUI({
 
           <section className="filter-section">
             <h4>Condition</h4>
-            {['NM', 'EX', 'VG', 'LP'].map((c) => (
-              <label key={c} className="checkbox">
-                <input
-                  type="checkbox"
-                  checked={conditions.includes(c)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      onConditionsChange([...conditions, c])
-                    } else {
-                      onConditionsChange(
-                        conditions.filter((x) => x !== c)
-                      )
-                    }
-                  }}
-                />
-                {c}
-              </label>
-            ))}
+            {[
+  'M',
+  'NM',
+  'EX',
+  'GD',
+  'LP',
+  'PL',
+  'PO',
+].map(c => (
+  <label key={c} className="checkbox">
+    <input
+      type="checkbox"
+      checked={conditions.includes(c)}
+      onChange={(e) => {
+        if (e.target.checked) {
+          onConditionsChange([...conditions, c])
+        } else {
+          onConditionsChange(conditions.filter(x => x !== c))
+        }
+      }}
+    />
+    {c}
+  </label>
+))}
+
           </section>
 
           <section className="filter-section">
