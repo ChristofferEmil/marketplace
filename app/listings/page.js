@@ -28,11 +28,10 @@ export default function ListingsPage() {
     )
   }
 
- // 🧩 SERIES FILTER (robust match)
-if (series) {
-  q = q.ilike('series', series)
-}
-
+  // 🧩 SERIES FILTER (KORREKT)
+  if (series) {
+    q = q.ilike('series', `%${series}%`)
+  }
 
   q.then(({ data, error }) => {
     if (error) {
@@ -44,6 +43,7 @@ if (series) {
     setLoading(false)
   })
 }, [query, series])
+
 
 
 
