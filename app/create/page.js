@@ -15,7 +15,16 @@ const SERIES = [
   'Neo Destiny',
 ]
 
-const CONDITIONS = ['NM', 'EX', 'VG', 'LP']
+const CONDITIONS = [
+  'MT', // Mint
+  'NM', // Near Mint
+  'EX', // Excellent
+  'GD', // Good
+  'LP', // Light Played
+  'PL', // Played
+  'PO', // Poor
+]
+
 const TAGS = ['Holo', 'Reverse', '1st Edition', 'Shadowless', 'Promo']
 
 export default function CreatePage() {
