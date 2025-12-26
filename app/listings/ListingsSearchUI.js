@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 export default function ListingsSearchUI({
   onSearch,
   onSeries,
+  series,              // ✅ modtag prop
   claimOnly,
   onClaimChange,
   auctionOnly,
@@ -12,6 +13,7 @@ export default function ListingsSearchUI({
   conditions,
   onConditionsChange,
 }) {
+
   /* =========================
      STATE – SEARCH & FILTER UI
      ========================= */

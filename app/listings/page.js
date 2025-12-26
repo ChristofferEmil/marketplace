@@ -76,9 +76,10 @@ export default function ListingsPage() {
   return (
     <main className="page">
       {/* SEARCH + FILTER UI */}
- <ListingsSearchUI
+<ListingsSearchUI
   onSearch={setQuery}
   onSeries={setSeries}
+  series={series}              // ✅ VIGTIG
   claimOnly={claimOnly}
   onClaimChange={setClaimOnly}
   auctionOnly={auctionOnly}
@@ -86,6 +87,7 @@ export default function ListingsPage() {
   conditions={conditions}
   onConditionsChange={setConditions}
 />
+
 
 
 
