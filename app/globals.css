@@ -1238,3 +1238,67 @@ body.filter-open {
 .bottom-nav {
   display: none !important;
 }
+
+/* =====================================================
+   STEP 1.8 – DESKTOP NAV VISIBILITY FIX
+===================================================== */
+
+.nav-desktop {
+  display: none;
+}
+
+/* Desktop sidebar nav */
+@media (min-width: 1024px) {
+  .nav-desktop {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 240px;
+    padding: 20px 14px;
+
+    background: #0c0e13;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    z-index: 100;
+  }
+
+  .nav-desktop .nav-logo {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .nav-desktop .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .nav-desktop .nav-links a,
+  .nav-desktop .nav-links button {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .nav-desktop .nav-links a:hover,
+  .nav-desktop .nav-links button:hover {
+    background: rgba(255,255,255,0.08);
+    color: white;
+  }
+
+  .nav-desktop .nav-links .active {
+    background: rgba(255,255,255,0.12);
+    color: white;
+  }
+}
