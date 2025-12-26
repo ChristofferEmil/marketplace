@@ -89,6 +89,52 @@ export default function ListingsPage() {
 
 
 
+{/* ACTIVE FILTER BADGES */}
+{(series || conditions.length || claimOnly || auctionOnly) && (
+  <div className="active-filters">
+    {series && (
+      <button
+        className="filter-badge"
+        onClick={() => setSeries(null)}
+      >
+        {series} ✕
+      </button>
+    )}
+
+    {conditions.map(c => (
+      <button
+        key={c}
+        className="filter-badge"
+        onClick={() =>
+          setConditions(conditions.filter(x => x !== c))
+        }
+      >
+        {c} ✕
+      </button>
+    ))}
+
+    {claimOnly && (
+      <button
+        className="filter-badge"
+        onClick={() => setClaimOnly(false)}
+      >
+        Claim ✕
+      </button>
+    )}
+
+    {auctionOnly && (
+      <button
+        className="filter-badge"
+        onClick={() => setAuctionOnly(false)}
+      >
+        Auction ✕
+      </button>
+    )}
+  </div>
+)}
+
+
+
 
       {/* LISTINGS GRID */}
       <section className="feed-grid">

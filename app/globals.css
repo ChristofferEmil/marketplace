@@ -959,4 +959,27 @@ select {
 }
 
 
+/* =====================================================
+   ACTIVE FILTER BADGES
+===================================================== */
+.active-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 0 12px;
+}
+
+.filter-badge {
+  background: #1e1e1e;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.filter-badge:hover {
+  opacity: 0.85;
+}
 
