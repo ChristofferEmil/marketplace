@@ -1302,3 +1302,126 @@ body.filter-open {
     color: white;
   }
 }
+
+/* =====================================================
+   STEP 2 – DESKTOP SIDEBAR POLISH (COURTYARD STYLE)
+===================================================== */
+
+@media (min-width: 1024px) {
+  .nav-desktop {
+    gap: 18px;
+  }
+
+  .nav-desktop .nav-logo {
+    font-size: 17px;
+    letter-spacing: 0.2px;
+    margin-bottom: 28px;
+  }
+
+  .nav-desktop .nav-links {
+    gap: 4px;
+  }
+
+  .nav-desktop .nav-links a,
+  .nav-desktop .nav-links button {
+    display: flex;
+    align-items: center;
+    height: 44px;
+
+    padding: 0 14px;
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .nav-desktop .nav-links a:hover,
+  .nav-desktop .nav-links button:hover {
+    background: rgba(255,255,255,0.06);
+  }
+
+  .nav-desktop .nav-links .active {
+    background: rgba(79,124,255,0.18);
+    color: white;
+  }
+
+  .nav-desktop .nav-links .active:hover {
+    background: rgba(79,124,255,0.22);
+  }
+}
+
+/* =====================================================
+   STEP 2 – MOBILE BURGER MENU POLISH
+===================================================== */
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: 82%;
+  max-width: 320px;
+
+  background: #0c0e13;
+  padding: 20px 16px;
+
+  z-index: 400;
+}
+
+.mobile-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 24px;
+}
+
+.mobile-menu-header span {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mobile-menu-header button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.mobile-menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mobile-menu-links a,
+.mobile-menu-links button {
+  height: 46px;
+  padding: 0 14px;
+
+  display: flex;
+  align-items: center;
+
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+
+  background: none;
+  border: none;
+  color: var(--text);
+
+  text-align: left;
+}
+
+.mobile-menu-links a.active {
+  background: rgba(79,124,255,0.18);
+}
+
+.mobile-menu-links a:active {
+  background: rgba(255,255,255,0.08);
+}
