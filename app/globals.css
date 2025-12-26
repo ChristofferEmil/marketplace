@@ -813,7 +813,7 @@ select {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: 100dvh; /* korrekt mobil viewport */
   width: 85%;
   max-width: 360px;
   background: var(--bg);
@@ -891,7 +891,9 @@ select {
   bottom: 0;
   background: var(--bg);
   padding-top: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
+
 
 .apply-btn {
   width: 100%;
@@ -928,6 +930,8 @@ select {
     max-width: none;
     display: none;
     padding: 16px 0;
+     overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   }
 
   .filter-panel.open {
@@ -948,4 +952,13 @@ select {
   background: transparent;
   color: #aaa;
   cursor: pointer;
+}
+
+
+/* -----------------------------------------------------
+   LOCK BODY SCROLL WHEN FILTER IS OPEN
+----------------------------------------------------- */
+body.filter-open {
+  overflow: hidden;
+  touch-action: none;
 }

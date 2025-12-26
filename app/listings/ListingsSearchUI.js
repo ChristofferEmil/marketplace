@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function ListingsSearchUI({
   onSearch,
@@ -20,7 +20,20 @@ export default function ListingsSearchUI({
      ========================= */
   const [search, setSearch] = useState('')
   const [activeChip, setActiveChip] = useState('All')
-  const [filtersOpen, setFiltersOpen] = useState(false)
+ const [filtersOpen, setFiltersOpen] = useState(false)
+
+useEffect(() => {
+  if (filtersOpen) {
+    document.body.classList.add('filter-open')
+  } else {
+    document.body.classList.remove('filter-open')
+  }
+
+  return () => {
+    document.body.classList.remove('filter-open')
+  }
+}, [filtersOpen])
+
 
   // Chips = SERIER (for nu)
   const chips = [
