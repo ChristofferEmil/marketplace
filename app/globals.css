@@ -983,3 +983,13 @@ select {
   opacity: 0.85;
 }
 
+
+/* -----------------------------------------------------
+   CLEAR ALL BADGE
+----------------------------------------------------- */
+.filter-badge.clear-all {
+  background: transparent;
+  border: 1px dashed #444;
+  color: #aaa;
+}
+

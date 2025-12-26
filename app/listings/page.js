@@ -92,6 +92,19 @@ export default function ListingsPage() {
 {/* ACTIVE FILTER BADGES */}
 {(series || conditions.length || claimOnly || auctionOnly) && (
   <div className="active-filters">
+    {/* Clear all */}
+    <button
+      className="filter-badge clear-all"
+      onClick={() => {
+        setSeries(null)
+        setConditions([])
+        setClaimOnly(false)
+        setAuctionOnly(false)
+      }}
+    >
+      Clear all
+    </button>
+
     {series && (
       <button
         className="filter-badge"
@@ -132,6 +145,7 @@ export default function ListingsPage() {
     )}
   </div>
 )}
+
 
 
 
