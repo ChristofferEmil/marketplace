@@ -1115,3 +1115,86 @@ body.filter-open {
     z-index: 1;
   }
 }
+
+
+/* =====================================================
+   NAV – RESPONSIVE (SINGLE COMPONENT)
+===================================================== */
+
+/* RESET */
+.nav {
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================
+   MOBILE – BOTTOM NAV
+========================= */
+@media (max-width: 768px) {
+  .nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    height: 64px;
+    background: rgba(15,17,21,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.06);
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    z-index: 200;
+  }
+
+  .nav-list {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-list li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* =========================
+   DESKTOP – SIDEBAR NAV
+========================= */
+@media (min-width: 1024px) {
+  .nav {
+    position: static;
+    display: block;
+  }
+
+  .nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .nav-list li a {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--muted);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-list li a:hover {
+    background: rgba(255,255,255,0.08);
+    color: white;
+  }
+}

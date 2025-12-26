@@ -66,7 +66,8 @@ export default function Nav() {
 
       {/* ================= BOTTOM NAV (MOBILE) ================= */}
       {!isListingDetail && (
-      <nav className="bottom-nav">
+      <nav className="nav">
+  <ul className="nav-list">
         <Link href="/" className={`tab ${pathname === '/' ? 'active' : ''}`}>
           <HomeIcon />
         </Link>
@@ -103,6 +104,7 @@ export default function Nav() {
             <LogoutIcon />
           </button>
         )}
+         </ul>
       </nav>
       )}
     </>
