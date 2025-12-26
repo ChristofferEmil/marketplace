@@ -1048,3 +1048,39 @@ body.filter-open {
   overflow: hidden;
   height: 100vh;
 }
+
+/* =====================================================
+   DESKTOP LAYOUT SKELETON (COURTYARD STYLE)
+   v1 – structure only
+===================================================== */
+
+@media (min-width: 1024px) {
+
+  .app-shell {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+
+    background: #0c0e13;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    z-index: 40;
+
+    padding: 20px 14px;
+  }
+
+  /* Content area */
+  .app-content {
+    margin-left: 240px;
+    min-height: 100vh;
+  }
+
+}

@@ -31,10 +31,21 @@ import AuthRecoveryRedirect from '@/app/components/AuthRecoveryRedirect'
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="app-body">
-  <Nav />
-  {children}
+      <body>
+  <div className="app-shell">
+    <aside className="app-sidebar">
+      {/* eksisterende nav indhold */}
+      <nav className="sidebar-nav">
+        {/* du kan genbruge dine links her */}
+      </nav>
+    </aside>
+
+    <main className="app-content">
+      {children}
+    </main>
+  </div>
 </body>
+
     </html>
   );
   
