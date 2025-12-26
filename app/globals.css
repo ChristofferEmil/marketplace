@@ -1095,3 +1095,23 @@ body.filter-open {
     margin: 0;
   }
 }
+
+/* =====================================================
+   FIX: RESTORE BOTTOM NAV ON MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200; /* over app-shell/content */
+  }
+
+  .app-shell,
+  .app-content {
+    position: relative;
+    z-index: 1;
+  }
+}
