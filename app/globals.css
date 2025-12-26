@@ -730,7 +730,7 @@ select {
 ----------------------------------------------------- */
 .search-bar {
   position: sticky;
-  top: 0;
+  top: 64px; /* under top navigation */
   z-index: 20;
   background: var(--bg);
   padding: 12px 0;
@@ -938,25 +938,7 @@ select {
 }
 
 
-/* =====================================================
-   DESKTOP OVERRIDE
-===================================================== */
-@media (min-width: 768px) {
-  .filter-overlay {
-    display: none;
-  }
 
-  .filter-panel {
-    position: static;
-    transform: none;
-    height: auto;
-    display: none;
-  }
-
-  .filter-panel.open {
-    display: block;
-  }
-}
 
 
 /* =====================================================
