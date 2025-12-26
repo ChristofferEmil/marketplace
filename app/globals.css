@@ -729,8 +729,6 @@ select {
    SEARCH BAR
 ----------------------------------------------------- */
 .search-bar {
-  position: sticky;
-  top: 64px; /* præcis under nav */
   z-index: 20;
 
   background: var(--bg);
@@ -1001,37 +999,7 @@ select {
   color: #aaa;
 }
 
-/* =====================================================
-   DESKTOP – STICKY SEARCH BAR WITH FILTER BUTTON
-   Trin 1: Holder søg + filter altid synligt
-===================================================== */
-@media (min-width: 1024px) {
-  @media (min-width: 1024px) {
-  .search-bar {
-    position: sticky;
-    top: 64px; /* matcher .nav højde */
-    z-index: 50;
 
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    background: var(--bg);
-    padding: 20px 0 16px;
-    border-bottom: 1px solid #222;
-  }
-}
-
-
-  .search-bar input {
-    flex: 1;
-    max-width: 520px;
-  }
-
-  .filter-btn {
-    flex-shrink: 0;
-  }
-}
 
 /* Subtil hover – desktop only */
 @media (hover: hover) {
@@ -1073,20 +1041,31 @@ body.filter-open {
 
 
 /* =====================================================
-   DESKTOP LAYOUT SKELETON (COURTYARD STYLE)
-   v1 – structure only
+   DESKTOP LAYOUT SKELETON – CLEAN VERSION
 ===================================================== */
 
-@media (min-width: 1024px) {
+/* Mobile = helt normalt */
+.app-shell {
+  display: block;
+}
 
+.app-sidebar {
+  display: none;
+}
+
+.app-content {
+  width: 100%;
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
   .app-shell {
-    display: grid;
-    grid-template-columns: 240px 1fr;
+    display: flex;
     min-height: 100vh;
   }
 
-  /* Sidebar */
   .app-sidebar {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
@@ -1100,10 +1079,19 @@ body.filter-open {
     padding: 20px 14px;
   }
 
-  /* Content area */
   .app-content {
     margin-left: 240px;
-    min-height: 100vh;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
   }
 
+  /* Content column */
+  .page {
+    width: 100%;
+    max-width: 960px;   /* 👈 vigtig */
+    padding: 32px 32px 120px;
+    margin: 0;
+  }
 }
