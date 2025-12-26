@@ -17,6 +17,10 @@ export default function ListingsSearchUI({
      ========================= */
   const [search, setSearch] = useState('')
   const [activeChip, setActiveChip] = useState('All')
+  useEffect(() => {
+  setActiveChip(series ?? 'All')
+}, [series])
+
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   /* =========================
