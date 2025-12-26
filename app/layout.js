@@ -33,18 +33,21 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
   <div className="app-shell">
+    {/* DESKTOP SIDEBAR */}
     <aside className="app-sidebar">
-      {/* eksisterende nav indhold */}
-      <nav className="sidebar-nav">
-        {/* du kan genbruge dine links her */}
-      </nav>
+      <Nav /> {/* 👈 dit eksisterende desktop-nav */}
     </aside>
 
+    {/* MAIN CONTENT */}
     <main className="app-content">
       {children}
     </main>
   </div>
+
+  {/* MOBILE BOTTOM NAV */}
+  <BottomNav />
 </body>
+
 
     </html>
   );
