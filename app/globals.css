@@ -812,13 +812,20 @@ select {
   display: flex;
   flex-direction: column;
 
-  transform: translateX(-100%);
-  transition: transform 0.25s ease;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.98);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .filter-panel.open {
-  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
 }
+
 
 
 /* =====================================================
@@ -980,9 +987,10 @@ select {
    Trin 1: Holder søg + filter altid synligt
 ===================================================== */
 @media (min-width: 1024px) {
+  @media (min-width: 1024px) {
   .search-bar {
     position: sticky;
-    top: 0;
+    top: 64px; /* matcher .nav højde */
     z-index: 50;
 
     display: flex;
@@ -993,6 +1001,8 @@ select {
     padding: 20px 0 16px;
     border-bottom: 1px solid #222;
   }
+}
+
 
   .search-bar input {
     flex: 1;
@@ -1009,4 +1019,13 @@ select {
   .filter-btn:hover {
     background: rgba(255, 255, 255, 0.12);
   }
+}
+
+
+/* =====================================================
+   LOCK BODY SCROLL WHEN FILTER IS OPEN
+===================================================== */
+body.filter-open {
+  overflow: hidden;
+  height: 100vh;
 }
