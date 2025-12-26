@@ -30,13 +30,10 @@ export default function RootLayout({ children }) {
       <body>
         <AuthRecoveryRedirect />
 
-        <div className="app-shell">
-          {/* NAVIGATION */}
-          <aside className="app-sidebar">
-            <Nav />
-          </aside>
+        {/* NAV (desktop sidebar + mobile burger) */}
+        <Nav />
 
-          {/* PAGE CONTENT */}
+        <div className="app-shell">
           <main className="app-content">
             {children}
           </main>
