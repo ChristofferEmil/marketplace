@@ -993,3 +993,38 @@ select {
   color: #aaa;
 }
 
+/* =====================================================
+   DESKTOP – STICKY SEARCH BAR WITH FILTER BUTTON
+   Trin 1: Holder søg + filter altid synligt
+===================================================== */
+@media (min-width: 1024px) {
+  .search-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    background: var(--bg);
+    padding: 20px 0 16px;
+    border-bottom: 1px solid #222;
+  }
+
+  .search-bar input {
+    flex: 1;
+    max-width: 520px;
+  }
+
+  .filter-btn {
+    flex-shrink: 0;
+  }
+}
+
+/* Subtil hover – desktop only */
+@media (hover: hover) {
+  .filter-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
