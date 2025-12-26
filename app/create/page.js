@@ -16,7 +16,6 @@ const SERIES = [
 ]
 
 const CONDITIONS = ['NM', 'EX', 'VG', 'LP']
-
 const TAGS = ['Holo', 'Reverse', '1st Edition', 'Shadowless', 'Promo']
 
 export default function CreatePage() {
@@ -26,8 +25,9 @@ export default function CreatePage() {
   const [description, setDescription] = useState('')
   const [image, setImage] = useState(null)
 
-  // UI-only (for now)
-  const [series, setSeries] = useState('')
+  // ✅ SERIES SOM ARRAY (0, 1 eller flere)
+  const [series, setSeries] = useState([])
+
   const [condition, setCondition] = useState('')
   const [tags, setTags] = useState([])
 
@@ -38,6 +38,18 @@ export default function CreatePage() {
   const [startingBid, setStartingBid] = useState('')
   const [auctionEnd, setAuctionEnd] = useState('')
 
+  /* =========================
+     HELPERS
+     ========================= */
+
+  const toggleSeries = s => {
+    setSeries(prev =>
+      prev.includes(s)
+        ? prev.filter(x => x !== s)
+        : [...prev, s]
+    )
+  }
+
   const toggleTag = tag => {
     setTags(prev =>
       prev.includes(tag)
@@ -46,6 +58,10 @@ export default function CreatePage() {
     )
   }
 
+  /* =========================
+     SUBMIT
+     ========================= */
+
   const submit = async e => {
     e.preventDefault()
 
@@ -53,20 +69,21 @@ export default function CreatePage() {
       data: { user },
     } = await supabase.auth.getUser()
 
-    if (!user) return alert('You must be logged in')
+    if (!user) {
+      alert('You must be logged in')
+      return
+    }
 
     let image_url = null
 
     if (image) {
-      const fileExt = image.name.split('.').pop()
       const fileName = `${Date.now()}-${image.name}`
 
-    const { error } = await supabase.storage
-  .from('listings')
-  .upload(fileName, image, {
-    contentType: image.type,
-  })
-
+      const { error } = await supabase.storage
+        .from('listings')
+        .upload(fileName, image, {
+          contentType: image.type,
+        })
 
       if (error) {
         alert('Image upload failed')
@@ -80,40 +97,45 @@ export default function CreatePage() {
       image_url = data.publicUrl
     }
 
-const { data, error } = await supabase
-  .from('listings')
-  .insert({
-    title,
-    description,
-    image_url,
+    const { data, error } = await supabase
+      .from('listings')
+      .insert({
+        title,
+        description,
+        image_url,
 
-    series,
-    condition,
-    tags,
+        // ✅ KORREKT: ARRAY ELLER NULL
+        series: series.length > 0 ? series : null,
+        condition: condition || null,
+        tags: tags.length > 0 ? tags : null,
 
-    allow_claim: allowClaim,
-    claim_price: allowClaim ? Number(claimPrice) : null,
+        allow_claim: allowClaim,
+        claim_price: allowClaim ? Number(claimPrice) : null,
 
-    allow_auction: allowAuction,
-    starting_bid: allowAuction ? Number(startingBid) : null,
-    auction_ends_at: allowAuction
-      ? new Date(auctionEnd).toISOString()
-      : null,
+        allow_auction: allowAuction,
+        starting_bid: allowAuction ? Number(startingBid) : null,
+        auction_ends_at: allowAuction
+          ? new Date(auctionEnd).toISOString()
+          : null,
 
-    user_id: user.id, // 👈 DETTE ER FIXET
-  })
-  .select()
-  .single()
-
-
+        user_id: user.id,
+      })
+      .select()
+      .single()
 
     if (error) {
-      alert('Failed to create listing')
-      return
-    }
+  console.error('CREATE LISTING ERROR:', error)
+  alert(error.message)
+  return
+}
+
 
     router.push(`/listings/${data.id}`)
   }
+
+  /* =========================
+     UI
+     ========================= */
 
   return (
     <main className="page">
@@ -148,20 +170,26 @@ const { data, error } = await supabase
             />
           </div>
 
-          {/* META */}
+          {/* SERIES (MULTI SELECT) */}
           <div>
-            <label>Series</label>
-            <select
-              value={series}
-              onChange={e => setSeries(e.target.value)}
-            >
-              <option value="">Select series</option>
+            <label>Series (optional – choose one or more)</label>
+            <div className="chip-group">
               {SERIES.map(s => (
-                <option key={s}>{s}</option>
+                <button
+                  type="button"
+                  key={s}
+                  className={`chip ${
+                    series.includes(s) ? 'active' : 'muted'
+                  }`}
+                  onClick={() => toggleSeries(s)}
+                >
+                  {s}
+                </button>
               ))}
-            </select>
+            </div>
           </div>
 
+          {/* CONDITION */}
           <div>
             <label>Condition</label>
             <div className="chip-group">
@@ -170,7 +198,7 @@ const { data, error } = await supabase
                   type="button"
                   key={c}
                   className={`chip ${
-                    condition === c ? 'active' : ''
+                    condition === c ? 'active' : 'muted'
                   }`}
                   onClick={() => setCondition(c)}
                 >
@@ -180,6 +208,7 @@ const { data, error } = await supabase
             </div>
           </div>
 
+          {/* TAGS */}
           <div>
             <label>Tags</label>
             <div className="chip-group">

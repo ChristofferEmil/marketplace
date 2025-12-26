@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-export default function ListingsSearchUI({ onSearch }) {
+export default function ListingsSearchUI({ onSearch, onSeries }) {
   /* =========================
      STATE – SEARCH & FILTER UI
      ========================= */
@@ -10,6 +10,7 @@ export default function ListingsSearchUI({ onSearch }) {
   const [activeChip, setActiveChip] = useState('All')
   const [filtersOpen, setFiltersOpen] = useState(false)
 
+  // Chips = SERIER (for nu)
   const chips = [
     'All',
     'Base Set',
@@ -17,8 +18,6 @@ export default function ListingsSearchUI({ onSearch }) {
     'Fossil',
     'Neo',
     'Modern',
-    'PSA',
-    'Sealed',
   ]
 
   return (
@@ -30,14 +29,14 @@ export default function ListingsSearchUI({ onSearch }) {
         <span className="search-icon">🔍</span>
 
         <input
-        placeholder="Search Pokémon cards…"
-        value={search}
-        onChange={(e) => {
-          const v = e.target.value
-          setSearch(v)
-          onSearch(v) // 🔔 send søgetekst op
-        }}
-      />
+          placeholder="Search Pokémon cards…"
+          value={search}
+          onChange={(e) => {
+            const v = e.target.value
+            setSearch(v)
+            onSearch(v) // 🔔 tekstsøgning
+          }}
+        />
 
         <button
           className="filter-btn"
@@ -48,14 +47,24 @@ export default function ListingsSearchUI({ onSearch }) {
       </div>
 
       {/* =========================
-          CHIPS
+          CHIPS (SERIES FILTER)
          ========================= */}
       <div className="chip-row">
         {chips.map(chip => (
           <button
             key={chip}
             className={`chip ${activeChip === chip ? 'active' : ''}`}
-            onClick={() => setActiveChip(chip)}
+            onClick={() => {
+                console.log('SERIES CLICKED:', chip)
+              setActiveChip(chip)
+
+              // 🔔 send serie op
+              if (chip === 'All') {
+                onSeries(null)
+              } else {
+                onSeries(chip)
+              }
+            }}
           >
             {chip}
           </button>
@@ -73,7 +82,7 @@ export default function ListingsSearchUI({ onSearch }) {
       )}
 
       {/* =========================
-          FILTER PANEL (LEFT)
+          FILTER PANEL (UI ONLY – IKKE AKTIV ENDNU)
          ========================= */}
       <aside className={`filter-panel ${filtersOpen ? 'open' : ''}`}>
         <div className="filter-header">
@@ -94,7 +103,7 @@ export default function ListingsSearchUI({ onSearch }) {
           <h4>Series</h4>
           {['Base Set', 'Jungle', 'Fossil', 'Neo', 'Modern'].map(s => (
             <label key={s} className="checkbox">
-              <input type="checkbox" />
+              <input type="checkbox" disabled />
               {s}
             </label>
           ))}
@@ -104,7 +113,7 @@ export default function ListingsSearchUI({ onSearch }) {
           <h4>Condition</h4>
           {['NM', 'EX', 'VG', 'LP'].map(c => (
             <label key={c} className="checkbox">
-              <input type="checkbox" />
+              <input type="checkbox" disabled />
               {c}
             </label>
           ))}
@@ -114,14 +123,14 @@ export default function ListingsSearchUI({ onSearch }) {
           <h4>Status</h4>
           {['Claim', 'Auction'].map(s => (
             <label key={s} className="checkbox">
-              <input type="checkbox" />
+              <input type="checkbox" disabled />
               {s}
             </label>
           ))}
         </section>
 
         <div className="filter-footer">
-          <button className="apply-btn">
+          <button className="apply-btn" disabled>
             Apply filters
           </button>
         </div>
