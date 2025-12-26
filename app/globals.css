@@ -1049,6 +1049,29 @@ body.filter-open {
   height: 100vh;
 }
 
+
+
+
+/* =====================================================
+   APP SHELL – MOBILE DEFAULTS
+   (mobile must behave exactly as before)
+===================================================== */
+
+.app-shell {
+  display: block;
+}
+
+.app-sidebar {
+  display: none;
+}
+
+.app-content {
+  margin: 0;
+  width: 100%;
+}
+
+
+
 /* =====================================================
    DESKTOP LAYOUT SKELETON (COURTYARD STYLE)
    v1 – structure only
