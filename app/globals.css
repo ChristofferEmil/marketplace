@@ -959,10 +959,4 @@ select {
 }
 
 
-/* =====================================================
-   LOCK BODY SCROLL WHEN FILTER IS OPEN
-===================================================== */
-body.filter-open {
-  overflow: hidden;
-  touch-action: none;
-}
+
