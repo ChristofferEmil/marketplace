@@ -105,9 +105,10 @@ export default function CreatePage() {
         image_url,
 
         // ✅ KORREKT: ARRAY ELLER NULL
-        series: series.length > 0 ? series : null,
-        condition: condition || null,
-        tags: tags.length > 0 ? tags : null,
+        series: Array.isArray(series) && series.length ? series : null,
+condition: condition || null,
+tags: Array.isArray(tags) && tags.length ? tags : null,
+
 
         allow_claim: allowClaim,
         claim_price: allowClaim ? Number(claimPrice) : null,
