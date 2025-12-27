@@ -779,14 +779,22 @@ select {
    FILTER BUTTON
 ----------------------------------------------------- */
 .filter-btn {
-  border: none;
-  background: #1e1e1e;
+  height: 40px;
+  padding: 0 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #1a1a1a;
   color: #fff;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
+
+.filter-btn:hover {
+  background: #222;
+  border-color: #444;
+}
+
 
 
 /* =====================================================
