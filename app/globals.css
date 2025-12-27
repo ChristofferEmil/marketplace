@@ -1522,4 +1522,10 @@ body.filter-open {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
 }
+.search-row input {
+  flex: 1;
+  min-width: 0;
+}
+
