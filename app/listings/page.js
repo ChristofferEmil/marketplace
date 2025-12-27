@@ -114,54 +114,65 @@ export default function ListingsPage() {
             </div>
           ))}
 
-        {!loading &&
-          listings.map(l => (
-            <Link key={l.id} href={`/listings/${l.id}`}>
-              <article
-  className={`card ${
-    l.allow_auction && isExpired(l.auction_ends_at)
-      ? 'card-expired'
-      : ''
-  }`}
->
-                {/* 🔥 AUCTION BADGES */}
-                {l.allow_auction && l.auction_ends_at && (
-                  <>
-                    {isExpired(l.auction_ends_at) && (
-                      <span className="auction-badge expired">
-                        Udløbet
-                      </span>
-                    )}
+       {!loading &&
+  listings.map(l => {
+    const expiredAuction =
+      l.allow_auction && isExpired(l.auction_ends_at)
 
-                    {!isExpired(l.auction_ends_at) &&
-                      isEndingSoon(l.auction_ends_at) && (
-                        <span className="auction-badge ending-soon">
-                          Ending soon
-                        </span>
-                      )}
-                  </>
-                )}
+    const CardContent = (
+      <article
+        className={`card ${expiredAuction ? 'card-expired' : ''}`}
+      >
+        {/* 🔥 AUCTION BADGES */}
+        {l.allow_auction && l.auction_ends_at && (
+          <>
+            {isExpired(l.auction_ends_at) && (
+              <span className="auction-badge expired">
+                Udløbet
+              </span>
+            )}
 
+            {!isExpired(l.auction_ends_at) &&
+              isEndingSoon(l.auction_ends_at) && (
+                <span className="auction-badge ending-soon">
+                  Ending soon
+                </span>
+              )}
+          </>
+        )}
 
-                <div className="card-image">
-                  {l.image_url && (
-                    <img src={l.image_url} alt={l.title} />
-                  )}
-                </div>
+        <div className="card-image">
+          {l.image_url && (
+            <img src={l.image_url} alt={l.title} />
+          )}
+        </div>
 
-                <div className="card-body">
-                  <h3>{l.title}</h3>
-                  {l.description && (
-                    <p>
-                      {l.description.length > 70
-                        ? `${l.description.slice(0, 70)}…`
-                        : l.description}
-                    </p>
-                  )}
-                </div>
-              </article>
-            </Link>
-          ))}
+        <div className="card-body">
+          <h3>{l.title}</h3>
+          {l.description && (
+            <p>
+              {l.description.length > 70
+                ? `${l.description.slice(0, 70)}…`
+                : l.description}
+            </p>
+          )}
+        </div>
+      </article>
+    )
+
+    // ❌ Udløbne auctions → ingen Link
+    if (expiredAuction) {
+      return <div key={l.id}>{CardContent}</div>
+    }
+
+    // ✅ Alt andet → Link
+    return (
+      <Link key={l.id} href={`/listings/${l.id}`}>
+        {CardContent}
+      </Link>
+    )
+  })}
+
       </section>
     </main>
   )
