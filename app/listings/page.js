@@ -5,6 +5,24 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
 import ListingsSearchUI from './ListingsSearchUI'
 
+
+
+const isEndingSoon = (endsAt) => {
+  if (!endsAt) return false
+  const now = new Date()
+  const end = new Date(endsAt)
+  const diffHours = (end - now) / (1000 * 60 * 60)
+  return diffHours > 0 && diffHours <= 24
+}
+
+const isExpired = (endsAt) => {
+  if (!endsAt) return false
+  return new Date(endsAt) < new Date()
+}
+
+
+
+
 export default function ListingsPage() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -178,6 +196,21 @@ export default function ListingsPage() {
           listings.map(l => (
             <Link key={l.id} href={`/listings/${l.id}`}>
               <article className="card">
+                {l.allow_auction && l.auction_ends_at && (
+  <>
+    {isExpired(l.auction_ends_at) && (
+      <span className="auction-badge expired">Udløbet</span>
+    )}
+
+    {!isExpired(l.auction_ends_at) &&
+      isEndingSoon(l.auction_ends_at) && (
+        <span className="auction-badge ending-soon">
+          Ending soon
+        </span>
+      )}
+  </>
+)}
+
                 <div className="card-image">
                   {l.image_url && (
                     <img src={l.image_url} alt={l.title} />

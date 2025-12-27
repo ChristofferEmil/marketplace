@@ -1471,3 +1471,23 @@ body.filter-open {
   padding: 40px 16px;
   opacity: 0.8;
 }
+
+.auction-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.auction-badge.ending-soon {
+  background: #ff9800;
+  color: #000;
+}
+
+.auction-badge.expired {
+  background: #555;
+  color: #aaa;
+}
