@@ -71,9 +71,16 @@ export default function ListingsSearchUI({
     <option value="price_desc">Pris: høj → lav</option>
   </select>
 
-  <button className="filter-btn" onClick={() => setFiltersOpen(true)}>
-    ☰
-  </button>
+<button className="filter-btn" onClick={() => setFiltersOpen(true)}>
+  <span className="filter-sliders">
+    <span />
+    <span />
+    <span />
+  </span>
+  Filtre
+</button>
+
+
 </div>
 
 
