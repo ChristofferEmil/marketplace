@@ -1425,3 +1425,15 @@ body.filter-open {
 .mobile-menu-links a:active {
   background: rgba(255,255,255,0.08);
 }
+
+
+.sort-select {
+  height: 40px;
+  padding: 0 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #111;
+  color: #fff;
+  max-width: 130px;
+}
