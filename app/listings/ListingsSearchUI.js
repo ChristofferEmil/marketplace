@@ -83,13 +83,13 @@ export default function ListingsSearchUI({
     />
     Filtre
   </button>
-</div>
 
-{resultCount !== null && (
-  <div className="search-result-count">
-    {resultCount} opslag
-  </div>
-)}
+  {resultCount !== null && (
+    <div className="search-result-count">
+      {resultCount} opslag
+    </div>
+  )}
+</div>
 
 
 

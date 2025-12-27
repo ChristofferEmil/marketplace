@@ -88,20 +88,21 @@ export default function ListingsPage() {
 
   return (
     <main className="page">
-      <ListingsSearchUI
-        onSearch={setQuery}
-        onSeries={setSeries}
-        series={series}
-        sort={sort}
-        onSortChange={setSort}
-        claimOnly={claimOnly}
-        onClaimChange={setClaimOnly}
-        auctionOnly={auctionOnly}
-        onAuctionChange={setAuctionOnly}
-        conditions={conditions}
-        onConditionsChange={setConditions}
-        resultCount={!loading ? listings.length : null}
-      />
+     <ListingsSearchUI
+  onSearch={setQuery}
+  onSeries={setSeries}
+  series={series}
+  sort={sort}
+  onSortChange={setSort}
+  claimOnly={claimOnly}
+  onClaimChange={setClaimOnly}
+  auctionOnly={auctionOnly}
+  onAuctionChange={setAuctionOnly}
+  conditions={conditions}
+  onConditionsChange={setConditions}
+  resultCount={!loading ? listings.length : null}
+/>
+
 
 
 {!loading && (
