@@ -102,6 +102,14 @@ export default function ListingsPage() {
         onConditionsChange={setConditions}
       />
 
+
+{!loading && (
+  <div className="result-count">
+    {listings.length} opslag
+  </div>
+)}
+
+
       <section className="feed-grid">
         {loading &&
           Array.from({ length: 6 }).map((_, i) => (
