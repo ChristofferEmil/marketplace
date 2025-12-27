@@ -154,6 +154,14 @@ export default function ListingsPage() {
         </div>
       )}
 
+      {!loading && listings.length === 0 && (
+  <div className="empty-state">
+    <h3>Ingen opslag matcher dine filtre</h3>
+    <p>Prøv at fjerne nogle filtre eller ændre din søgning.</p>
+  </div>
+)}
+
+
       <section className="feed-grid">
         {loading &&
           Array.from({ length: 6 }).map((_, i) => (
