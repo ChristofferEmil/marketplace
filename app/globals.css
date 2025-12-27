@@ -738,7 +738,7 @@ select {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap; /* 🔑 tillader ny linje */
+  
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
@@ -1511,5 +1511,7 @@ body.filter-open {
   opacity: 0.7;
   margin: 6px 0 8px;
   padding-left: 2px;
+  flex-basis: 100%;
+  margin-top: 6px;
 }
 
