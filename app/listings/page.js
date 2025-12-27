@@ -68,20 +68,21 @@ export default function ListingsPage() {
   })
 }, [query, series, claimOnly, auctionOnly, conditions])
 
+
+
+
+
+
+
+
   return (
     <main className="page">
-
-
-
-
-
-
       {/* SEARCH + FILTER UI */}
 <ListingsSearchUI
-  onSearch={setSearch}
+  onSearch={setQuery}
   onSeries={setSeries}
-  series={series}
-  sort={sort}
+  series={series}              // ✅ VIGTIG
+    sort={sort}
   onSortChange={setSort}
   claimOnly={claimOnly}
   onClaimChange={setClaimOnly}
