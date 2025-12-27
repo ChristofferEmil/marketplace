@@ -225,11 +225,14 @@ export default function ListingsSearchUI({
 
         {/* ---------- FOOTER ---------- */}
         <div className="filter-footer">
-         <button
+        <button
   className="apply-btn"
   onClick={() => setFiltersOpen(false)}
 >
-  Vis resultater{resultCount !== null ? ` (${resultCount})` : ''}
+  <span>Vis resultater</span>
+  <span className="result-count-inline">
+    {resultCount !== null ? ` (${resultCount})` : ''}
+  </span>
 </button>
 
 

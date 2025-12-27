@@ -980,6 +980,10 @@ select {
   background: #fff;
   color: #000;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .reset-btn {
@@ -1520,3 +1524,7 @@ body.filter-open {
   min-width: 0;
 }
 
+.result-count-inline {
+  min-width: 32px; /* 🔑 reserver plads */
+  text-align: right;
+}
