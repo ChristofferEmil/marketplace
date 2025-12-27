@@ -13,6 +13,8 @@ export default function ListingsPage() {
   const [claimOnly, setClaimOnly] = useState(false);
   const [auctionOnly, setAuctionOnly] = useState(false);
   const [conditions, setConditions] = useState([]); // ['NM', 'EX', ...]
+  const [sort, setSort] = useState('newest')
+
 
   
 
@@ -66,20 +68,21 @@ export default function ListingsPage() {
   })
 }, [query, series, claimOnly, auctionOnly, conditions])
 
-
-
-
-
-
-
-
   return (
     <main className="page">
+
+
+
+
+
+
       {/* SEARCH + FILTER UI */}
 <ListingsSearchUI
-  onSearch={setQuery}
+  onSearch={setSearch}
   onSeries={setSeries}
-  series={series}              // ✅ VIGTIG
+  series={series}
+  sort={sort}
+  onSortChange={setSort}
   claimOnly={claimOnly}
   onClaimChange={setClaimOnly}
   auctionOnly={auctionOnly}
