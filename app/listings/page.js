@@ -100,6 +100,7 @@ export default function ListingsPage() {
         onAuctionChange={setAuctionOnly}
         conditions={conditions}
         onConditionsChange={setConditions}
+        resultCount={!loading ? listings.length : null}
       />
 
 
