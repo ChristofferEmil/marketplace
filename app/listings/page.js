@@ -117,13 +117,30 @@ export default function ListingsPage() {
         {!loading &&
           listings.map(l => (
             <Link key={l.id} href={`/listings/${l.id}`}>
-             <article
+              <article
   className={`card ${
     l.allow_auction && isExpired(l.auction_ends_at)
       ? 'card-expired'
       : ''
   }`}
 >
+                {/* 🔥 AUCTION BADGES */}
+                {l.allow_auction && l.auction_ends_at && (
+                  <>
+                    {isExpired(l.auction_ends_at) && (
+                      <span className="auction-badge expired">
+                        Udløbet
+                      </span>
+                    )}
+
+                    {!isExpired(l.auction_ends_at) &&
+                      isEndingSoon(l.auction_ends_at) && (
+                        <span className="auction-badge ending-soon">
+                          Ending soon
+                        </span>
+                      )}
+                  </>
+                )}
 
 
                 <div className="card-image">
