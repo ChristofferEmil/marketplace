@@ -5,8 +5,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
 import ListingsSearchUI from './ListingsSearchUI'
 
-
-
+// 🔹 AUCTION HELPERS
 const isEndingSoon = (endsAt) => {
   if (!endsAt) return false
   const now = new Date()
@@ -19,9 +18,6 @@ const isExpired = (endsAt) => {
   if (!endsAt) return false
   return new Date(endsAt) < new Date()
 }
-
-
-
 
 export default function ListingsPage() {
   const [listings, setListings] = useState([])
@@ -42,29 +38,24 @@ export default function ListingsPage() {
         .from('listings')
         .select('*')
 
-      // 🔍 SEARCH
-      if (query && query.trim() !== '') {
+      if (query) {
         q = q.or(
           `title.ilike.%${query}%,description.ilike.%${query}%`
         )
       }
 
-      // 🧩 SERIES
       if (series) {
         q = q.contains('series', [series])
       }
 
-      // ✅ CLAIM
       if (claimOnly) {
         q = q.eq('allow_claim', true)
       }
 
-      // ✅ AUCTION
       if (auctionOnly) {
         q = q.eq('allow_auction', true)
       }
 
-      // ✅ CONDITION
       if (conditions.length > 0) {
         q = q.in('condition', conditions)
       }
@@ -88,13 +79,7 @@ export default function ListingsPage() {
 
       const { data, error } = await q
 
-      if (error) {
-        console.error(error)
-        setListings([])
-      } else {
-        setListings(data || [])
-      }
-
+      setListings(error ? [] : data || [])
       setLoading(false)
     }
 
@@ -117,69 +102,6 @@ export default function ListingsPage() {
         onConditionsChange={setConditions}
       />
 
-      {(series || conditions.length || claimOnly || auctionOnly) && (
-        <div className="active-filters">
-          <button
-            className="filter-badge clear-all"
-            onClick={() => {
-              setSeries(null)
-              setConditions([])
-              setClaimOnly(false)
-              setAuctionOnly(false)
-            }}
-          >
-            Clear all
-          </button>
-
-          {series && (
-            <button
-              className="filter-badge"
-              onClick={() => setSeries(null)}
-            >
-              {series} ✕
-            </button>
-          )}
-
-          {conditions.map(c => (
-            <button
-              key={c}
-              className="filter-badge"
-              onClick={() =>
-                setConditions(conditions.filter(x => x !== c))
-              }
-            >
-              {c} ✕
-            </button>
-          ))}
-
-          {claimOnly && (
-            <button
-              className="filter-badge"
-              onClick={() => setClaimOnly(false)}
-            >
-              Claim ✕
-            </button>
-          )}
-
-          {auctionOnly && (
-            <button
-              className="filter-badge"
-              onClick={() => setAuctionOnly(false)}
-            >
-              Auction ✕
-            </button>
-          )}
-        </div>
-      )}
-
-      {!loading && listings.length === 0 && (
-  <div className="empty-state">
-    <h3>Ingen opslag matcher dine filtre</h3>
-    <p>Prøv at fjerne nogle filtre eller ændre din søgning.</p>
-  </div>
-)}
-
-
       <section className="feed-grid">
         {loading &&
           Array.from({ length: 6 }).map((_, i) => (
@@ -196,20 +118,23 @@ export default function ListingsPage() {
           listings.map(l => (
             <Link key={l.id} href={`/listings/${l.id}`}>
               <article className="card">
+                {/* 🔥 AUCTION BADGES */}
                 {l.allow_auction && l.auction_ends_at && (
-  <>
-    {isExpired(l.auction_ends_at) && (
-      <span className="auction-badge expired">Udløbet</span>
-    )}
+                  <>
+                    {isExpired(l.auction_ends_at) && (
+                      <span className="auction-badge expired">
+                        Udløbet
+                      </span>
+                    )}
 
-    {!isExpired(l.auction_ends_at) &&
-      isEndingSoon(l.auction_ends_at) && (
-        <span className="auction-badge ending-soon">
-          Ending soon
-        </span>
-      )}
-  </>
-)}
+                    {!isExpired(l.auction_ends_at) &&
+                      isEndingSoon(l.auction_ends_at) && (
+                        <span className="auction-badge ending-soon">
+                          Ending soon
+                        </span>
+                      )}
+                  </>
+                )}
 
                 <div className="card-image">
                   {l.image_url && (
