@@ -8,155 +8,152 @@ import ListingsSearchUI from './ListingsSearchUI'
 export default function ListingsPage() {
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
+
   const [query, setQuery] = useState('')
   const [series, setSeries] = useState(null)
-  const [claimOnly, setClaimOnly] = useState(false);
-  const [auctionOnly, setAuctionOnly] = useState(false);
-  const [conditions, setConditions] = useState([]); // ['NM', 'EX', ...]
+  const [claimOnly, setClaimOnly] = useState(false)
+  const [auctionOnly, setAuctionOnly] = useState(false)
+  const [conditions, setConditions] = useState([])
   const [sort, setSort] = useState('newest')
 
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true)
 
-  
+      let q = supabase
+        .from('listings')
+        .select('*')
 
+      // 🔍 SEARCH
+      if (query && query.trim() !== '') {
+        q = q.or(
+          `title.ilike.%${query}%,description.ilike.%${query}%`
+        )
+      }
 
+      // 🧩 SERIES
+      if (series) {
+        q = q.contains('series', [series])
+      }
 
- useEffect(() => {
-  setLoading(true)
+      // ✅ CLAIM
+      if (claimOnly) {
+        q = q.eq('allow_claim', true)
+      }
 
-  let q = supabase
-    .from('listings')
-    .select('*')
-    .order('created_at', { ascending: false })
+      // ✅ AUCTION
+      if (auctionOnly) {
+        q = q.eq('allow_auction', true)
+      }
 
-  // 🔍 SEARCH I TITLE + DESCRIPTION
-  if (query && query.trim() !== '') {
-    q = q.or(
-      `title.ilike.%${query}%,description.ilike.%${query}%`
-    )
-  }
+      // ✅ CONDITION
+      if (conditions.length > 0) {
+        q = q.in('condition', conditions)
+      }
 
-  // 🧩 SERIES FILTER (ARRAY / text[])
-  if (series) {
-    q = q.contains('series', [series])
-  }
+      // 🔀 SORTERING
+      if (sort === 'newest') {
+        q = q.order('created_at', { ascending: false })
+      }
 
-    // ✅ CLAIM FILTER
-  if (claimOnly) {
-    q = q.eq('allow_claim', true)
-  }
+      if (sort === 'price_asc') {
+        q = q
+          .order('allow_claim', { ascending: false })
+          .order('claim_price', { ascending: true, nullsFirst: false })
+      }
 
-    // ✅ AUCTION FILTER
-  if (auctionOnly) {
-    q = q.eq('allow_auction', true)
-  }
+      if (sort === 'price_desc') {
+        q = q
+          .order('allow_claim', { ascending: false })
+          .order('claim_price', { ascending: false, nullsFirst: false })
+      }
 
-  // ✅ CONDITION FILTER
-  if (conditions.length > 0) {
-    q = q.in('condition', conditions)
-  }
+      const { data, error } = await q
 
+      if (error) {
+        console.error(error)
+        setListings([])
+      } else {
+        setListings(data || [])
+      }
 
-
-  q.then(({ data, error }) => {
-    if (error) {
-      console.error(error)
-      setListings([])
-    } else {
-      setListings(data || [])
+      setLoading(false)
     }
-    setLoading(false)
-  })
-}, [query, series, claimOnly, auctionOnly, conditions])
 
-
-
-
-
-
-
+    fetchListings()
+  }, [query, series, claimOnly, auctionOnly, conditions, sort])
 
   return (
     <main className="page">
-      {/* SEARCH + FILTER UI */}
-<ListingsSearchUI
-  onSearch={setQuery}
-  onSeries={setSeries}
-  series={series}              // ✅ VIGTIG
-    sort={sort}
-  onSortChange={setSort}
-  claimOnly={claimOnly}
-  onClaimChange={setClaimOnly}
-  auctionOnly={auctionOnly}
-  onAuctionChange={setAuctionOnly}
-  conditions={conditions}
-  onConditionsChange={setConditions}
-/>
+      <ListingsSearchUI
+        onSearch={setQuery}
+        onSeries={setSeries}
+        series={series}
+        sort={sort}
+        onSortChange={setSort}
+        claimOnly={claimOnly}
+        onClaimChange={setClaimOnly}
+        auctionOnly={auctionOnly}
+        onAuctionChange={setAuctionOnly}
+        conditions={conditions}
+        onConditionsChange={setConditions}
+      />
 
+      {(series || conditions.length || claimOnly || auctionOnly) && (
+        <div className="active-filters">
+          <button
+            className="filter-badge clear-all"
+            onClick={() => {
+              setSeries(null)
+              setConditions([])
+              setClaimOnly(false)
+              setAuctionOnly(false)
+            }}
+          >
+            Clear all
+          </button>
 
+          {series && (
+            <button
+              className="filter-badge"
+              onClick={() => setSeries(null)}
+            >
+              {series} ✕
+            </button>
+          )}
 
+          {conditions.map(c => (
+            <button
+              key={c}
+              className="filter-badge"
+              onClick={() =>
+                setConditions(conditions.filter(x => x !== c))
+              }
+            >
+              {c} ✕
+            </button>
+          ))}
 
-{/* ACTIVE FILTER BADGES */}
-{(series || conditions.length || claimOnly || auctionOnly) && (
-  <div className="active-filters">
-    {/* Clear all */}
-    <button
-      className="filter-badge clear-all"
-      onClick={() => {
-        setSeries(null)
-        setConditions([])
-        setClaimOnly(false)
-        setAuctionOnly(false)
-      }}
-    >
-      Clear all
-    </button>
+          {claimOnly && (
+            <button
+              className="filter-badge"
+              onClick={() => setClaimOnly(false)}
+            >
+              Claim ✕
+            </button>
+          )}
 
-    {series && (
-      <button
-        className="filter-badge"
-        onClick={() => setSeries(null)}
-      >
-        {series} ✕
-      </button>
-    )}
+          {auctionOnly && (
+            <button
+              className="filter-badge"
+              onClick={() => setAuctionOnly(false)}
+            >
+              Auction ✕
+            </button>
+          )}
+        </div>
+      )}
 
-    {conditions.map(c => (
-      <button
-        key={c}
-        className="filter-badge"
-        onClick={() =>
-          setConditions(conditions.filter(x => x !== c))
-        }
-      >
-        {c} ✕
-      </button>
-    ))}
-
-    {claimOnly && (
-      <button
-        className="filter-badge"
-        onClick={() => setClaimOnly(false)}
-      >
-        Claim ✕
-      </button>
-    )}
-
-    {auctionOnly && (
-      <button
-        className="filter-badge"
-        onClick={() => setAuctionOnly(false)}
-      >
-        Auction ✕
-      </button>
-    )}
-  </div>
-)}
-
-
-
-
-
-      {/* LISTINGS GRID */}
       <section className="feed-grid">
         {loading &&
           Array.from({ length: 6 }).map((_, i) => (
