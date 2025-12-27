@@ -1493,3 +1493,8 @@ body.filter-open {
   background: #555;
   color: #aaa;
 }
+.card-expired {
+  opacity: 0.5;
+  filter: grayscale(1);
+  pointer-events: none;
+}
