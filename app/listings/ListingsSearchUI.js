@@ -6,6 +6,8 @@ export default function ListingsSearchUI({
   onSearch,
   onSeries,
   series,              // ✅ modtag prop
+  sort,
+  onSortChange,
   claimOnly,
   onClaimChange,
   auctionOnly,
@@ -49,22 +51,31 @@ export default function ListingsSearchUI({
           SEARCH BAR
          ========================= */}
       <div className="search-bar">
-        <span className="search-icon">🔍</span>
+  <input
+    placeholder="Search Pokémon cards…"
+    value={search}
+    onChange={(e) => {
+      const v = e.target.value
+      setSearch(v)
+      onSearch(v)
+    }}
+  />
 
-        <input
-          placeholder="Search Pokémon cards…"
-          value={search}
-          onChange={(e) => {
-            const v = e.target.value
-            setSearch(v)
-            onSearch(v)
-          }}
-        />
+  <select
+    className="sort-select"
+    value={sort}
+    onChange={(e) => onSortChange(e.target.value)}
+  >
+    <option value="newest">Nyeste</option>
+    <option value="price_asc">Pris: lav → høj</option>
+    <option value="price_desc">Pris: høj → lav</option>
+  </select>
 
-        <button className="filter-btn" onClick={() => setFiltersOpen(true)}>
-          ☰
-        </button>
-      </div>
+  <button className="filter-btn" onClick={() => setFiltersOpen(true)}>
+    ☰
+  </button>
+</div>
+
 
       {/* =========================
           QUICK SERIES CHIPS
