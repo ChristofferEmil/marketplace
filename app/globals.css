@@ -1508,15 +1508,6 @@ body.filter-open {
   opacity: 0.7;
 }
 
-.search-result-count {
-  width: 100%;
-  font-size: 13px;
-  opacity: 0.7;
-  margin: 6px 0 8px;
-  padding-left: 2px;
-  flex-basis: 100%;
-  margin-top: 6px;
-}
 
 .search-row {
   display: flex;

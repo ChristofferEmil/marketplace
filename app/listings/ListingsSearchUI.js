@@ -86,11 +86,7 @@ export default function ListingsSearchUI({
     </button>
   </div>
 
-  {resultCount !== null && (
-    <div className="search-result-count">
-      {resultCount} opslag
-    </div>
-  )}
+
 </div>
 
 
@@ -229,12 +225,13 @@ export default function ListingsSearchUI({
 
         {/* ---------- FOOTER ---------- */}
         <div className="filter-footer">
-          <button
-            className="apply-btn"
-            onClick={() => setFiltersOpen(false)}
-          >
-            Vis resultater
-          </button>
+         <button
+  className="apply-btn"
+  onClick={() => setFiltersOpen(false)}
+>
+  Vis resultater{resultCount !== null ? ` (${resultCount})` : ''}
+</button>
+
 
           <button
             className="reset-btn"
