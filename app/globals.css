@@ -740,6 +740,9 @@ select {
   gap: 12px;
   
   border-bottom: 1px solid rgba(255,255,255,0.06);
+
+  
+  
 }
 
 
@@ -1515,3 +1518,8 @@ body.filter-open {
   margin-top: 6px;
 }
 
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

@@ -52,37 +52,39 @@ export default function ListingsSearchUI({
           SEARCH BAR
          ========================= */}
       <div className="search-bar">
-  <input
-    placeholder="Search Pokémon cards…"
-    value={search}
-    onChange={(e) => {
-      const v = e.target.value
-      setSearch(v)
-      onSearch(v)
-    }}
-  />
-
-  <select
-    className="sort-select"
-    value={sort}
-    onChange={(e) => onSortChange(e.target.value)}
-  >
-    <option value="newest">Nyeste</option>
-    <option value="price_asc">Pris: lav → høj</option>
-    <option value="price_desc">Pris: høj → lav</option>
-  </select>
-
-  <button
-    className="filter-btn"
-    onClick={() => setFiltersOpen(true)}
-  >
-    <img
-      src="/icons/filter.png"
-      alt="Filtre"
-      className="filter-icon"
+  <div className="search-row">
+    <input
+      placeholder="Search Pokémon cards…"
+      value={search}
+      onChange={(e) => {
+        const v = e.target.value
+        setSearch(v)
+        onSearch(v)
+      }}
     />
-    Filtre
-  </button>
+
+    <select
+      className="sort-select"
+      value={sort}
+      onChange={(e) => onSortChange(e.target.value)}
+    >
+      <option value="newest">Nyeste</option>
+      <option value="price_asc">Pris: lav → høj</option>
+      <option value="price_desc">Pris: høj → lav</option>
+    </select>
+
+    <button
+      className="filter-btn"
+      onClick={() => setFiltersOpen(true)}
+    >
+      <img
+        src="/icons/filter.png"
+        alt="Filtre"
+        className="filter-icon"
+      />
+      Filtre
+    </button>
+  </div>
 
   {resultCount !== null && (
     <div className="search-result-count">
@@ -90,6 +92,7 @@ export default function ListingsSearchUI({
     </div>
   )}
 </div>
+
 
 
 
