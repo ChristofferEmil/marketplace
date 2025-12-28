@@ -227,6 +227,7 @@ export default function ListingsSearchUI({
         <div className="filter-footer">
         <button
   className="apply-btn"
+  disabled={resultCount === 0}
   onClick={() => setFiltersOpen(false)}
 >
   <span>Vis resultater</span>

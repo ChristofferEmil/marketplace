@@ -986,6 +986,11 @@ select {
   gap: 4px;
 }
 
+.apply-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .reset-btn {
   padding: 14px;
   border-radius: 999px;
