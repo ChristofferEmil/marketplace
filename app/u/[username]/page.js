@@ -87,19 +87,28 @@ export default function UserProfilePage() {
 
 {currentUserId === profile.id && (
   <div className="card-actions">
-    <button
+<button
   className="card-action"
-  onClick={(e) => e.stopPropagation()}
+  onClick={(e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    // rediger-logik senere
+  }}
 >
   Rediger
 </button>
 
 <button
   className="card-action danger"
-  onClick={(e) => e.stopPropagation()}
+  onClick={(e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    // slet-logik kommer i næste trin
+  }}
 >
   Slet
 </button>
+
 
   </div>
 )}
