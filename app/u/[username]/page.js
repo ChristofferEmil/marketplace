@@ -3,34 +3,50 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
-export default function TestProfilePage() {
-  const [rows, setRows] = useState(null)
+export default function UserProfilePage({ params }) {
+  const { username } = params
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const test = async () => {
+    const fetchProfile = async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
-        .limit(5)
+        .select('username, bio, avatar_url, created_at, city')
+        .eq('username', username)
+        .limit(1)
 
-      console.log('profiles test', data, error)
-      setRows(data || [])
+      setProfile(data && data.length ? data[0] : null)
+      setLoading(false)
     }
 
-    test()
-  }, [])
+    fetchProfile()
+  }, [username])
+
+  if (loading) {
+    return <main className="page">Loader…</main>
+  }
+
+  if (!profile) {
+    return (
+      <main className="page">
+        <h1>Profil ikke fundet</h1>
+      </main>
+    )
+  }
 
   return (
     <main className="page">
-      <h1>Profiles test</h1>
+      <h1>{profile.username}</h1>
 
-      {rows === null && <p>Loader…</p>}
+      {profile.city && <p>{profile.city}</p>}
 
-      {rows && rows.length === 0 && <p>Ingen rows</p>}
+      {profile.bio && <p>{profile.bio}</p>}
 
-      {rows && rows.length > 0 && (
-        <pre>{JSON.stringify(rows, null, 2)}</pre>
-      )}
+      <p>
+        Medlem siden{' '}
+        {new Date(profile.created_at).toLocaleDateString('da-DK')}
+      </p>
     </main>
   )
 }
