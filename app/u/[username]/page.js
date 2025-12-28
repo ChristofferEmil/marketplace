@@ -87,8 +87,20 @@ export default function UserProfilePage() {
 
 {currentUserId === profile.id && (
   <div className="card-actions">
-    <button className="card-action">Rediger</button>
-    <button className="card-action danger">Slet</button>
+    <button
+  className="card-action"
+  onClick={(e) => e.stopPropagation()}
+>
+  Rediger
+</button>
+
+<button
+  className="card-action danger"
+  onClick={(e) => e.stopPropagation()}
+>
+  Slet
+</button>
+
   </div>
 )}
 
