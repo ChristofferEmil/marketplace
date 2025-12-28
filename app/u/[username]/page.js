@@ -13,7 +13,7 @@ export default function UserProfilePage({ params }) {
       const { data, error } = await supabase
         .from('profiles')
         .select('username, bio, avatar_url, created_at')
-        .eq('username', username)
+        .ilike('username', username)
         .single()
 
       setProfile(error ? null : data)
