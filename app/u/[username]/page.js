@@ -72,7 +72,8 @@ export default function UserProfilePage() {
   )}
 
   {listings.map(l => (
-    <article key={l.id} className="card">
+  <Link key={l.id} href={`/listings/${l.id}`}>
+    <article className="card">
       <div className="card-image">
         {l.image_url && (
           <img src={l.image_url} alt={l.title} />
@@ -91,7 +92,9 @@ export default function UserProfilePage() {
         )}
       </div>
     </article>
-  ))}
+  </Link>
+))}
+
 </section>
 
     </main>
