@@ -1,15 +1,33 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
-export default async function UserProfilePage({ params }) {
+export default function UserProfilePage({ params }) {
   const { username } = params
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('username, bio, avatar_url, created_at')
-    .eq('username', username)
-    .single()
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username, bio, avatar_url, created_at')
+        .eq('username', username)
+        .single()
 
-  if (error || !profile) {
+      setProfile(error ? null : data)
+      setLoading(false)
+    }
+
+    fetchProfile()
+  }, [username])
+
+  if (loading) {
+    return <main className="page">Loader…</main>
+  }
+
+  if (!profile) {
     return (
       <main className="page">
         <h1>Profil ikke fundet</h1>
