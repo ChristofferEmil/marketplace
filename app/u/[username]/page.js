@@ -1,18 +1,21 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
-export default function UserProfilePage({ params }) {
-  const { username } = params
+export default function UserProfilePage() {
+  const { username } = useParams()
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!username) return
+
     const fetchProfile = async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('username, bio, avatar_url, created_at, city')
+        .select('*')
         .eq('username', username)
         .limit(1)
 
@@ -40,7 +43,6 @@ export default function UserProfilePage({ params }) {
       <h1>{profile.username}</h1>
 
       {profile.city && <p>{profile.city}</p>}
-
       {profile.bio && <p>{profile.bio}</p>}
 
       <p>
