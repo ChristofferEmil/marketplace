@@ -11,10 +11,18 @@ export default function UserProfilePage() {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [listings, setListings] = useState([])
+  const [currentUserId, setCurrentUserId] = useState(null)
+
 
 
   useEffect(() => {
     if (!username) return
+
+
+    supabase.auth.getUser().then(({ data }) => {
+  setCurrentUserId(data?.user?.id ?? null)
+})
+
 
     const fetchProfile = async () => {
   const { data: profileRows } = await supabase
@@ -76,6 +84,15 @@ export default function UserProfilePage() {
   {listings.map(l => (
   <Link key={l.id} href={`/listings/${l.id}`}>
     <article className="card">
+
+{currentUserId === profile.id && (
+  <div className="card-actions">
+    <button className="card-action">Rediger</button>
+    <button className="card-action danger">Slet</button>
+  </div>
+)}
+
+
       <div className="card-image">
         {l.image_url && (
           <img src={l.image_url} alt={l.title} />
