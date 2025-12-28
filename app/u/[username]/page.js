@@ -13,6 +13,23 @@ export default function UserProfilePage() {
   const [listings, setListings] = useState([])
   const [currentUserId, setCurrentUserId] = useState(null)
 
+  const handleDelete = async (listingId) => {
+  const ok = confirm('Vil du slette dette opslag?')
+  if (!ok) return
+
+  const { error } = await supabase
+    .from('listings')
+    .delete()
+    .eq('id', listingId)
+
+  if (!error) {
+    setListings(prev => prev.filter(l => l.id !== listingId))
+  } else {
+    alert('Kunne ikke slette opslag')
+  }
+}
+
+
 
 
   useEffect(() => {
@@ -103,11 +120,12 @@ export default function UserProfilePage() {
   onClick={(e) => {
     e.preventDefault()
     e.stopPropagation()
-    // slet-logik kommer i næste trin
+    handleDelete(l.id)
   }}
 >
   Slet
 </button>
+
 
 
   </div>
