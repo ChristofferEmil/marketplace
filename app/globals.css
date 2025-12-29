@@ -285,6 +285,12 @@ textarea {
   font-weight: 500;
 }
 
+
+.nav-icon svg {
+  display: block;
+}
+
+
 /* =========================
    APP HERO (HOME)
 ========================= */

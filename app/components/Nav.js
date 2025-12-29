@@ -9,25 +9,61 @@ export default function Nav() {
   const pathname = usePathname()
   const [user, setUser] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [notifCount, setNotifCount] = useState(0)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
+      if (data.user) fetchNotifications(data.user.id)
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      if (session?.user) fetchNotifications(session.user.id)
+      else setNotifCount(0)
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
+  const fetchNotifications = async (userId) => {
+    const { count } = await supabase
+      .from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('is_read', false)
+
+    setNotifCount(count || 0)
+  }
+
   const logout = async () => {
     await supabase.auth.signOut()
     setMenuOpen(false)
   }
+
+  const NotificationIcon = () => (
+    <Link href="/notifications" className="nav-icon" aria-label="Notifikationer">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 01-3.46 0" />
+      </svg>
+
+      {notifCount > 0 && (
+        <span className="notif-badge">{notifCount}</span>
+      )}
+    </Link>
+  )
 
   const NavLinks = () => (
     <>
@@ -45,6 +81,8 @@ export default function Nav() {
       <Link href="/create" className={pathname === '/create' ? 'active' : ''}>
         Create
       </Link>
+
+      {user && <NotificationIcon />}
 
       {!user ? (
         <Link href="/login" className={pathname === '/login' ? 'active' : ''}>
