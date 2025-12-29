@@ -12,6 +12,8 @@ export default function UserProfilePage() {
   const [loading, setLoading] = useState(true)
   const [listings, setListings] = useState([])
   const [currentUserId, setCurrentUserId] = useState(null)
+  const [questionsForStats, setQuestionsForStats] = useState([])
+
 
   const handleDelete = async (listingId) => {
     const ok = confirm('Vil du slette dette opslag?')
@@ -56,6 +58,19 @@ export default function UserProfilePage() {
         setListings(userListings || [])
       }
 
+      const listingIds = userListings.map(l => l.id)
+
+if (listingIds.length) {
+  const { data: qs } = await supabase
+    .from('listing_questions')
+    .select('listing_id, created_at, user_id')
+    .in('listing_id', listingIds)
+    .order('created_at', { ascending: true })
+
+  setQuestionsForStats(qs || [])
+}
+
+
       setLoading(false)
     }
 
@@ -82,6 +97,38 @@ export default function UserProfilePage() {
   const isActiveSeller = totalListings >= 3 && activeListings >= 1
 
 
+const sellerId = profile.id
+
+// grupér spørgsmål pr. listing
+const byListing = {}
+questionsForStats.forEach(q => {
+  byListing[q.listing_id] = byListing[q.listing_id] || []
+  byListing[q.listing_id].push(q)
+})
+
+// find svar-par (spørgsmål -> sælgers svar)
+let replyTimes = []
+
+Object.values(byListing).forEach(list => {
+  for (let i = 0; i < list.length - 1; i++) {
+    const q = list[i]
+    const next = list[i + 1]
+
+    if (q.user_id !== sellerId && next.user_id === sellerId) {
+      const diff =
+        new Date(next.created_at) - new Date(q.created_at)
+      replyTimes.push(diff)
+    }
+  }
+})
+
+const avgReplyMs =
+  replyTimes.reduce((a, b) => a + b, 0) / (replyTimes.length || 1)
+
+const repliesFast =
+  replyTimes.length >= 3 && avgReplyMs <= 2 * 60 * 60 * 1000
+
+
   return (
     <main className="page">
       {profile.avatar_url && (
@@ -97,6 +144,11 @@ export default function UserProfilePage() {
           <span className="badge">🔥 Aktiv sælger</span>
         )}
       </div>
+
+      {repliesFast && (
+  <span className="badge">⚡ Svarer hurtigt</span>
+)}
+
 
    {currentUserId && currentUserId !== profile.id && (
   <button
