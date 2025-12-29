@@ -6,7 +6,8 @@ import { supabase } from '@/lib/supabaseClient'
 
 // ⬇️ JUSTÉR DENNE IMPORT TIL DIN EKSISTERENDE CREATE-FORM
 // Fx: import CreateListingForm from '../../create/CreateListingForm'
-import CreateListingForm from '../../create/page.js'
+import CreateListingForm from '../../create/CreateListingForm'
+
 
 export default function EditListingPage() {
   const { id } = useParams()
