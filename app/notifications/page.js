@@ -89,9 +89,17 @@ export default function NotificationsPage() {
             </div>
 
             {n.listing_id && (
-              <Link href={`/listings/${n.listing_id}`}>
-                <small>Gå til opslag →</small>
-              </Link>
+             <Link
+  href={`/listings/${n.listing_id}`}
+  onClick={() => {
+    if (!n.is_read) {
+      markAsRead(n.id)
+    }
+  }}
+>
+  <small>Gå til opslag →</small>
+</Link>
+
             )}
           </li>
         ))}
