@@ -171,14 +171,26 @@ export default function ListingDetailPage() {
 
         {questions.length === 0 && <p>Ingen spørgsmål endnu</p>}
 
-        {questions.map(q => (
-          <div key={q.id} style={{ marginBottom: 12 }}>
-            <p>{q.text}</p>
-            <small>
-              {new Date(q.created_at).toLocaleDateString('da-DK')}
-            </small>
-          </div>
-        ))}
+        {questions.map(q => {
+  const isSeller = q.user_id === listing.user_id
+
+  return (
+    <div key={q.id} style={{ marginBottom: 12 }}>
+      <p>{q.text}</p>
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <small>
+          {new Date(q.created_at).toLocaleDateString('da-DK')}
+        </small>
+
+        {isSeller && (
+          <span className="badge">Sælger</span>
+        )}
+      </div>
+    </div>
+  )
+})}
+
 
         {user && (
           <form onSubmit={submitQuestion} style={{ marginTop: 16 }}>
