@@ -67,15 +67,6 @@ export default function UserProfilePage() {
   }
 
   if (!profile) {
-
-const totalListings = listings.length
-const activeListings = totalListings
-const soldListings = 0
-
-const memberYear = new Date(profile.created_at).getFullYear()
-const isActiveSeller = totalListings >= 5
-
-
     return (
       <main className="page">
         <h1>Profil ikke fundet</h1>
@@ -83,25 +74,28 @@ const isActiveSeller = totalListings >= 5
     )
   }
 
+  // ✅ TRUST / STATS (KORREKT PLACERING)
+  const totalListings = listings.length
+  const activeListings = totalListings
+  const soldListings = 0
+  const memberYear = new Date(profile.created_at).getFullYear()
+  const isActiveSeller = totalListings >= 5
+
   return (
     <main className="page">
-        {profile.avatar_url && (
-  <img
-    src={`${profile.avatar_url}?t=${Date.now()}`}
-    alt={profile.username}
-    style={{ width: 96, height: 96, borderRadius: '50%' }}
+      {profile.avatar_url && (
+        <img
+          src={`${profile.avatar_url}?t=${Date.now()}`}
+          alt={profile.username}
+          style={{ width: 96, height: 96, borderRadius: '50%' }}
+        />
+      )}
 
-  />
-)}
-
-<div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-
-
-  {isActiveSeller && (
-    <span className="badge">🔥 Aktiv sælger</span>
-  )}
-</div>
-
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        {isActiveSeller && (
+          <span className="badge">🔥 Aktiv sælger</span>
+        )}
+      </div>
 
       <h1>{profile.username}</h1>
 
@@ -113,28 +107,26 @@ const isActiveSeller = totalListings >= 5
         {new Date(profile.created_at).toLocaleDateString('da-DK')}
       </p>
 
-
       <div className="profile-stats">
-  <div>
-    <strong>{totalListings}</strong>
-    <span>Opslag</span>
-  </div>
-  <div>
-    <strong>{activeListings}</strong>
-    <span>Aktive</span>
-  </div>
-  <div>
-    <strong>{soldListings}</strong>
-    <span>Solgt</span>
-  </div>
-  <div>
-    <strong>{memberYear}</strong>
-    <span>Medlem</span>
-  </div>
-</div>
+        <div>
+          <strong>{totalListings}</strong>
+          <span>Opslag</span>
+        </div>
+        <div>
+          <strong>{activeListings}</strong>
+          <span>Aktive</span>
+        </div>
+        <div>
+          <strong>{soldListings}</strong>
+          <span>Solgt</span>
+        </div>
+        <div>
+          <strong>{memberYear}</strong>
+          <span>Medlem</span>
+        </div>
+      </div>
 
-
-      {profile && currentUserId && currentUserId === profile.id && (
+      {currentUserId === profile.id && (
         <EditProfileForm profile={profile} />
       )}
 
