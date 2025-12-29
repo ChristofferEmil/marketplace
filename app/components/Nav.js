@@ -11,6 +11,7 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [notifCount, setNotifCount] = useState(0)
 
+  // 🔔 hent antal ulæste
   const fetchNotifications = async (userId) => {
     const { count } = await supabase
       .from('notifications')
@@ -22,40 +23,33 @@ export default function Nav() {
   }
 
   useEffect(() => {
-    let interval
-
+    // initial load
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
-      if (data.user) {
-        fetchNotifications(data.user.id)
-
-        // 🔁 POLLING (hver 5. sekund)
-        interval = setInterval(() => {
-          fetchNotifications(data.user.id)
-        }, 5000)
-      }
+      if (data.user) fetchNotifications(data.user.id)
     })
 
+    // auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-
-      if (session?.user) {
-        fetchNotifications(session.user.id)
-
-        interval = setInterval(() => {
-          fetchNotifications(session.user.id)
-        }, 5000)
-      } else {
-        setNotifCount(0)
-        clearInterval(interval)
-      }
+      if (session?.user) fetchNotifications(session.user.id)
+      else setNotifCount(0)
     })
+
+    // 👂 LYTTER PÅ SAMME EVENT SOM NotificationsPage SENDER
+    const handler = () => {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data?.user) fetchNotifications(data.user.id)
+      })
+    }
+
+    window.addEventListener('notifications:updated', handler)
 
     return () => {
       subscription.unsubscribe()
-      clearInterval(interval)
+      window.removeEventListener('notifications:updated', handler)
     }
   }, [])
 
@@ -117,7 +111,7 @@ export default function Nav() {
 
   return (
     <>
-      {/* DESKTOP SIDEBAR */}
+      {/* DESKTOP */}
       <nav className="nav nav-desktop">
         <div className="nav-logo">CardSwap</div>
         <div className="nav-links">
@@ -125,7 +119,7 @@ export default function Nav() {
         </div>
       </nav>
 
-      {/* MOBILE TOP BAR */}
+      {/* MOBILE */}
       <div className="mobile-topbar">
         <div className="mobile-logo">CardSwap</div>
         <button
@@ -137,7 +131,6 @@ export default function Nav() {
         </button>
       </div>
 
-      {/* MOBILE SLIDE-IN MENU */}
       {menuOpen && (
         <>
           <div
