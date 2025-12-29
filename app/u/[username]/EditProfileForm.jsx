@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
-export default function EditProfileForm({ profile }) {
+export default function EditProfileForm({ profile, onSaved }) {
   const [bio, setBio] = useState(profile.bio || '')
   const [city, setCity] = useState(profile.city || '')
   const [avatar, setAvatar] = useState(null)
@@ -49,12 +49,12 @@ export default function EditProfileForm({ profile }) {
 
     if (error) {
       setError(error.message)
-    } else {
-      setSuccess(true)
-onSaved?.({ bio, city, avatar_url })
+} else {
+  onSaved?.({ bio, city, avatar_url })
+  setSuccess(true)
+  setTimeout(() => setSuccess(false), 2000)
+}
 
-      setTimeout(() => setSuccess(false), 2000)
-    }
 
     setSaving(false)
   }
