@@ -21,6 +21,7 @@ export default function EditProfileForm({ profile }) {
       const fileExt = avatar.name.split('.').pop()
       const filePath = `${profile.id}.${fileExt}`
 
+
       const { error: uploadError } = await supabase
         .storage
         .from('avatars')
