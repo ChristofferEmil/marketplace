@@ -9,11 +9,13 @@ export default function EditProfileForm({ profile }) {
   const [avatar, setAvatar] = useState(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const [success, setSuccess] = useState(false)
 
   async function handleSave(e) {
     e.preventDefault()
     setSaving(true)
     setError(null)
+    setSuccess(false)
 
     let avatar_url = profile.avatar_url || null
 
@@ -21,10 +23,10 @@ export default function EditProfileForm({ profile }) {
       const fileExt = avatar.name.split('.').pop()
       const filePath = `${profile.id}.${fileExt}`
 
-
       const { error: uploadError } = await supabase
-       .storage.from('avatars').upload(filePath, avatar, { upsert: true })
-
+        .storage
+        .from('avatars')
+        .upload(filePath, avatar, { upsert: true })
 
       if (uploadError) {
         setError(uploadError.message)
@@ -45,7 +47,15 @@ export default function EditProfileForm({ profile }) {
       .update({ bio, city, avatar_url })
       .eq('id', profile.id)
 
-    if (error) setError(error.message)
+    if (error) {
+      setError(error.message)
+    } else {
+      setSuccess(true)
+onSaved?.({ bio, city, avatar_url })
+
+      setTimeout(() => setSuccess(false), 2000)
+    }
+
     setSaving(false)
   }
 
@@ -81,6 +91,7 @@ export default function EditProfileForm({ profile }) {
       </label>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p style={{ color: 'green' }}>Gemt ✓</p>}
 
       <button disabled={saving}>
         {saving ? 'Gemmer…' : 'Gem'}

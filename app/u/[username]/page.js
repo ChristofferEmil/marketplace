@@ -127,8 +127,12 @@ export default function UserProfilePage() {
       </div>
 
       {currentUserId === profile.id && (
-        <EditProfileForm profile={profile} />
-      )}
+  <EditProfileForm
+    profile={profile}
+    onSaved={(updated) => setProfile(p => ({ ...p, ...updated }))}
+  />
+)}
+
 
       <section className="feed-grid">
         {listings.length === 0 && <p>Ingen opslag endnu</p>}
