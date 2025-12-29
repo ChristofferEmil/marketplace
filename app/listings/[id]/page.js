@@ -16,11 +16,14 @@ export default function ListingDetailPage() {
   const [isClaimed, setIsClaimed] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
 
-  const isOwner = user && listing && user.id === listing.user_id
+  const [questions, setQuestions] = useState([])
+  const [questionText, setQuestionText] = useState('')
 
   const isDesktop =
     typeof window !== 'undefined' && window.innerWidth >= 769
   const [showChat, setShowChat] = useState(isDesktop)
+
+  const isOwner = user && listing && user.id === listing.user_id
 
   /* ---------- LOAD DATA ---------- */
   useEffect(() => {
@@ -58,6 +61,44 @@ export default function ListingDetailPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  /* ---------- LOAD Q&A ---------- */
+  useEffect(() => {
+    if (!listing?.id) return
+
+    supabase
+      .from('listing_questions')
+      .select('*')
+      .eq('listing_id', listing.id)
+      .order('created_at', { ascending: true })
+      .then(({ data }) => setQuestions(data || []))
+  }, [listing?.id])
+
+  /* ---------- SEND QUESTION ---------- */
+  async function submitQuestion(e) {
+    e.preventDefault()
+    if (!questionText.trim() || !user) return
+
+    const { error } = await supabase
+      .from('listing_questions')
+      .insert({
+        listing_id: listing.id,
+        user_id: user.id,
+        text: questionText,
+      })
+
+    if (!error) {
+      setQuestions(q => [
+        ...q,
+        {
+          id: crypto.randomUUID(),
+          text: questionText,
+          created_at: new Date().toISOString(),
+        },
+      ])
+      setQuestionText('')
+    }
+  }
+
   /* ---------- CHAT ---------- */
   async function send() {
     if (!user || !text) return
@@ -92,9 +133,7 @@ export default function ListingDetailPage() {
         claimer_id: user.id,
       })
 
-    if (error) {
-      alert(error.message)
-    } else {
+    if (!error) {
       setIsClaimed(true)
       alert('Kortet er nu claimed. Skriv til sælgeren i chatten.')
     }
@@ -112,8 +151,7 @@ export default function ListingDetailPage() {
 
   return (
     <main className="page page-detail hide-bottom-nav">
-
-      {/* IMAGE HERO */}
+      {/* IMAGE */}
       {listing.image_url && (
         <div className="detail-image">
           <img src={listing.image_url} alt={listing.title} />
@@ -124,69 +162,42 @@ export default function ListingDetailPage() {
       <section className="detail-content">
         <h1>{listing.title}</h1>
 
-        <div className="detail-tags">
-          {listing.series && <span className="tag">{listing.series}</span>}
-          {listing.condition && (
-            <span className="tag">{listing.condition}</span>
-          )}
+        <p className="detail-description">{listing.description}</p>
+      </section>
 
-          {Array.isArray(listing.tags) &&
-            listing.tags.map(tag => (
-              <span key={tag} className="tag tag-muted">
-                {tag}
-              </span>
-            ))}
-        </div>
+      {/* Q&A */}
+      <section style={{ marginTop: 32 }}>
+        <h3>Spørgsmål & svar</h3>
 
-        <div className="sale-box">
-          {listing.claim_price && (
-            <div className="sale-item">
-              <span className="sale-label">Claim price</span>
-              <strong>{listing.claim_price} kr</strong>
-            </div>
-          )}
-        </div>
+        {questions.length === 0 && <p>Ingen spørgsmål endnu</p>}
 
-        {listing.description && (
-          <p className="detail-description">
-            {listing.description}
-          </p>
+        {questions.map(q => (
+          <div key={q.id} style={{ marginBottom: 12 }}>
+            <p>{q.text}</p>
+            <small>
+              {new Date(q.created_at).toLocaleDateString('da-DK')}
+            </small>
+          </div>
+        ))}
+
+        {user && (
+          <form onSubmit={submitQuestion} style={{ marginTop: 16 }}>
+            <textarea
+              value={questionText}
+              onChange={e => setQuestionText(e.target.value)}
+              rows={3}
+              placeholder="Stil et offentligt spørgsmål…"
+            />
+            <button type="submit">Send spørgsmål</button>
+          </form>
         )}
       </section>
 
-
-
-{isDesktop && (
-  <div style={{ marginBottom: 12 }}>
-    <button
-      className="action-btn primary"
-      onClick={handleClaim}
-      disabled={isOwner || isClaimed || claimLoading}
-    >
-      {isOwner
-        ? 'Dit opslag'
-        : isClaimed
-        ? 'Allerede claimed'
-        : claimLoading
-        ? 'Claimer…'
-        : 'Claim'}
-    </button>
-  </div>
-)}
-
-
-
       {/* CHAT */}
       <section className="card card-detail chat-card">
-        <strong>Chat with seller</strong>
+        <strong>Chat</strong>
 
         <div className="chat chat-scroll">
-          {messages.length === 0 && (
-            <p className="chat-empty">
-              No messages yet. Start the conversation 👋
-            </p>
-          )}
-
           {messages.map(m => (
             <div
               key={m.id}
@@ -197,52 +208,22 @@ export default function ListingDetailPage() {
               {m.content}
             </div>
           ))}
-
           <div ref={bottomRef} />
         </div>
       </section>
 
       {/* CHAT INPUT */}
-      {showChat && (
-        <div className="chat-input chat-input-fixed">
-          <input
-            value={text}
-            onChange={e => setText(e.target.value)}
-            placeholder={user ? 'Write a message…' : 'Log in to chat'}
-            disabled={!user}
-          />
-
-          <button onClick={send} disabled={!user || !text}>
-            Send
-          </button>
-        </div>
-      )}
-
-      {/* ACTION BAR */}
-      {!showChat && (
-        <div className="action-bar">
-          <button
-            className="action-btn secondary"
-            onClick={() => setShowChat(true)}
-          >
-            Chat
-          </button>
-
-          <button
-            className="action-btn primary"
-            onClick={handleClaim}
-            disabled={isOwner || isClaimed || claimLoading}
-          >
-            {isOwner
-              ? 'Dit opslag'
-              : isClaimed
-              ? 'Allerede claimed'
-              : claimLoading
-              ? 'Claimer…'
-              : 'Claim'}
-          </button>
-        </div>
-      )}
+      <div className="chat-input chat-input-fixed">
+        <input
+          value={text}
+          onChange={e => setText(e.target.value)}
+          placeholder={user ? 'Skriv besked…' : 'Log ind for at chatte'}
+          disabled={!user}
+        />
+        <button onClick={send} disabled={!user || !text}>
+          Send
+        </button>
+      </div>
     </main>
   )
 }
