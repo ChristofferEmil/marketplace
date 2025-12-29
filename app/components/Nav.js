@@ -11,23 +11,6 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [notifCount, setNotifCount] = useState(0)
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
-      if (data.user) fetchNotifications(data.user.id)
-    })
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) fetchNotifications(session.user.id)
-      else setNotifCount(0)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
   const fetchNotifications = async (userId) => {
     const { count } = await supabase
       .from('notifications')
@@ -37,6 +20,35 @@ export default function Nav() {
 
     setNotifCount(count || 0)
   }
+
+  useEffect(() => {
+    // initial load
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      if (data.user) fetchNotifications(data.user.id)
+    })
+
+    // auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) fetchNotifications(session.user.id)
+      else setNotifCount(0)
+    })
+
+    // 🔔 listen for updates from notifications page
+    const handler = () => {
+      if (user) fetchNotifications(user.id)
+    }
+
+    window.addEventListener('notifications:updated', handler)
+
+    return () => {
+      subscription.unsubscribe()
+      window.removeEventListener('notifications:updated', handler)
+    }
+  }, [user])
 
   const logout = async () => {
     await supabase.auth.signOut()

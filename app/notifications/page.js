@@ -30,15 +30,19 @@ export default function NotificationsPage() {
   }, [])
 
   async function markAsRead(id) {
-    await supabase
-      .from('notifications')
-      .update({ is_read: true })
-      .eq('id', id)
+  await supabase
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('id', id)
 
-    setItems(prev =>
-      prev.map(n => (n.id === id ? { ...n, is_read: true } : n))
-    )
-  }
+  setItems(prev =>
+    prev.map(n => (n.id === id ? { ...n, is_read: true } : n))
+  )
+
+  // 🔔 Fortæl navbar at count skal opdateres
+  window.dispatchEvent(new Event('notifications:updated'))
+}
+
 
   if (loading) {
     return <main className="page">Loader…</main>
