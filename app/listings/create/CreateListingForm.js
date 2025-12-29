@@ -128,53 +128,37 @@ export default function CreateListingForm({
         <input value={title} onChange={e => setTitle(e.target.value)} required />
         <textarea value={description} onChange={e => setDescription(e.target.value)} />
 
-        {mode === 'edit' && initialData?.image_url && !changeImage && (
-          <div style={{ marginBottom: 12 }}>
-            <img
-              src={initialData.image_url}
-              alt="Nuværende billede"
-              style={{ maxWidth: '100%', borderRadius: 8 }}
-            />
+        {mode === 'edit' && initialData?.image_url && (
+  <div style={{ marginBottom: 12 }}>
+    <img
+      src={initialData.image_url}
+      alt="Nuværende billede"
+      style={{ maxWidth: '100%', borderRadius: 8 }}
+    />
 
-            <button type="button" onClick={() => setChangeImage(true)}>
-              Skift billede
-            </button>
-          </div>
-        )}
+    {!changeImage ? (
+      <button
+        type="button"
+        onClick={() => setChangeImage(true)}
+        style={{ marginTop: 8 }}
+      >
+        Skift billede
+      </button>
+    ) : (
+      <button
+        type="button"
+        onClick={() => {
+          setChangeImage(false)
+          setImage(null)
+        }}
+        style={{ marginTop: 8 }}
+      >
+        Annuller
+      </button>
+    )}
+  </div>
+)}
 
-        {(mode === 'create' || changeImage) && (
-          <input
-            type="file"
-            accept="image/*"
-            onChange={e => setImage(e.target.files[0])}
-          />
-        )}
-
-        <div className="chip-group">
-          {SERIES.map(s => (
-            <button
-              key={s}
-              type="button"
-              className={`chip ${series.includes(s) ? 'active' : ''}`}
-              onClick={() => toggleSeries(s)}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-
-        <div className="chip-group">
-          {CONDITIONS.map(c => (
-            <button
-              key={c}
-              type="button"
-              className={`chip ${condition === c ? 'active' : ''}`}
-              onClick={() => setCondition(c)}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
 
         <div className="chip-group">
           {TAGS.map(t => (
