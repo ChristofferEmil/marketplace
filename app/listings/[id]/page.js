@@ -88,13 +88,15 @@ export default function ListingDetailPage() {
 
     if (!error) {
       setQuestions(q => [
-        ...q,
-        {
-          id: crypto.randomUUID(),
-          text: questionText,
-          created_at: new Date().toISOString(),
-        },
-      ])
+  ...q,
+  {
+    id: crypto.randomUUID(),
+    text: questionText,
+    created_at: new Date().toISOString(),
+    user_id: user.id, // ⭐ VIGTIG
+  },
+])
+
       setQuestionText('')
     }
   }
