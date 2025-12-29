@@ -22,33 +22,42 @@ export default function Nav() {
   }
 
   useEffect(() => {
-    // initial load
+    let interval
+
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
-      if (data.user) fetchNotifications(data.user.id)
+      if (data.user) {
+        fetchNotifications(data.user.id)
+
+        // 🔁 POLLING (hver 5. sekund)
+        interval = setInterval(() => {
+          fetchNotifications(data.user.id)
+        }, 5000)
+      }
     })
 
-    // auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchNotifications(session.user.id)
-      else setNotifCount(0)
+
+      if (session?.user) {
+        fetchNotifications(session.user.id)
+
+        interval = setInterval(() => {
+          fetchNotifications(session.user.id)
+        }, 5000)
+      } else {
+        setNotifCount(0)
+        clearInterval(interval)
+      }
     })
-
-    // 🔔 listen for updates from notifications page
-    const handler = () => {
-      if (user) fetchNotifications(user.id)
-    }
-
-    window.addEventListener('notifications:updated', handler)
 
     return () => {
       subscription.unsubscribe()
-      window.removeEventListener('notifications:updated', handler)
+      clearInterval(interval)
     }
-  }, [user])
+  }, [])
 
   const logout = async () => {
     await supabase.auth.signOut()
