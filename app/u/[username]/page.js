@@ -79,7 +79,8 @@ export default function UserProfilePage() {
   const activeListings = totalListings
   const soldListings = 0
   const memberYear = new Date(profile.created_at).getFullYear()
-  const isActiveSeller = totalListings >= 5
+  const isActiveSeller = totalListings >= 3 && activeListings >= 1
+
 
   return (
     <main className="page">
@@ -96,6 +97,18 @@ export default function UserProfilePage() {
           <span className="badge">🔥 Aktiv sælger</span>
         )}
       </div>
+
+      {currentUserId && currentUserId !== profile.id && (
+  <button
+    className="primary"
+    onClick={() => {
+      window.location.href = `/chat?user=${profile.id}`
+    }}
+  >
+    Kontakt sælger
+  </button>
+)}
+
 
       <h1>{profile.username}</h1>
 
