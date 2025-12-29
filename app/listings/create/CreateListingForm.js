@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
+
 const SERIES = [
   'Base Set',
   'Jungle',
@@ -17,6 +18,8 @@ const SERIES = [
 
 const CONDITIONS = ['MT', 'NM', 'EX', 'GD', 'LP', 'PL', 'PO']
 const TAGS = ['Holo', 'Reverse', '1st Edition', 'Shadowless', 'Promo']
+const [changeImage, setChangeImage] = useState(false)
+
 
 export default function CreateListingForm({
   mode = 'create',
@@ -126,7 +129,36 @@ export default function CreateListingForm({
         <input value={title} onChange={e => setTitle(e.target.value)} required />
         <textarea value={description} onChange={e => setDescription(e.target.value)} />
 
-        <input type="file" accept="image/*" onChange={e => setImage(e.target.files[0])} />
+
+{mode === 'edit' && initialData?.image_url && !changeImage && (
+  <div style={{ marginBottom: 12 }}>
+    <img
+      src={initialData.image_url}
+      alt="Nuværende billede"
+      style={{ maxWidth: '100%', borderRadius: 8 }}
+    />
+
+    <button
+      type="button"
+      onClick={() => setChangeImage(true)}
+      style={{ marginTop: 8 }}
+    >
+      Skift billede
+    </button>
+  </div>
+)}
+
+
+      {(mode === 'create' || changeImage) && (
+  <input
+    type="file"
+    accept="image/*"
+    onChange={e => setImage(e.target.files[0])}
+  />
+)}
+
+
+
 
         <div className="chip-group">
           {SERIES.map(s => (
