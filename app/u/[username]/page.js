@@ -102,7 +102,7 @@ export default function UserProfilePage() {
   <button
     className="primary"
     onClick={() => {
-      window.location.href = '/chat'
+      window.location.href = '/inbox'
     }}
   >
     Kontakt sælger
