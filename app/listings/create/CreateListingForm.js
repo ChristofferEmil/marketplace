@@ -128,6 +128,8 @@ export default function CreateListingForm({
         <input value={title} onChange={e => setTitle(e.target.value)} required />
         <textarea value={description} onChange={e => setDescription(e.target.value)} />
 
+
+
         {mode === 'edit' && initialData?.image_url && (
   <div style={{ marginBottom: 12 }}>
     <img
@@ -158,6 +160,17 @@ export default function CreateListingForm({
     )}
   </div>
 )}
+
+{(mode === 'create' || changeImage) && (
+  <div style={{ marginBottom: 12 }}>
+    <input
+      type="file"
+      accept="image/*"
+      onChange={e => setImage(e.target.files[0])}
+    />
+  </div>
+)}
+
 
 
         <div className="chip-group">
