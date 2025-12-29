@@ -17,7 +17,6 @@ const SERIES = [
 
 const CONDITIONS = ['MT', 'NM', 'EX', 'GD', 'LP', 'PL', 'PO']
 const TAGS = ['Holo', 'Reverse', '1st Edition', 'Shadowless', 'Promo']
-const [saving, setSaving] = useState(false)
 
 
 
@@ -29,6 +28,7 @@ export default function CreateListingForm({
 }) {
   const router = useRouter()
 
+const [saving, setSaving] = useState(false)
   const [changeImage, setChangeImage] = useState(false)
 
   const [title, setTitle] = useState(initialData?.title ?? '')
