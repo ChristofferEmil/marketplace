@@ -6,8 +6,6 @@ import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import EditProfileForm from './EditProfileForm'
 
-
-
 export default function UserProfilePage() {
   const { username } = useParams()
   const [profile, setProfile] = useState(null)
@@ -16,65 +14,55 @@ export default function UserProfilePage() {
   const [currentUserId, setCurrentUserId] = useState(null)
 
   const handleDelete = async (listingId) => {
-  const ok = confirm('Vil du slette dette opslag?')
-  if (!ok) return
+    const ok = confirm('Vil du slette dette opslag?')
+    if (!ok) return
 
-  const { error } = await supabase
-    .from('listings')
-    .delete()
-    .eq('id', listingId)
+    const { error } = await supabase
+      .from('listings')
+      .delete()
+      .eq('id', listingId)
 
-  if (!error) {
-    setListings(prev => prev.filter(l => l.id !== listingId))
-  } else {
-    alert('Kunne ikke slette opslag')
+    if (!error) {
+      setListings(prev => prev.filter(l => l.id !== listingId))
+    } else {
+      alert('Kunne ikke slette opslag')
+    }
   }
-}
-
-
-
 
   useEffect(() => {
     if (!username) return
 
-
     supabase.auth.getUser().then(({ data }) => {
-  setCurrentUserId(data?.user?.id ?? null)
-})
-
+      setCurrentUserId(data?.user?.id ?? null)
+    })
 
     const fetchProfile = async () => {
-  const { data: profileRows } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('username', username)
-    .limit(1)
+      const { data: profileRows } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('username', username)
+        .limit(1)
 
-  const profile = profileRows?.[0] || null
-  setProfile(profile)
+      const p = profileRows?.[0] || null
+      setProfile(p)
 
-  if (profile) {
-    const { data: userListings } = await supabase
-      .from('listings')
-      .select('*')
-      .eq('user_id', profile.id)
-      .order('created_at', { ascending: false })
+      if (p) {
+        const { data: userListings } = await supabase
+          .from('listings')
+          .select('*')
+          .eq('user_id', p.id)
+          .order('created_at', { ascending: false })
 
-    setListings(userListings || [])
-  }
+        setListings(userListings || [])
+      }
 
-  setLoading(false)
-}
-
+      setLoading(false)
+    }
 
     fetchProfile()
   }, [username])
 
   if (loading) {
-   
-   console.log('DEBUG currentUserId:', currentUserId)
-console.log('DEBUG profile.id:', profile?.id)
-
     return <main className="page">Loader…</main>
   }
 
@@ -98,72 +86,61 @@ console.log('DEBUG profile.id:', profile?.id)
         {new Date(profile.created_at).toLocaleDateString('da-DK')}
       </p>
 
+      {profile && currentUserId && currentUserId === profile.id && (
+        <EditProfileForm profile={profile} />
+      )}
 
       <section className="feed-grid">
-  {listings.length === 0 && (
-    <p>Ingen opslag endnu</p>
-  )}
+        {listings.length === 0 && <p>Ingen opslag endnu</p>}
 
-  {listings.map(l => (
-  <Link key={l.id} href={`/listings/${l.id}`}>
-    <article className="card">
+        {listings.map(l => (
+          <Link key={l.id} href={`/listings/${l.id}`}>
+            <article className="card">
+              {currentUserId === profile.id && (
+                <div className="card-actions">
+                  <button
+                    className="card-action"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      window.location.href = `/listings/${l.id}/edit`
+                    }}
+                  >
+                    Rediger
+                  </button>
 
-{currentUserId === profile.id && (
-  <div className="card-actions">
-<button
-  className="card-action"
-  onClick={(e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    window.location.href = `/listings/${l.id}/edit`
-  }}
->
-  Rediger
-</button>
+                  <button
+                    className="card-action danger"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleDelete(l.id)
+                    }}
+                  >
+                    Slet
+                  </button>
+                </div>
+              )}
 
+              <div className="card-image">
+                {l.image_url && <img src={l.image_url} alt={l.title} />}
+              </div>
 
-<button
-  className="card-action danger"
-  onClick={(e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    handleDelete(l.id)
-  }}
->
-  Slet
-</button>
+              <div className="card-body">
+                <h3>{l.title}</h3>
 
-
-
-  </div>
-)}
-
-
-      <div className="card-image">
-        {l.image_url && (
-          <img src={l.image_url} alt={l.title} />
-        )}
-      </div>
-
-      <div className="card-body">
-        <h3>{l.title}</h3>
-
-        {l.description && (
-          <p>
-            {l.description.length > 70
-              ? `${l.description.slice(0, 70)}…`
-              : l.description}
-          </p>
-        )}
-      </div>
-    </article>
-  </Link>
-))}
-
-</section>
-
+                {l.description && (
+                  <p>
+                    {l.description.length > 70
+                      ? `${l.description.slice(0, 70)}…`
+                      : l.description}
+                  </p>
+                )}
+              </div>
+            </article>
+          </Link>
+        ))}
+      </section>
     </main>
-
-    
   )
 }
