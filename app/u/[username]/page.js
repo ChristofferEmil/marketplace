@@ -78,9 +78,10 @@ export default function UserProfilePage() {
     <main className="page">
         {profile.avatar_url && (
   <img
-    src={profile.avatar_url}
+    src={`${profile.avatar_url}?t=${Date.now()}`}
     alt={profile.username}
     style={{ width: 96, height: 96, borderRadius: '50%' }}
+
   />
 )}
 
