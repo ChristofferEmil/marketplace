@@ -71,6 +71,10 @@ export default function UserProfilePage() {
   }, [username])
 
   if (loading) {
+   
+   console.log('DEBUG currentUserId:', currentUserId)
+console.log('DEBUG profile.id:', profile?.id)
+
     return <main className="page">Loader…</main>
   }
 
