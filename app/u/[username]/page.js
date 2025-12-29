@@ -31,48 +31,51 @@ export default function UserProfilePage() {
     }
   }
 
-  useEffect(() => {
-    if (!username) return
+useEffect(() => {
+  if (!username) return
 
-    supabase.auth.getUser().then(({ data }) => {
-      setCurrentUserId(data?.user?.id ?? null)
-    })
+  setLoading(true)
 
-    const fetchProfile = async () => {
-      const { data: profileRows } = await supabase
-        .from('profiles')
+  supabase.auth.getUser().then(({ data }) => {
+    setCurrentUserId(data?.user?.id ?? null)
+  })
+
+  const fetchProfile = async () => {
+    const { data: profileRows } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('username', username)
+      .limit(1)
+
+    const p = profileRows?.[0] || null
+    setProfile(p)
+
+    if (p) {
+      const { data: userListings } = await supabase
+        .from('listings')
         .select('*')
-        .eq('username', username)
-        .limit(1)
+        .eq('user_id', p.id)
+        .order('created_at', { ascending: false })
 
-      const p = profileRows?.[0] || null
-      setProfile(p)
+      setListings(userListings || [])
 
-      if (p) {
-        const { data: userListings } = await supabase
-          .from('listings')
-          .select('*')
-          .eq('user_id', p.id)
-          .order('created_at', { ascending: false })
+      const listingIds = (userListings || []).map(l => l.id)
 
-        setListings(userListings || [])
+      if (listingIds.length) {
+        const { data: qs } = await supabase
+          .from('listing_questions')
+          .select('listing_id, created_at, user_id')
+          .in('listing_id', listingIds)
+          .order('created_at', { ascending: true })
+
+        setQuestionsForStats(qs || [])
+      } else {
+        setQuestionsForStats([])
       }
-
-      const listingIds = userListings.map(l => l.id)
-
-if (listingIds.length) {
-  const { data: qs } = await supabase
-    .from('listing_questions')
-    .select('listing_id, created_at, user_id')
-    .in('listing_id', listingIds)
-    .order('created_at', { ascending: true })
-
-  setQuestionsForStats(qs || [])
-}
-
-
-      setLoading(false)
     }
+
+    setLoading(false)
+  }
 
     fetchProfile()
   }, [username])
