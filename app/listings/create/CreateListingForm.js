@@ -17,6 +17,9 @@ const SERIES = [
 
 const CONDITIONS = ['MT', 'NM', 'EX', 'GD', 'LP', 'PL', 'PO']
 const TAGS = ['Holo', 'Reverse', '1st Edition', 'Shadowless', 'Promo']
+const [saving, setSaving] = useState(false)
+
+
 
 export default function CreateListingForm({
   mode = 'create',
@@ -57,14 +60,18 @@ export default function CreateListingForm({
       prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]
     )
 
-  const submit = async e => {
-    e.preventDefault()
+ const submit = async e => {
+  e.preventDefault()
+  if (saving) return
 
-    const { data: auth } = await supabase.auth.getUser()
-    if (!auth?.user) {
-      alert('You must be logged in')
-      return
-    }
+  setSaving(true)
+
+  const { data: auth } = await supabase.auth.getUser()
+  if (!auth?.user) {
+    alert('You must be logged in')
+    setSaving(false)
+    return
+  }
 
     let image_url = initialData?.image_url ?? null
 
@@ -76,6 +83,7 @@ export default function CreateListingForm({
 
       if (error) {
         alert('Image upload failed')
+        setSaving(false)
         return
       }
 
@@ -112,6 +120,7 @@ export default function CreateListingForm({
 
     if (error) {
       alert(error.message)
+      setSaving(false)
       return
     }
 
@@ -186,9 +195,14 @@ export default function CreateListingForm({
           ))}
         </div>
 
-        <button className="submit-btn">
-          {mode === 'edit' ? 'Gem ændringer' : 'Create listing'}
-        </button>
+        <button className="submit-btn" disabled={saving}>
+  {saving
+    ? 'Gemmer…'
+    : mode === 'edit'
+      ? 'Gem ændringer'
+      : 'Create listing'}
+</button>
+
       </form>
     </div>
   )
