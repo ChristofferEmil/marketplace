@@ -23,9 +23,8 @@ export default function EditProfileForm({ profile }) {
 
 
       const { error: uploadError } = await supabase
-        .storage
-        .from('avatars')
-        .upload(filePath, avatar, { upsert: true })
+       .storage.from('avatars').upload(filePath, avatar, { upsert: true })
+
 
       if (uploadError) {
         setError(uploadError.message)
