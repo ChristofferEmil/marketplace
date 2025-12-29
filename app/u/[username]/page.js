@@ -76,6 +76,14 @@ export default function UserProfilePage() {
 
   return (
     <main className="page">
+        {profile.avatar_url && (
+  <img
+    src={profile.avatar_url}
+    alt={profile.username}
+    style={{ width: 96, height: 96, borderRadius: '50%' }}
+  />
+)}
+
       <h1>{profile.username}</h1>
 
       {profile.city && <p>{profile.city}</p>}
