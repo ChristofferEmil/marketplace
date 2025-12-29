@@ -98,16 +98,17 @@ export default function UserProfilePage() {
         )}
       </div>
 
-      {currentUserId && currentUserId !== profile.id && (
+   {currentUserId && currentUserId !== profile.id && (
   <button
     className="primary"
     onClick={() => {
-      window.location.href = `/chat?user=${profile.id}`
+      window.location.href = '/chat'
     }}
   >
     Kontakt sælger
   </button>
 )}
+
 
 
       <h1>{profile.username}</h1>
