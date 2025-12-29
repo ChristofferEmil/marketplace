@@ -4,6 +4,26 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
+
+function timeAgo(date) {
+  const seconds = Math.floor((Date.now() - new Date(date)) / 1000)
+  const intervals = [
+    { label: 'år', seconds: 31536000 },
+    { label: 'mdr', seconds: 2592000 },
+    { label: 'uge', seconds: 604800 },
+    { label: 'dag', seconds: 86400 },
+    { label: 't', seconds: 3600 },
+    { label: 'min', seconds: 60 },
+  ]
+
+  for (const i of intervals) {
+    const count = Math.floor(seconds / i.seconds)
+    if (count >= 1) return `${count} ${i.label} siden`
+  }
+  return 'lige nu'
+}
+
+
 export default function ListingDetailPage() {
   const { id } = useParams()
   const bottomRef = useRef(null)
@@ -181,9 +201,8 @@ export default function ListingDetailPage() {
       <p>{q.text}</p>
 
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <small>
-          {new Date(q.created_at).toLocaleDateString('da-DK')}
-        </small>
+        <small>{timeAgo(q.created_at)}</small>
+
 
         {isSeller && (
           <span className="badge">Sælger</span>
