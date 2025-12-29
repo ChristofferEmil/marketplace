@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import Link from 'next/link'
+import EditProfileForm from './EditProfileForm'
+
 
 
 export default function UserProfilePage() {
