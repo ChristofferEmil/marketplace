@@ -109,11 +109,12 @@ export default function UserProfilePage() {
   onClick={(e) => {
     e.preventDefault()
     e.stopPropagation()
-    // rediger-logik senere
+    window.location.href = `/listings/${l.id}/edit`
   }}
 >
   Rediger
 </button>
+
 
 <button
   className="card-action danger"
