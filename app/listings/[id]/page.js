@@ -81,6 +81,25 @@ export default function ListingDetailPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+
+
+
+{listing.qa_closed && (
+  <span className="badge">Besvaret</span>
+)}
+
+{user?.id === listing.user_id && (
+  <button
+    className="secondary"
+    onClick={toggleQaClosed}
+    style={{ marginLeft: 8 }}
+  >
+    {listing.qa_closed ? 'Genåbn Q&A' : 'Markér som besvaret'}
+  </button>
+)}
+
+
+
   /* ---------- LOAD Q&A ---------- */
   useEffect(() => {
     if (!listing?.id) return
@@ -171,6 +190,20 @@ export default function ListingDetailPage() {
     )
   }
 
+
+async function toggleQaClosed() {
+  const { data, error } = await supabase
+    .from('listings')
+    .update({ qa_closed: !listing.qa_closed })
+    .eq('id', listing.id)
+    .select()
+    .single()
+
+  if (!error) setListing(data)
+}
+
+
+
   return (
     <main className="page page-detail hide-bottom-nav">
       {/* IMAGE */}
@@ -213,8 +246,16 @@ export default function ListingDetailPage() {
 })}
 
 
-        {user && (
-          <form onSubmit={submitQuestion} style={{ marginTop: 16 }}>
+       {user && !listing.qa_closed ? (
+  <form onSubmit={submitQuestion}>
+
+    ) : (
+  <p style={{ opacity: 0.7 }}>
+    Q&A er markeret som besvaret.
+  </p>
+)}
+
+
             <textarea
               value={questionText}
               onChange={e => setQuestionText(e.target.value)}
