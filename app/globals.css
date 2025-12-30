@@ -1820,33 +1820,25 @@ button.primary {
 }
 
 /* =========================
-   PROFILE PAGE – DESKTOP LAYOUT FIX
+   PROFILE PAGE – DESKTOP CONTAINER
 ========================= */
 
 @media (min-width: 1024px) {
+  /* Fjern global centering kun på profil */
+  .app-content:has(.profile-page) {
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  /* Kontrolleret bredde + luft */
   .profile-page {
     width: 100%;
-  }
-
-  /* ophæv centering fra app-content */
-  .app-content:has(.profile-page) {
-    justify-content: flex-start;
-  }
-}
-
-/* =========================
-   PROFILE PAGE – REMOVE EXTRA LEFT GAP (DESKTOP)
-========================= */
-
-@media (min-width: 1024px) {
-  /* Fjern ekstra venstre margin */
-  .app-content:has(.profile-page) {
-    margin-left: 0;
-    justify-content: flex-start;
-  }
-
-  /* Profil fylder resten af skærmen */
-  .profile-page {
-    width: calc(100vw - 220px); /* sidebar width */
+    max-width: 1200px;        /* 👈 justér her */
+    margin-left: 240px;       /* sidebar */
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 }
+
+
