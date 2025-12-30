@@ -94,8 +94,10 @@ export default function NotificationsPage() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>
-                Nyt spørgsmål på dit opslag
-              </span>
+  {n.type === 'claim'
+    ? 'Dit opslag er blevet claimed'
+    : 'Nyt spørgsmål på dit opslag'}
+</span>
 
               <small style={{ opacity: 0.7 }}>
   {timeAgo(n.created_at)}
