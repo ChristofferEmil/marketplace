@@ -1604,3 +1604,18 @@ button.primary {
   font-weight: 600;
   margin: 8px 0 12px;
 }
+
+
+/* BADGE: SOLGT */
+.badge-sold {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #2a2f45;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 2;
+}

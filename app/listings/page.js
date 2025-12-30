@@ -34,6 +34,9 @@ export default function ListingsPage() {
     const fetchListings = async () => {
       setLoading(true)
 
+      // =========================
+      // LISTINGS: hent opslag
+      // =========================
       let q = supabase
         .from('listings')
         .select('*')
@@ -60,7 +63,6 @@ export default function ListingsPage() {
         q = q.in('condition', conditions)
       }
 
-      // 🔀 SORTERING
       if (sort === 'newest') {
         q = q.order('created_at', { ascending: false })
       }
@@ -77,9 +79,28 @@ export default function ListingsPage() {
           .order('claim_price', { ascending: false, nullsFirst: false })
       }
 
-      const { data, error } = await q
+      const { data: listingsData } = await q
 
-      setListings(error ? [] : data || [])
+      // =========================
+      // CLAIMS: find claimed ids
+      // =========================
+      const { data: claimsData } = await supabase
+        .from('claims')
+        .select('listing_id')
+
+      const claimedIds = new Set(
+        (claimsData || []).map(c => c.listing_id)
+      )
+
+      // =========================
+      // MERGE: tilføj isClaimed
+      // =========================
+      const merged = (listingsData || []).map(l => ({
+        ...l,
+        isClaimed: claimedIds.has(l.id),
+      }))
+
+      setListings(merged)
       setLoading(false)
     }
 
@@ -88,29 +109,26 @@ export default function ListingsPage() {
 
   return (
     <main className="page">
-     <ListingsSearchUI
-  onSearch={setQuery}
-  onSeries={setSeries}
-  series={series}
-  sort={sort}
-  onSortChange={setSort}
-  claimOnly={claimOnly}
-  onClaimChange={setClaimOnly}
-  auctionOnly={auctionOnly}
-  onAuctionChange={setAuctionOnly}
-  conditions={conditions}
-  onConditionsChange={setConditions}
-  resultCount={!loading ? listings.length : null}
-/>
+      <ListingsSearchUI
+        onSearch={setQuery}
+        onSeries={setSeries}
+        series={series}
+        sort={sort}
+        onSortChange={setSort}
+        claimOnly={claimOnly}
+        onClaimChange={setClaimOnly}
+        auctionOnly={auctionOnly}
+        onAuctionChange={setAuctionOnly}
+        conditions={conditions}
+        onConditionsChange={setConditions}
+        resultCount={!loading ? listings.length : null}
+      />
 
-
-
-{!loading && (
-  <div className="result-count">
-    {listings.length} opslag
-  </div>
-)}
-
+      {!loading && (
+        <div className="result-count">
+          {listings.length} opslag
+        </div>
+      )}
 
       <section className="feed-grid">
         {loading &&
@@ -124,65 +142,69 @@ export default function ListingsPage() {
             </div>
           ))}
 
-       {!loading &&
-  listings.map(l => {
-    const expiredAuction =
-      l.allow_auction && isExpired(l.auction_ends_at)
+        {!loading &&
+          listings.map(l => {
+            const expiredAuction =
+              l.allow_auction && isExpired(l.auction_ends_at)
 
-    const CardContent = (
-      <article
-        className={`card ${expiredAuction ? 'card-expired' : ''}`}
-      >
-        {/* 🔥 AUCTION BADGES */}
-        {l.allow_auction && l.auction_ends_at && (
-          <>
-            {isExpired(l.auction_ends_at) && (
-              <span className="auction-badge expired">
-                Udløbet
-              </span>
-            )}
+            const CardContent = (
+              <article
+                className={`card ${expiredAuction ? 'card-expired' : ''}`}
+              >
+                {/* STATUS: SOLGT */}
+                {l.isClaimed && (
+                  <span className="badge badge-sold">
+                    SOLGT
+                  </span>
+                )}
 
-            {!isExpired(l.auction_ends_at) &&
-              isEndingSoon(l.auction_ends_at) && (
-                <span className="auction-badge ending-soon">
-                  Ending soon
-                </span>
-              )}
-          </>
-        )}
+                {/* AUCTION BADGES */}
+                {l.allow_auction && l.auction_ends_at && (
+                  <>
+                    {isExpired(l.auction_ends_at) && (
+                      <span className="auction-badge expired">
+                        Udløbet
+                      </span>
+                    )}
 
-        <div className="card-image">
-          {l.image_url && (
-            <img src={l.image_url} alt={l.title} />
-          )}
-        </div>
+                    {!isExpired(l.auction_ends_at) &&
+                      isEndingSoon(l.auction_ends_at) && (
+                        <span className="auction-badge ending-soon">
+                          Ending soon
+                        </span>
+                      )}
+                  </>
+                )}
 
-        <div className="card-body">
-          <h3>{l.title}</h3>
-          {l.description && (
-            <p>
-              {l.description.length > 70
-                ? `${l.description.slice(0, 70)}…`
-                : l.description}
-            </p>
-          )}
-        </div>
-      </article>
-    )
+                <div className="card-image">
+                  {l.image_url && (
+                    <img src={l.image_url} alt={l.title} />
+                  )}
+                </div>
 
-    // ❌ Udløbne auctions → ingen Link
-    if (expiredAuction) {
-      return <div key={l.id}>{CardContent}</div>
-    }
+                <div className="card-body">
+                  <h3>{l.title}</h3>
+                  {l.description && (
+                    <p>
+                      {l.description.length > 70
+                        ? `${l.description.slice(0, 70)}…`
+                        : l.description}
+                    </p>
+                  )}
+                </div>
+              </article>
+            )
 
-    // ✅ Alt andet → Link
-    return (
-      <Link key={l.id} href={`/listings/${l.id}`}>
-        {CardContent}
-      </Link>
-    )
-  })}
+            if (expiredAuction) {
+              return <div key={l.id}>{CardContent}</div>
+            }
 
+            return (
+              <Link key={l.id} href={`/listings/${l.id}`}>
+                {CardContent}
+              </Link>
+            )
+          })}
       </section>
     </main>
   )
