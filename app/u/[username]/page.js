@@ -108,140 +108,89 @@ export default function UserProfilePage() {
   ).length
 
   return (
-    <main className="page">
-      {/* AVATAR */}
-      {profile.avatar_url && (
-        <img
-          src={`${profile.avatar_url}?t=${Date.now()}`}
-          alt={profile.username}
-          style={{ width: 96, height: 96, borderRadius: '50%' }}
-        />
-      )}
+    <main className="profile-page">
 
-      {/* BADGES */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-        {totalListings >= 3 && activeListings >= 1 && (
-          <span className="badge">🔥 Aktiv sælger</span>
-        )}
+  {/* HERO */}
+  <div className="profile-hero" />
+
+  {/* HEADER */}
+  <section className="profile-header">
+    <div className="profile-left">
+      <img
+        className="profile-avatar"
+        src={profile.avatar_url}
+        alt={profile.username}
+      />
+
+      <div className="profile-meta">
+        <h1 className="profile-name">{profile.name}</h1>
+        <div className="profile-username">@{profile.username}</div>
+        <div className="profile-member">
+          Medlem siden{' '}
+          {new Date(profile.created_at).toLocaleDateString('da-DK', {
+            month: 'long',
+            year: 'numeric',
+          })}
+        </div>
       </div>
+    </div>
 
-      <h1>{profile.username}</h1>
-<p className="member-since">
-  Medlem siden {new Date(profile.created_at).toLocaleDateString('da-DK', {
-    month: 'long',
-    year: 'numeric',
-  })}
-</p>
+    <button className="follow-btn">
+      Følg
+    </button>
+  </section>
 
-      {profile.city && <p>{profile.city}</p>}
-      {profile.bio && <p>{profile.bio}</p>}
+  {/* BIO */}
+  {profile.bio && (
+    <section className="profile-bio">
+      {profile.bio}
+    </section>
+  )}
 
-      <p>
-        Medlem siden{' '}
-        {new Date(profile.created_at).toLocaleDateString('da-DK')}
-      </p>
-
-      {/* STATS = FILTER BUTTONS */}
-      <div className="profile-stats">
-  <div
-    onClick={() => setFilter('all')}
-    className={`stat-tab ${filter === 'all' ? 'active' : ''}`}
-  >
-    <strong>{totalListings}</strong>
-    <span>Alle</span>
+  {/* TABS */}
+  <div className="profile-tabs">
+    <button
+      className={`tab ${filter === 'all' ? 'active' : ''}`}
+      onClick={() => setFilter('all')}
+    >
+      Annoncer
+    </button>
+    <button
+      className={`tab ${filter === 'active' ? 'active' : ''}`}
+      onClick={() => setFilter('active')}
+    >
+      Aktive
+    </button>
+    <button
+      className={`tab ${filter === 'sold' ? 'active' : ''}`}
+      onClick={() => setFilter('sold')}
+    >
+      Solgte
+    </button>
   </div>
 
-  <div
-    onClick={() => setFilter('active')}
-    className={`stat-tab ${filter === 'active' ? 'active' : ''}`}
-  >
-    <strong>{activeListings}</strong>
-    <span>Aktive</span>
-  </div>
+  {/* LISTINGS GRID */}
+  <section className="profile-grid">
+    {filteredListings.map(l => (
+      <Link key={l.id} href={`/listings/${l.id}`}>
+        <article className="card">
+          {l.isClaimed && (
+            <span className="badge badge-sold">SOLGT</span>
+          )}
 
-  <div
-    onClick={() => setFilter('sold')}
-    className={`stat-tab ${filter === 'sold' ? 'active' : ''}`}
-  >
-    <strong>{soldListings}</strong>
-    <span>Solgte</span>
-  </div>
+          <div className="card-image">
+            {l.image_url && <img src={l.image_url} alt={l.title} />}
+          </div>
 
-</div>
+          <div className="card-body">
+            <h3>{l.title}</h3>
+          </div>
+        </article>
+      </Link>
+    ))}
+  </section>
 
+</main>
 
-      {currentUserId === profile.id && (
-        <EditProfileForm
-          profile={profile}
-          onSaved={(updated) =>
-            setProfile(p => ({ ...p, ...updated }))
-          }
-        />
-      )}
-
-      {/* LISTINGS */}
-      <section className="feed-grid">
-        {filteredListings.length === 0 && (
-          <p>Ingen opslag at vise</p>
-        )}
-
-        {filteredListings.map(l => {
-          const isSold = claimedIds.includes(l.id)
-
-          return (
-            <Link key={l.id} href={`/listings/${l.id}`}>
-              <article className="card">
-                {isSold && (
-                  <span className="badge badge-sold">SOLGT</span>
-                )}
-
-                {currentUserId === profile.id && (
-                  <div className="card-actions">
-                    <button
-                      className="card-action"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        window.location.href = `/listings/${l.id}/edit`
-                      }}
-                    >
-                      Rediger
-                    </button>
-
-                    <button
-                      className="card-action danger"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleDelete(l.id)
-                      }}
-                    >
-                      Slet
-                    </button>
-                  </div>
-                )}
-
-                <div className="card-image">
-                  {l.image_url && (
-                    <img src={l.image_url} alt={l.title} />
-                  )}
-                </div>
-
-                <div className="card-body">
-                  <h3>{l.title}</h3>
-                  {l.description && (
-                    <p>
-                      {l.description.length > 70
-                        ? `${l.description.slice(0, 70)}…`
-                        : l.description}
-                    </p>
-                  )}
-                </div>
-              </article>
-            </Link>
-          )
-        })}
-      </section>
-    </main>
   )
 }
