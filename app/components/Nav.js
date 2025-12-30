@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabaseClient'
 export default function Nav() {
   const pathname = usePathname()
   const [user, setUser] = useState(null)
+  const [username, setUsername] = useState(null) // ✅ NY
   const [menuOpen, setMenuOpen] = useState(false)
   const [notifCount, setNotifCount] = useState(0)
 
@@ -22,11 +23,26 @@ export default function Nav() {
     setNotifCount(count || 0)
   }
 
+  // 👤 hent username
+  const fetchUsername = async (userId) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', userId)
+      .single()
+
+    setUsername(data?.username ?? null)
+  }
+
   useEffect(() => {
     // initial load
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user)
-      if (data.user) fetchNotifications(data.user.id)
+
+      if (data.user) {
+        fetchNotifications(data.user.id)
+        fetchUsername(data.user.id) // ✅ NY
+      }
     })
 
     // auth changes
@@ -34,11 +50,17 @@ export default function Nav() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchNotifications(session.user.id)
-      else setNotifCount(0)
+
+      if (session?.user) {
+        fetchNotifications(session.user.id)
+        fetchUsername(session.user.id) // ✅ NY
+      } else {
+        setNotifCount(0)
+        setUsername(null)
+      }
     })
 
-    // 👂 LYTTER PÅ SAMME EVENT SOM NotificationsPage SENDER
+    // 👂 lytter på notifications updates
     const handler = () => {
       supabase.auth.getUser().then(({ data }) => {
         if (data?.user) fetchNotifications(data.user.id)
@@ -98,6 +120,16 @@ export default function Nav() {
       </Link>
 
       {user && <NotificationIcon />}
+
+      {/* 👤 PROFIL LINK */}
+      {user && username && (
+        <Link
+          href={`/u/${username}`}
+          className={pathname.startsWith('/u/') ? 'active' : ''}
+        >
+          Profil
+        </Link>
+      )}
 
       {!user ? (
         <Link href="/login" className={pathname === '/login' ? 'active' : ''}>
