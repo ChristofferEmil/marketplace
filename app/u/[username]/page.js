@@ -8,13 +8,19 @@ import EditProfileForm from './EditProfileForm'
 
 export default function UserProfilePage() {
   const { username } = useParams()
+
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+
   const [listings, setListings] = useState([])
+  const [claimedIds, setClaimedIds] = useState([])
+
   const [currentUserId, setCurrentUserId] = useState(null)
-  const [questionsForStats, setQuestionsForStats] = useState([])
 
+  // FILTER: alle | aktive | solgte
+  const [filter, setFilter] = useState('all')
 
+  /* ---------- DELETE ---------- */
   const handleDelete = async (listingId) => {
     const ok = confirm('Vil du slette dette opslag?')
     if (!ok) return
@@ -31,51 +37,45 @@ export default function UserProfilePage() {
     }
   }
 
-useEffect(() => {
-  if (!username) return
+  /* ---------- LOAD DATA ---------- */
+  useEffect(() => {
+    if (!username) return
+    setLoading(true)
 
-  setLoading(true)
+    supabase.auth.getUser().then(({ data }) => {
+      setCurrentUserId(data?.user?.id ?? null)
+    })
 
-  supabase.auth.getUser().then(({ data }) => {
-    setCurrentUserId(data?.user?.id ?? null)
-  })
-
-  const fetchProfile = async () => {
-    const { data: profileRows } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('username', username)
-      .limit(1)
-
-    const p = profileRows?.[0] || null
-    setProfile(p)
-
-    if (p) {
-      const { data: userListings } = await supabase
-        .from('listings')
+    const fetchProfile = async () => {
+      const { data: profileRows } = await supabase
+        .from('profiles')
         .select('*')
-        .eq('user_id', p.id)
-        .order('created_at', { ascending: false })
+        .eq('username', username)
+        .limit(1)
 
-      setListings(userListings || [])
+      const p = profileRows?.[0] || null
+      setProfile(p)
 
-      const listingIds = (userListings || []).map(l => l.id)
+      if (p) {
+        // LISTINGS
+        const { data: userListings } = await supabase
+          .from('listings')
+          .select('*')
+          .eq('user_id', p.id)
+          .order('created_at', { ascending: false })
 
-      if (listingIds.length) {
-        const { data: qs } = await supabase
-          .from('listing_questions')
-          .select('listing_id, created_at, user_id')
-          .in('listing_id', listingIds)
-          .order('created_at', { ascending: true })
+        setListings(userListings || [])
 
-        setQuestionsForStats(qs || [])
-      } else {
-        setQuestionsForStats([])
+        // CLAIMS → find solgte opslag
+        const { data: claims } = await supabase
+          .from('claims')
+          .select('listing_id')
+
+        setClaimedIds((claims || []).map(c => c.listing_id))
       }
-    }
 
-    setLoading(false)
-  }
+      setLoading(false)
+    }
 
     fetchProfile()
   }, [username])
@@ -92,94 +92,33 @@ useEffect(() => {
     )
   }
 
-  // ✅ TRUST / STATS (KORREKT PLACERING)
+  /* ---------- FILTER LOGIC ---------- */
+  const filteredListings = listings.filter(l => {
+    const isSold = claimedIds.includes(l.id)
+
+    if (filter === 'active') return !isSold
+    if (filter === 'sold') return isSold
+    return true // all
+  })
+
   const totalListings = listings.length
-  const activeListings = totalListings
-  const soldListings = 0
-  const memberYear = new Date(profile.created_at).getFullYear()
-  const isActiveSeller = totalListings >= 3 && activeListings >= 1
-
-
-const sellerId = profile.id
-
-// grupér spørgsmål pr. listing
-const byListing = {}
-questionsForStats.forEach(q => {
-  byListing[q.listing_id] = byListing[q.listing_id] || []
-  byListing[q.listing_id].push(q)
-})
-
-// find svar-par (spørgsmål -> sælgers svar)
-let replyTimes = []
-
-Object.values(byListing).forEach(list => {
-  for (let i = 0; i < list.length - 1; i++) {
-    const q = list[i]
-    const next = list[i + 1]
-
-    if (q.user_id !== sellerId && next.user_id === sellerId) {
-      const diff =
-        new Date(next.created_at) - new Date(q.created_at)
-      replyTimes.push(diff)
-    }
-  }
-})
-
-const avgReplyMs =
-  replyTimes.reduce((a, b) => a + b, 0) / (replyTimes.length || 1)
-
-const repliesFast =
-  replyTimes.length >= 3 && avgReplyMs <= 2 * 60 * 60 * 1000
-
+  const activeListings = listings.filter(
+    l => !claimedIds.includes(l.id)
+  ).length
+  const soldListings = listings.filter(
+    l => claimedIds.includes(l.id)
+  ).length
 
   return (
     <main className="page">
-      {profile.avatar_url && (
-        <img
-          src={`${profile.avatar_url}?t=${Date.now()}`}
-          alt={profile.username}
-          style={{ width: 96, height: 96, borderRadius: '50%' }}
-        />
-      )}
-
-      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-        {isActiveSeller && (
-          <span className="badge">🔥 Aktiv sælger</span>
-        )}
-      </div>
-
-      {repliesFast && (
-  <span className="badge">⚡ Svarer hurtigt</span>
-)}
-
-
-   {currentUserId && currentUserId !== profile.id && (
-  <button
-    className="primary"
-    onClick={() => {
-      window.location.href = '/inbox'
-    }}
-  >
-    Kontakt sælger
-  </button>
-)}
-
-
-
       <h1>{profile.username}</h1>
-
       {profile.city && <p>{profile.city}</p>}
       {profile.bio && <p>{profile.bio}</p>}
-
-      <p>
-        Medlem siden{' '}
-        {new Date(profile.created_at).toLocaleDateString('da-DK')}
-      </p>
 
       <div className="profile-stats">
         <div>
           <strong>{totalListings}</strong>
-          <span>Opslag</span>
+          <span>Alle</span>
         </div>
         <div>
           <strong>{activeListings}</strong>
@@ -187,72 +126,105 @@ const repliesFast =
         </div>
         <div>
           <strong>{soldListings}</strong>
-          <span>Solgt</span>
-        </div>
-        <div>
-          <strong>{memberYear}</strong>
-          <span>Medlem</span>
+          <span>Solgte</span>
         </div>
       </div>
 
+      {/* FILTER BUTTONS */}
+      <div style={{ display: 'flex', gap: 8, margin: '16px 0' }}>
+        <button
+          onClick={() => setFilter('all')}
+          className={filter === 'all' ? 'primary' : ''}
+        >
+          Alle
+        </button>
+        <button
+          onClick={() => setFilter('active')}
+          className={filter === 'active' ? 'primary' : ''}
+        >
+          Aktive
+        </button>
+        <button
+          onClick={() => setFilter('sold')}
+          className={filter === 'sold' ? 'primary' : ''}
+        >
+          Solgte
+        </button>
+      </div>
+
       {currentUserId === profile.id && (
-  <EditProfileForm
-    profile={profile}
-    onSaved={(updated) => setProfile(p => ({ ...p, ...updated }))}
-  />
-)}
+        <EditProfileForm
+          profile={profile}
+          onSaved={(updated) =>
+            setProfile(p => ({ ...p, ...updated }))
+          }
+        />
+      )}
 
-
+      {/* LISTINGS */}
       <section className="feed-grid">
-        {listings.length === 0 && <p>Ingen opslag endnu</p>}
+        {filteredListings.length === 0 && (
+          <p>Ingen opslag at vise</p>
+        )}
 
-        {listings.map(l => (
-          <Link key={l.id} href={`/listings/${l.id}`}>
-            <article className="card">
-              {currentUserId === profile.id && (
-                <div className="card-actions">
-                  <button
-                    className="card-action"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.location.href = `/listings/${l.id}/edit`
-                    }}
-                  >
-                    Rediger
-                  </button>
+        {filteredListings.map(l => {
+          const isSold = claimedIds.includes(l.id)
 
-                  <button
-                    className="card-action danger"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      handleDelete(l.id)
-                    }}
-                  >
-                    Slet
-                  </button>
-                </div>
-              )}
-
-              <div className="card-image">
-                {l.image_url && <img src={l.image_url} alt={l.title} />}
-              </div>
-
-              <div className="card-body">
-                <h3>{l.title}</h3>
-
-                {l.description && (
-                  <p>
-                    {l.description.length > 70
-                      ? `${l.description.slice(0, 70)}…`
-                      : l.description}
-                  </p>
+          return (
+            <Link key={l.id} href={`/listings/${l.id}`}>
+              <article className="card">
+                {isSold && (
+                  <span className="badge badge-sold">
+                    SOLGT
+                  </span>
                 )}
-              </div>
-            </article>
-          </Link>
-        ))}
+
+                {currentUserId === profile.id && (
+                  <div className="card-actions">
+                    <button
+                      className="card-action"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        window.location.href = `/listings/${l.id}/edit`
+                      }}
+                    >
+                      Rediger
+                    </button>
+
+                    <button
+                      className="card-action danger"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleDelete(l.id)
+                      }}
+                    >
+                      Slet
+                    </button>
+                  </div>
+                )}
+
+                <div className="card-image">
+                  {l.image_url && (
+                    <img src={l.image_url} alt={l.title} />
+                  )}
+                </div>
+
+                <div className="card-body">
+                  <h3>{l.title}</h3>
+                  {l.description && (
+                    <p>
+                      {l.description.length > 70
+                        ? `${l.description.slice(0, 70)}…`
+                        : l.description}
+                    </p>
+                  )}
+                </div>
+              </article>
+            </Link>
+          )
+        })}
       </section>
     </main>
   )
