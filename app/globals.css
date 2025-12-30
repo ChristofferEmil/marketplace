@@ -1818,3 +1818,18 @@ button.primary {
     margin-left: 240px; /* samme bredde som sidebar */
   }
 }
+
+/* =========================
+   PROFILE PAGE – DESKTOP LAYOUT FIX
+========================= */
+
+@media (min-width: 1024px) {
+  .profile-page {
+    width: 100%;
+  }
+
+  /* ophæv centering fra app-content */
+  .app-content:has(.profile-page) {
+    justify-content: flex-start;
+  }
+}
