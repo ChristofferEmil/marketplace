@@ -1814,8 +1814,7 @@ button.primary {
     padding-left: 0;
     padding-right: 0;
 
-    /* starter efter sidebar */
-    margin-left: 240px; /* samme bredde som sidebar */
+    
   }
 }
 
