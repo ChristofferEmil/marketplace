@@ -1847,6 +1847,6 @@ button.primary {
 
   /* Profil fylder resten af skærmen */
   .profile-page {
-    width: calc(100vw - 240px); /* sidebar width */
+    width: calc(100vw - 220px); /* sidebar width */
   }
 }
