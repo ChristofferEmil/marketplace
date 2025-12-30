@@ -16,28 +16,8 @@ export default function UserProfilePage() {
   const [claimedIds, setClaimedIds] = useState([])
 
   const [currentUserId, setCurrentUserId] = useState(null)
-
-  // FILTER: all | active | sold
   const [filter, setFilter] = useState('all')
 
-  /* ---------- DELETE ---------- */
-  const handleDelete = async (listingId) => {
-    const ok = confirm('Vil du slette dette opslag?')
-    if (!ok) return
-
-    const { error } = await supabase
-      .from('listings')
-      .delete()
-      .eq('id', listingId)
-
-    if (!error) {
-      setListings(prev => prev.filter(l => l.id !== listingId))
-    } else {
-      alert('Kunne ikke slette opslag')
-    }
-  }
-
-  /* ---------- LOAD DATA ---------- */
   useEffect(() => {
     if (!username) return
 
@@ -79,19 +59,9 @@ export default function UserProfilePage() {
     fetchProfile()
   }, [username])
 
-  if (loading) {
-    return <main className="page">Loader…</main>
-  }
+  if (loading) return <main className="page">Loader…</main>
+  if (!profile) return <main className="page">Profil ikke fundet</main>
 
-  if (!profile) {
-    return (
-      <main className="page">
-        <h1>Profil ikke fundet</h1>
-      </main>
-    )
-  }
-
-  /* ---------- FILTER LOGIC ---------- */
   const filteredListings = listings.filter(l => {
     const isSold = claimedIds.includes(l.id)
     if (filter === 'active') return !isSold
@@ -99,98 +69,105 @@ export default function UserProfilePage() {
     return true
   })
 
-  const totalListings = listings.length
-  const activeListings = listings.filter(
-    l => !claimedIds.includes(l.id)
-  ).length
-  const soldListings = listings.filter(
-    l => claimedIds.includes(l.id)
-  ).length
-
   return (
     <main className="profile-page">
 
-  {/* HERO */}
-  <div className="profile-hero" />
+      {/* HERO */}
+      <div className="profile-hero" />
 
-  {/* HEADER */}
-  <section className="profile-header">
-    <div className="profile-left">
-      <img
-        className="profile-avatar"
-        src={profile.avatar_url}
-        alt={profile.username}
-      />
+      {/* HEADER */}
+      <section className="profile-header">
+        <div className="profile-left">
 
-      <div className="profile-meta">
-        <h1 className="profile-name">{profile.name}</h1>
-        <div className="profile-username">@{profile.username}</div>
-        <div className="profile-member">
-          Medlem siden{' '}
-          {new Date(profile.created_at).toLocaleDateString('da-DK', {
-            month: 'long',
-            year: 'numeric',
-          })}
-        </div>
-      </div>
-    </div>
-
-    <button className="follow-btn">
-      Følg
-    </button>
-  </section>
-
-  {/* BIO */}
-  {profile.bio && (
-    <section className="profile-bio">
-      {profile.bio}
-    </section>
-  )}
-
-  {/* TABS */}
-  <div className="profile-tabs">
-    <button
-      className={`tab ${filter === 'all' ? 'active' : ''}`}
-      onClick={() => setFilter('all')}
-    >
-      Annoncer
-    </button>
-    <button
-      className={`tab ${filter === 'active' ? 'active' : ''}`}
-      onClick={() => setFilter('active')}
-    >
-      Aktive
-    </button>
-    <button
-      className={`tab ${filter === 'sold' ? 'active' : ''}`}
-      onClick={() => setFilter('sold')}
-    >
-      Solgte
-    </button>
-  </div>
-
-  {/* LISTINGS GRID */}
-  <section className="profile-grid">
-    {filteredListings.map(l => (
-      <Link key={l.id} href={`/listings/${l.id}`}>
-        <article className="card">
-          {l.isClaimed && (
-            <span className="badge badge-sold">SOLGT</span>
+          {profile.avatar_url ? (
+            <img
+              className="profile-avatar"
+              src={profile.avatar_url}
+              alt={profile.username}
+            />
+          ) : (
+            <div className="profile-avatar placeholder">
+              {profile.username[0].toUpperCase()}
+            </div>
           )}
 
-          <div className="card-image">
-            {l.image_url && <img src={l.image_url} alt={l.title} />}
+          <div className="profile-meta">
+            <h1 className="profile-name">{profile.username}</h1>
+            <div className="profile-username">@{profile.username}</div>
+            <div className="profile-member">
+              Medlem siden{' '}
+              {new Date(profile.created_at).toLocaleDateString('da-DK', {
+                month: 'long',
+                year: 'numeric',
+              })}
+            </div>
           </div>
+        </div>
 
-          <div className="card-body">
-            <h3>{l.title}</h3>
-          </div>
-        </article>
-      </Link>
-    ))}
-  </section>
+        <button className="follow-btn">Følg</button>
+      </section>
 
-</main>
+      {profile.bio && (
+        <section className="profile-bio">
+          {profile.bio}
+        </section>
+      )}
 
+      {/* TABS */}
+      <div className="profile-tabs">
+        {['all', 'active', 'sold'].map(t => (
+          <button
+            key={t}
+            onClick={() => setFilter(t)}
+            className={`tab ${filter === t ? 'active' : ''}`}
+          >
+            {t === 'all' ? 'Annoncer' : t === 'active' ? 'Aktive' : 'Solgte'}
+          </button>
+        ))}
+      </div>
+
+      {/* GRID */}
+      <section className="profile-grid">
+        {filteredListings.map(l => {
+          const isSold = claimedIds.includes(l.id)
+
+          return (
+            <Link key={l.id} href={`/listings/${l.id}`}>
+              <article className="card">
+                {isSold && <span className="badge badge-sold">SOLGT</span>}
+
+                <div className="card-image">
+                  {l.image_url && <img src={l.image_url} alt={l.title} />}
+                </div>
+
+                <div className="card-body">
+                  <h3>{l.title}</h3>
+                </div>
+              </article>
+            </Link>
+          )
+        })}
+      </section>
+
+    </main>
   )
+}
+
+.profile-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  margin-top: -40px;
+  background: #1f2336;
+  border-radius: 16px;
+}
+
+.profile-avatar.placeholder {
+  background: #2a2f45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
 }
