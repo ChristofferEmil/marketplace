@@ -1833,3 +1833,20 @@ button.primary {
     justify-content: flex-start;
   }
 }
+
+/* =========================
+   PROFILE PAGE – REMOVE EXTRA LEFT GAP (DESKTOP)
+========================= */
+
+@media (min-width: 1024px) {
+  /* Fjern ekstra venstre margin */
+  .app-content:has(.profile-page) {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  /* Profil fylder resten af skærmen */
+  .profile-page {
+    width: calc(100vw - 240px); /* sidebar width */
+  }
+}
