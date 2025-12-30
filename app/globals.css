@@ -1802,3 +1802,19 @@ button.primary {
   justify-content: center;
   font-weight: 600;
 }
+
+/* =========================
+   PROFILE PAGE – DESKTOP FULL WIDTH
+========================= */
+
+@media (min-width: 1024px) {
+  .profile-page {
+    max-width: none;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+
+    /* starter efter sidebar */
+    margin-left: 240px; /* samme bredde som sidebar */
+  }
+}
