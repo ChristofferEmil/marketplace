@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
-
 function timeAgo(date) {
   const seconds = Math.floor((Date.now() - new Date(date)) / 1000)
   const intervals = [
@@ -23,25 +22,21 @@ function timeAgo(date) {
   return 'lige nu'
 }
 
-
 export default function ListingDetailPage() {
   const { id } = useParams()
   const bottomRef = useRef(null)
 
   const [listing, setListing] = useState(null)
-  const [messages, setMessages] = useState([])
-  const [text, setText] = useState('')
   const [user, setUser] = useState(null)
 
-  const [isClaimed, setIsClaimed] = useState(false)
-  const [claimLoading, setClaimLoading] = useState(false)
+  const [messages, setMessages] = useState([])
+  const [text, setText] = useState('')
 
   const [questions, setQuestions] = useState([])
   const [questionText, setQuestionText] = useState('')
 
-  const isDesktop =
-    typeof window !== 'undefined' && window.innerWidth >= 769
-  const [showChat, setShowChat] = useState(isDesktop)
+  const [isClaimed, setIsClaimed] = useState(false)
+  const [claimLoading, setClaimLoading] = useState(false)
 
   const isOwner = user && listing && user.id === listing.user_id
 
@@ -50,7 +45,7 @@ export default function ListingDetailPage() {
     if (!id) return
 
     supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user)
+      setUser(data?.user ?? null)
     })
 
     supabase
@@ -68,6 +63,13 @@ export default function ListingDetailPage() {
       .then(({ data }) => setMessages(data || []))
 
     supabase
+      .from('listing_questions')
+      .select('*')
+      .eq('listing_id', id)
+      .order('created_at', { ascending: true })
+      .then(({ data }) => setQuestions(data || []))
+
+    supabase
       .from('claims')
       .select('id')
       .eq('listing_id', id)
@@ -81,38 +83,19 @@ export default function ListingDetailPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  /* ---------- Q&A TOGGLE ---------- */
+  async function toggleQaClosed() {
+    const { data, error } = await supabase
+      .from('listings')
+      .update({ qa_closed: !listing.qa_closed })
+      .eq('id', listing.id)
+      .select()
+      .single()
 
+    if (!error) setListing(data)
+  }
 
-
-{listing.qa_closed && (
-  <span className="badge">Besvaret</span>
-)}
-
-{user?.id === listing.user_id && (
-  <button
-    className="secondary"
-    onClick={toggleQaClosed}
-    style={{ marginLeft: 8 }}
-  >
-    {listing.qa_closed ? 'Genåbn Q&A' : 'Markér som besvaret'}
-  </button>
-)}
-
-
-
-  /* ---------- LOAD Q&A ---------- */
-  useEffect(() => {
-    if (!listing?.id) return
-
-    supabase
-      .from('listing_questions')
-      .select('*')
-      .eq('listing_id', listing.id)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => setQuestions(data || []))
-  }, [listing?.id])
-
-  /* ---------- SEND QUESTION ---------- */
+  /* ---------- SUBMIT QUESTION ---------- */
   async function submitQuestion(e) {
     e.preventDefault()
     if (!questionText.trim() || !user) return
@@ -127,15 +110,14 @@ export default function ListingDetailPage() {
 
     if (!error) {
       setQuestions(q => [
-  ...q,
-  {
-    id: crypto.randomUUID(),
-    text: questionText,
-    created_at: new Date().toISOString(),
-    user_id: user.id, // ⭐ VIGTIG
-  },
-])
-
+        ...q,
+        {
+          id: crypto.randomUUID(),
+          text: questionText,
+          created_at: new Date().toISOString(),
+          user_id: user.id,
+        },
+      ])
       setQuestionText('')
     }
   }
@@ -190,20 +172,6 @@ export default function ListingDetailPage() {
     )
   }
 
-
-async function toggleQaClosed() {
-  const { data, error } = await supabase
-    .from('listings')
-    .update({ qa_closed: !listing.qa_closed })
-    .eq('id', listing.id)
-    .select()
-    .single()
-
-  if (!error) setListing(data)
-}
-
-
-
   return (
     <main className="page page-detail hide-bottom-nav">
       {/* IMAGE */}
@@ -216,46 +184,44 @@ async function toggleQaClosed() {
       {/* DETAILS */}
       <section className="detail-content">
         <h1>{listing.title}</h1>
-
-        <p className="detail-description">{listing.description}</p>
+        {listing.description && (
+          <p className="detail-description">{listing.description}</p>
+        )}
       </section>
 
       {/* Q&A */}
       <section style={{ marginTop: 32 }}>
         <h3>Spørgsmål & svar</h3>
 
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          {listing.qa_closed && <span className="badge">Besvaret</span>}
+
+          {isOwner && (
+            <button className="secondary" onClick={toggleQaClosed}>
+              {listing.qa_closed ? 'Genåbn Q&A' : 'Markér som besvaret'}
+            </button>
+          )}
+        </div>
+
         {questions.length === 0 && <p>Ingen spørgsmål endnu</p>}
 
         {questions.map(q => {
-  const isSeller = q.user_id === listing.user_id
+          const isSeller = q.user_id === listing.user_id
 
-  return (
-    <div key={q.id} style={{ marginBottom: 12 }}>
-      <p>{q.text}</p>
+          return (
+            <div key={q.id} style={{ marginBottom: 12 }}>
+              <p>{q.text}</p>
 
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <small>{timeAgo(q.created_at)}</small>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <small>{timeAgo(q.created_at)}</small>
+                {isSeller && <span className="badge">Sælger</span>}
+              </div>
+            </div>
+          )
+        })}
 
-
-        {isSeller && (
-          <span className="badge">Sælger</span>
-        )}
-      </div>
-    </div>
-  )
-})}
-
-
-       {user && !listing.qa_closed ? (
-  <form onSubmit={submitQuestion}>
-
-    ) : (
-  <p style={{ opacity: 0.7 }}>
-    Q&A er markeret som besvaret.
-  </p>
-)}
-
-
+        {user && !listing.qa_closed ? (
+          <form onSubmit={submitQuestion}>
             <textarea
               value={questionText}
               onChange={e => setQuestionText(e.target.value)}
@@ -264,6 +230,10 @@ async function toggleQaClosed() {
             />
             <button type="submit">Send spørgsmål</button>
           </form>
+        ) : (
+          <p style={{ opacity: 0.7 }}>
+            Q&A er markeret som besvaret.
+          </p>
         )}
       </section>
 
@@ -296,6 +266,23 @@ async function toggleQaClosed() {
         />
         <button onClick={send} disabled={!user || !text}>
           Send
+        </button>
+      </div>
+
+      {/* CLAIM */}
+      <div style={{ marginTop: 16 }}>
+        <button
+          className="action-btn primary"
+          onClick={handleClaim}
+          disabled={isOwner || isClaimed || claimLoading}
+        >
+          {isOwner
+            ? 'Dit opslag'
+            : isClaimed
+            ? 'Allerede claimed'
+            : claimLoading
+            ? 'Claimer…'
+            : 'Claim'}
         </button>
       </div>
     </main>
