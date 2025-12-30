@@ -137,6 +137,16 @@ export default function ListingDetailPage() {
       return
     }
 
+
+await supabase.from('notifications').insert({
+  user_id: seller_id,
+  listing_id,
+  type: 'claim',
+  is_read: false,
+})
+
+
+
     setClaimLoading(true)
 
     const { error } = await supabase
@@ -154,6 +164,8 @@ export default function ListingDetailPage() {
     setClaimLoading(false)
   }
 
+  
+
   if (!listing) {
     return (
       <main className="page">
@@ -161,6 +173,9 @@ export default function ListingDetailPage() {
       </main>
     )
   }
+
+
+  
 
   return (
     <main className="page page-detail hide-bottom-nav">
