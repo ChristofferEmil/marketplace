@@ -17,7 +17,7 @@ export default function UserProfilePage() {
 
   const [currentUserId, setCurrentUserId] = useState(null)
 
-  // FILTER: alle | aktive | solgte
+  // FILTER: all | active | sold
   const [filter, setFilter] = useState('all')
 
   /* ---------- DELETE ---------- */
@@ -40,6 +40,7 @@ export default function UserProfilePage() {
   /* ---------- LOAD DATA ---------- */
   useEffect(() => {
     if (!username) return
+
     setLoading(true)
 
     supabase.auth.getUser().then(({ data }) => {
@@ -57,7 +58,6 @@ export default function UserProfilePage() {
       setProfile(p)
 
       if (p) {
-        // LISTINGS
         const { data: userListings } = await supabase
           .from('listings')
           .select('*')
@@ -66,7 +66,6 @@ export default function UserProfilePage() {
 
         setListings(userListings || [])
 
-        // CLAIMS → find solgte opslag
         const { data: claims } = await supabase
           .from('claims')
           .select('listing_id')
@@ -95,10 +94,9 @@ export default function UserProfilePage() {
   /* ---------- FILTER LOGIC ---------- */
   const filteredListings = listings.filter(l => {
     const isSold = claimedIds.includes(l.id)
-
     if (filter === 'active') return !isSold
     if (filter === 'sold') return isSold
-    return true // all
+    return true
   })
 
   const totalListings = listings.length
@@ -111,45 +109,49 @@ export default function UserProfilePage() {
 
   return (
     <main className="page">
+      {/* AVATAR */}
+      {profile.avatar_url && (
+        <img
+          src={`${profile.avatar_url}?t=${Date.now()}`}
+          alt={profile.username}
+          style={{ width: 96, height: 96, borderRadius: '50%' }}
+        />
+      )}
+
+      {/* BADGES */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        {totalListings >= 3 && activeListings >= 1 && (
+          <span className="badge">🔥 Aktiv sælger</span>
+        )}
+      </div>
+
       <h1>{profile.username}</h1>
       {profile.city && <p>{profile.city}</p>}
       {profile.bio && <p>{profile.bio}</p>}
 
+      <p>
+        Medlem siden{' '}
+        {new Date(profile.created_at).toLocaleDateString('da-DK')}
+      </p>
+
+      {/* STATS = FILTER BUTTONS */}
       <div className="profile-stats">
-        <div>
+        <div onClick={() => setFilter('all')} style={{ cursor: 'pointer' }}>
           <strong>{totalListings}</strong>
           <span>Alle</span>
         </div>
-        <div>
+        <div onClick={() => setFilter('active')} style={{ cursor: 'pointer' }}>
           <strong>{activeListings}</strong>
           <span>Aktive</span>
         </div>
-        <div>
+        <div onClick={() => setFilter('sold')} style={{ cursor: 'pointer' }}>
           <strong>{soldListings}</strong>
           <span>Solgte</span>
         </div>
-      </div>
-
-      {/* FILTER BUTTONS */}
-      <div style={{ display: 'flex', gap: 8, margin: '16px 0' }}>
-        <button
-          onClick={() => setFilter('all')}
-          className={filter === 'all' ? 'primary' : ''}
-        >
-          Alle
-        </button>
-        <button
-          onClick={() => setFilter('active')}
-          className={filter === 'active' ? 'primary' : ''}
-        >
-          Aktive
-        </button>
-        <button
-          onClick={() => setFilter('sold')}
-          className={filter === 'sold' ? 'primary' : ''}
-        >
-          Solgte
-        </button>
+        <div>
+          <strong>{new Date(profile.created_at).getFullYear()}</strong>
+          <span>Medlem</span>
+        </div>
       </div>
 
       {currentUserId === profile.id && (
@@ -174,9 +176,7 @@ export default function UserProfilePage() {
             <Link key={l.id} href={`/listings/${l.id}`}>
               <article className="card">
                 {isSold && (
-                  <span className="badge badge-sold">
-                    SOLGT
-                  </span>
+                  <span className="badge badge-sold">SOLGT</span>
                 )}
 
                 {currentUserId === profile.id && (
