@@ -1662,4 +1662,10 @@ button.primary {
   background: #1f2336;
 }
 
+/* PROFILE: member since text */
+.member-since {
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.65;
+}
 

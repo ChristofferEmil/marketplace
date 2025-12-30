@@ -126,6 +126,13 @@ export default function UserProfilePage() {
       </div>
 
       <h1>{profile.username}</h1>
+<p className="member-since">
+  Medlem siden {new Date(profile.created_at).toLocaleDateString('da-DK', {
+    month: 'long',
+    year: 'numeric',
+  })}
+</p>
+
       {profile.city && <p>{profile.city}</p>}
       {profile.bio && <p>{profile.bio}</p>}
 
@@ -160,10 +167,6 @@ export default function UserProfilePage() {
     <span>Solgte</span>
   </div>
 
-  <div className="stat-tab disabled">
-    <strong>{new Date(profile.created_at).getFullYear()}</strong>
-    <span>Medlem</span>
-  </div>
 </div>
 
 
