@@ -1620,46 +1620,5 @@ button.primary {
   z-index: 2;
 }
 
-/* PROFILE FILTER TABS */
-.stat-tab {
-  cursor: pointer;
-  padding: 10px 12px;
-  border-radius: 12px;
-  transition: background 0.2s ease, color 0.2s ease;
-  background: #1f2336;
-}
-
-.stat-tab:hover {
-  background: #2a2f45;
-}
-
-.stat-tab.active {
-  background: #2a2f45;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
-}
-
-.stat-tab.active span {
-  opacity: 1;
-}
-
-.stat-tab span {
-  display: block;
-  font-size: 12px;
-  opacity: 0.7;
-}
-
-.stat-tab strong {
-  font-size: 16px;
-}
-
-/* Ikke-klikbar (fx Medlem) */
-.stat-tab.disabled {
-  cursor: default;
-  opacity: 0.6;
-}
-
-.stat-tab.disabled:hover {
-  background: #1f2336;
-}
 
 
