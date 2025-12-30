@@ -1763,3 +1763,11 @@ button.primary {
   opacity: 1;
 }
 
+/* GRID */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* ✅ 2 kolonner på mobil */
+  gap: 12px;
+  padding: 0 12px 24px;
+}
+
