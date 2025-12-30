@@ -285,6 +285,12 @@ textarea {
   font-weight: 500;
 }
 
+
+.nav-icon svg {
+  display: block;
+}
+
+
 /* =========================
    APP HERO (HOME)
 ========================= */
@@ -1535,3 +1541,264 @@ body.filter-open {
 }
 
 
+.card-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.card-action {
+  font-size: 12px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.card-action.danger {
+  background: rgba(180,0,0,0.7);
+}
+
+.badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #2a2f45;
+  color: #cfd3ff;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.profile-stats div {
+  background: #1f2336;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.profile-stats strong {
+  display: block;
+  font-size: 18px;
+}
+
+.profile-stats span {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+button.primary {
+  background: #6b7cff;
+  color: #0b0f2a;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 600;
+  margin: 8px 0 12px;
+}
+
+
+/* BADGE: SOLGT */
+.badge-sold {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #2a2f45;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+/* PROFILE FILTER TABS */
+.stat-tab {
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background 0.2s ease, color 0.2s ease;
+  background: #1f2336;
+}
+
+.stat-tab:hover {
+  background: #2a2f45;
+}
+
+.stat-tab.active {
+  background: #2a2f45;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+}
+
+.stat-tab.active span {
+  opacity: 1;
+}
+
+.stat-tab span {
+  display: block;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.stat-tab strong {
+  font-size: 16px;
+}
+
+/* Ikke-klikbar (fx Medlem) */
+.stat-tab.disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.stat-tab.disabled:hover {
+  background: #1f2336;
+}
+
+/* PROFILE: member since text */
+.member-since {
+  margin-top: 4px;
+  font-size: 13px;
+  opacity: 0.65;
+}
+
+
+/* PAGE */
+.profile-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* HERO */
+.profile-hero {
+  height: 160px;
+  background: linear-gradient(135deg, #1f2336, #2a2f45);
+}
+
+/* HEADER */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+}
+
+.profile-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-meta {
+  line-height: 1.2;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 20px;
+}
+
+.profile-username {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.profile-member {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+.follow-btn {
+  background: #2a2f45;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #fff;
+  font-size: 14px;
+}
+
+/* BIO */
+.profile-bio {
+  padding: 0 16px;
+  margin-bottom: 16px;
+  opacity: 0.85;
+  max-width: 600px;
+}
+
+/* TABS */
+.profile-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.profile-tabs .tab {
+  background: #1f2336;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #fff;
+  opacity: 0.7;
+}
+
+.profile-tabs .tab.active {
+  background: #2a2f45;
+  opacity: 1;
+}
+
+/* GRID */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* ✅ 2 kolonner på mobil */
+  gap: 12px;
+  padding: 0 12px 24px;
+}
+
+/* DESKTOP */
+@media (min-width: 900px) {
+  .profile-hero {
+    height: 240px;
+  }
+
+  .profile-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+
+.profile-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  margin-top: -40px;
+  background: #1f2336;
+  border-radius: 16px;
+}
+
+.profile-avatar.placeholder {
+  background: #2a2f45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
