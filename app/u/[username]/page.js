@@ -136,23 +136,36 @@ export default function UserProfilePage() {
 
       {/* STATS = FILTER BUTTONS */}
       <div className="profile-stats">
-        <div onClick={() => setFilter('all')} style={{ cursor: 'pointer' }}>
-          <strong>{totalListings}</strong>
-          <span>Alle</span>
-        </div>
-        <div onClick={() => setFilter('active')} style={{ cursor: 'pointer' }}>
-          <strong>{activeListings}</strong>
-          <span>Aktive</span>
-        </div>
-        <div onClick={() => setFilter('sold')} style={{ cursor: 'pointer' }}>
-          <strong>{soldListings}</strong>
-          <span>Solgte</span>
-        </div>
-        <div>
-          <strong>{new Date(profile.created_at).getFullYear()}</strong>
-          <span>Medlem</span>
-        </div>
-      </div>
+  <div
+    onClick={() => setFilter('all')}
+    className={`stat-tab ${filter === 'all' ? 'active' : ''}`}
+  >
+    <strong>{totalListings}</strong>
+    <span>Alle</span>
+  </div>
+
+  <div
+    onClick={() => setFilter('active')}
+    className={`stat-tab ${filter === 'active' ? 'active' : ''}`}
+  >
+    <strong>{activeListings}</strong>
+    <span>Aktive</span>
+  </div>
+
+  <div
+    onClick={() => setFilter('sold')}
+    className={`stat-tab ${filter === 'sold' ? 'active' : ''}`}
+  >
+    <strong>{soldListings}</strong>
+    <span>Solgte</span>
+  </div>
+
+  <div className="stat-tab disabled">
+    <strong>{new Date(profile.created_at).getFullYear()}</strong>
+    <span>Medlem</span>
+  </div>
+</div>
+
 
       {currentUserId === profile.id && (
         <EditProfileForm
