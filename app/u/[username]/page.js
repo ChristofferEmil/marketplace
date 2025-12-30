@@ -153,21 +153,3 @@ export default function UserProfilePage() {
   )
 }
 
-.profile-page {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.profile-header {
-  margin-top: -40px;
-  background: #1f2336;
-  border-radius: 16px;
-}
-
-.profile-avatar.placeholder {
-  background: #2a2f45;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-}
