@@ -1833,7 +1833,7 @@ button.primary {
   /* Kontrolleret bredde + luft */
   .profile-page {
     width: 100%;
-    max-width: 1200px;        /* 👈 justér her */
+    max-width: 900px;        /* 👈 justér her */
     margin-left: 240px;       /* sidebar */
     margin-right: auto;
     padding-left: 24px;
