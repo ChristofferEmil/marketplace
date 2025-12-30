@@ -18,6 +18,10 @@ export default function UserProfilePage() {
   const [currentUserId, setCurrentUserId] = useState(null)
   const [filter, setFilter] = useState('all')
 
+  // FOLLOW STATE
+const [isFollowing, setIsFollowing] = useState(false)
+
+
   useEffect(() => {
     if (!username) return
 
@@ -52,6 +56,19 @@ export default function UserProfilePage() {
 
         setClaimedIds((claims || []).map(c => c.listing_id))
       }
+
+      // TRIN 1: tjek om current user følger denne profil
+if (currentUserId && currentUserId !== p.id) {
+  const { data } = await supabase
+    .from('followers')
+    .select('id')
+    .eq('follower_id', currentUserId)
+    .eq('following_id', p.id)
+    .maybeSingle()
+
+  setIsFollowing(!!data)
+}
+
 
       setLoading(false)
     }
