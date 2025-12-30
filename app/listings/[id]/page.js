@@ -83,17 +83,7 @@ export default function ListingDetailPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  /* ---------- Q&A TOGGLE ---------- */
-  async function toggleQaClosed() {
-    const { data, error } = await supabase
-      .from('listings')
-      .update({ qa_closed: !listing.qa_closed })
-      .eq('id', listing.id)
-      .select()
-      .single()
-
-    if (!error) setListing(data)
-  }
+ 
 
   /* ---------- SUBMIT QUESTION ---------- */
   async function submitQuestion(e) {
@@ -193,15 +183,7 @@ export default function ListingDetailPage() {
       <section style={{ marginTop: 32 }}>
         <h3>Spørgsmål & svar</h3>
 
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-          {listing.qa_closed && <span className="badge">Besvaret</span>}
-
-          {isOwner && (
-            <button className="secondary" onClick={toggleQaClosed}>
-              {listing.qa_closed ? 'Genåbn Q&A' : 'Markér som besvaret'}
-            </button>
-          )}
-        </div>
+        
 
         {questions.length === 0 && <p>Ingen spørgsmål endnu</p>}
 
