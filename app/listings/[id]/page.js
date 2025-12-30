@@ -83,12 +83,10 @@ export default function ListingDetailPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
- 
-
   /* ---------- SUBMIT QUESTION ---------- */
   async function submitQuestion(e) {
     e.preventDefault()
-    if (!questionText.trim() || !user) return
+    if (!questionText.trim() || !user || !listing) return
 
     const { error } = await supabase
       .from('listing_questions')
@@ -126,55 +124,52 @@ export default function ListingDetailPage() {
       .select()
       .single()
 
-    setMessages(prev => [...prev, data])
-    setText('')
+    if (data) {
+      setMessages(prev => [...prev, data])
+      setText('')
+    }
   }
 
   /* ---------- CLAIM ---------- */
-async function handleClaim() {
-  if (!user) {
-    alert('Du skal være logget ind for at claime')
-    return
-  }
+  async function handleClaim() {
+    if (!user || !listing) return
 
-  setClaimLoading(true)
+    setClaimLoading(true)
 
-  // 1️⃣ Opret claim FØRST
-  const { error: claimError } = await supabase
-    .from('claims')
-    .insert({
-      listing_id: id,
-      claimer_id: user.id,
-    })
+    const { error: claimError } = await supabase
+      .from('claims')
+      .insert({
+        listing_id: id,
+        claimer_id: user.id,
+      })
 
-  if (claimError) {
-    console.error('Claim error:', claimError)
-    alert('Kunne ikke claime opslaget')
-    setClaimLoading(false)
-    return
-  }
+    if (claimError) {
+      console.error(claimError)
+      alert('Kunne ikke claime opslaget')
+      setClaimLoading(false)
+      return
+    }
 
-  // 2️⃣ Opret notification TIL SÆLGER
-  const { error: notifError } = await supabase
-    .from('notifications')
-    .insert({
-      user_id: listing.user_id, // 🔴 VIGTIGT: sælgerens id
+    await supabase.from('notifications').insert({
+      user_id: listing.user_id,
       listing_id: id,
       type: 'claim',
       is_read: false,
     })
 
-  if (notifError) {
-    console.error('Notification error:', notifError)
+    setIsClaimed(true)
+    setClaimLoading(false)
+    alert('Kortet er nu claimed. Skriv til sælgeren i chatten.')
   }
 
-  setIsClaimed(true)
-  alert('Kortet er nu claimed. Skriv til sælgeren i chatten.')
-  setClaimLoading(false)
-}
-
-
-  
+  /* ---------- GUARD ---------- */
+  if (!listing) {
+    return (
+      <main className="page">
+        <p>Loading…</p>
+      </main>
+    )
+  }
 
   return (
     <main className="page page-detail hide-bottom-nav">
@@ -197,8 +192,6 @@ async function handleClaim() {
       <section style={{ marginTop: 32 }}>
         <h3>Spørgsmål & svar</h3>
 
-        
-
         {questions.length === 0 && <p>Ingen spørgsmål endnu</p>}
 
         {questions.map(q => {
@@ -207,7 +200,6 @@ async function handleClaim() {
           return (
             <div key={q.id} style={{ marginBottom: 12 }}>
               <p>{q.text}</p>
-
               <div style={{ display: 'flex', gap: 8 }}>
                 <small>{timeAgo(q.created_at)}</small>
                 {isSeller && <span className="badge">Sælger</span>}
@@ -227,17 +219,15 @@ async function handleClaim() {
             <button type="submit">Send spørgsmål</button>
           </form>
         ) : (
-         <p style={{ opacity: 0.7 }}>
-  Opslaget er solgt – Q&A er lukket.
-</p>
-
+          <p style={{ opacity: 0.7 }}>
+            Opslaget er solgt – Q&A er lukket.
+          </p>
         )}
       </section>
 
       {/* CHAT */}
       <section className="card card-detail chat-card">
         <strong>Chat</strong>
-
         <div className="chat chat-scroll">
           {messages.map(m => (
             <div
