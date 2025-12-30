@@ -69,6 +69,30 @@ if (currentUserId && currentUserId !== p.id) {
   setIsFollowing(!!data)
 }
 
+// TRIN 2: follow / unfollow
+async function handleFollow() {
+  if (!currentUserId || !profile) return
+
+  if (isFollowing) {
+    // unfollow
+    await supabase
+      .from('followers')
+      .delete()
+      .eq('follower_id', currentUserId)
+      .eq('following_id', profile.id)
+
+    setIsFollowing(false)
+  } else {
+    // follow
+    await supabase.from('followers').insert({
+      follower_id: currentUserId,
+      following_id: profile.id,
+    })
+
+    setIsFollowing(true)
+  }
+}
+
 
       setLoading(false)
     }
@@ -121,7 +145,12 @@ if (currentUserId && currentUserId !== p.id) {
           </div>
         </div>
 
-        <button className="follow-btn">Følg</button>
+        {currentUserId && currentUserId !== profile.id && (
+  <button className="follow-btn" onClick={handleFollow}>
+    {isFollowing ? 'Følger' : 'Følg'}
+  </button>
+)}
+
       </section>
 
       {profile.bio && (
