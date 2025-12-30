@@ -220,7 +220,7 @@ export default function ListingDetailPage() {
           )
         })}
 
-        {user && !listing.qa_closed ? (
+        {user && !isClaimed ? (
           <form onSubmit={submitQuestion}>
             <textarea
               value={questionText}
@@ -231,9 +231,10 @@ export default function ListingDetailPage() {
             <button type="submit">Send spørgsmål</button>
           </form>
         ) : (
-          <p style={{ opacity: 0.7 }}>
-            Q&A er markeret som besvaret.
-          </p>
+         <p style={{ opacity: 0.7 }}>
+  Opslaget er solgt – Q&A er lukket.
+</p>
+
         )}
       </section>
 
