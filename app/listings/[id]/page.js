@@ -131,48 +131,47 @@ export default function ListingDetailPage() {
   }
 
   /* ---------- CLAIM ---------- */
-  async function handleClaim() {
-    if (!user) {
-      alert('Du skal være logget ind for at claime')
-      return
-    }
+async function handleClaim() {
+  if (!user) {
+    alert('Du skal være logget ind for at claime')
+    return
+  }
 
+  setClaimLoading(true)
 
-await supabase.from('notifications').insert({
-  user_id: seller_id,
-  listing_id,
-  type: 'claim',
-  is_read: false,
-})
+  // 1️⃣ Opret claim FØRST
+  const { error: claimError } = await supabase
+    .from('claims')
+    .insert({
+      listing_id: id,
+      claimer_id: user.id,
+    })
 
-
-
-    setClaimLoading(true)
-
-    const { error } = await supabase
-      .from('claims')
-      .insert({
-        listing_id: id,
-        claimer_id: user.id,
-      })
-
-    if (!error) {
-      setIsClaimed(true)
-      alert('Kortet er nu claimed. Skriv til sælgeren i chatten.')
-    }
-
+  if (claimError) {
+    console.error('Claim error:', claimError)
+    alert('Kunne ikke claime opslaget')
     setClaimLoading(false)
+    return
   }
 
-  
+  // 2️⃣ Opret notification TIL SÆLGER
+  const { error: notifError } = await supabase
+    .from('notifications')
+    .insert({
+      user_id: listing.user_id, // 🔴 VIGTIGT: sælgerens id
+      listing_id: id,
+      type: 'claim',
+      is_read: false,
+    })
 
-  if (!listing) {
-    return (
-      <main className="page">
-        <p>Loading…</p>
-      </main>
-    )
+  if (notifError) {
+    console.error('Notification error:', notifError)
   }
+
+  setIsClaimed(true)
+  alert('Kortet er nu claimed. Skriv til sælgeren i chatten.')
+  setClaimLoading(false)
+}
 
 
   
