@@ -1535,25 +1535,3 @@ body.filter-open {
 }
 
 
-.card-actions {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: flex;
-  gap: 6px;
-}
-
-.card-action {
-  font-size: 12px;
-  background: rgba(0,0,0,0.6);
-  color: white;
-  border: none;
-  padding: 4px 6px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.card-action.danger {
-  background: rgba(180,0,0,0.7);
-}
-
