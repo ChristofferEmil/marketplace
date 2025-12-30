@@ -1771,3 +1771,53 @@ button.primary {
   padding: 0 12px 24px;
 }
 
+/* DESKTOP */
+@media (min-width: 900px) {
+  .profile-hero {
+    height: 240px;
+  }
+
+  .profile-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+
+.profile-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  margin-top: -40px;
+  background: #1f2336;
+  border-radius: 16px;
+}
+
+.profile-avatar.placeholder {
+  background: #2a2f45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+/* =========================
+   PROFILE PAGE – DESKTOP FULL WIDTH
+========================= */
+
+@media (min-width: 1024px) {
+  .profile-page {
+    max-width: none;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+
+    /* starter efter sidebar */
+    margin-left: 240px; /* samme bredde som sidebar */
+  }
+}
+
+
+
