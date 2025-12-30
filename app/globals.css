@@ -1670,4 +1670,96 @@ button.primary {
 }
 
 
+/* PAGE */
+.profile-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* HERO */
+.profile-hero {
+  height: 160px;
+  background: linear-gradient(135deg, #1f2336, #2a2f45);
+}
+
+/* HEADER */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+}
+
+.profile-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-meta {
+  line-height: 1.2;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 20px;
+}
+
+.profile-username {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.profile-member {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 2px;
+}
+
+.follow-btn {
+  background: #2a2f45;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #fff;
+  font-size: 14px;
+}
+
+/* BIO */
+.profile-bio {
+  padding: 0 16px;
+  margin-bottom: 16px;
+  opacity: 0.85;
+  max-width: 600px;
+}
+
+/* TABS */
+.profile-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.profile-tabs .tab {
+  background: #1f2336;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #fff;
+  opacity: 0.7;
+}
+
+.profile-tabs .tab.active {
+  background: #2a2f45;
+  opacity: 1;
+}
 
