@@ -16,22 +16,28 @@ export default function UserProfilePage() {
   const [claimedIds, setClaimedIds] = useState([])
 
   const [currentUserId, setCurrentUserId] = useState(null)
+
+  // FILTER: all | active | sold
   const [filter, setFilter] = useState('all')
 
-  // FOLLOW STATE
-const [isFollowing, setIsFollowing] = useState(false)
+  // FOLLOW
+  const [isFollowing, setIsFollowing] = useState(false)
 
-
+  /* ---------- LOAD AUTH USER ---------- */
   useEffect(() => {
-    if (!username) return
-
-    setLoading(true)
-
     supabase.auth.getUser().then(({ data }) => {
       setCurrentUserId(data?.user?.id ?? null)
     })
+  }, [])
 
-    const fetchProfile = async () => {
+  /* ---------- LOAD PROFILE + DATA ---------- */
+  useEffect(() => {
+    if (!username) return
+
+    const load = async () => {
+      setLoading(true)
+
+      // 1️⃣ hent profil
       const { data: profileRows } = await supabase
         .from('profiles')
         .select('*')
@@ -41,68 +47,71 @@ const [isFollowing, setIsFollowing] = useState(false)
       const p = profileRows?.[0] || null
       setProfile(p)
 
-      if (p) {
-        const { data: userListings } = await supabase
-          .from('listings')
-          .select('*')
-          .eq('user_id', p.id)
-          .order('created_at', { ascending: false })
-
-        setListings(userListings || [])
-
-        const { data: claims } = await supabase
-          .from('claims')
-          .select('listing_id')
-
-        setClaimedIds((claims || []).map(c => c.listing_id))
+      if (!p) {
+        setLoading(false)
+        return
       }
 
-      // TRIN 1: tjek om current user følger denne profil
-if (currentUserId && currentUserId !== p.id) {
-  const { data } = await supabase
-    .from('followers')
-    .select('id')
-    .eq('follower_id', currentUserId)
-    .eq('following_id', p.id)
-    .maybeSingle()
+      // 2️⃣ hent opslag
+      const { data: userListings } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('user_id', p.id)
+        .order('created_at', { ascending: false })
 
-  setIsFollowing(!!data)
-}
+      setListings(userListings || [])
 
-// TRIN 2: follow / unfollow
-async function handleFollow() {
-  if (!currentUserId || !profile) return
+      // 3️⃣ hent claims
+      const { data: claims } = await supabase
+        .from('claims')
+        .select('listing_id')
 
-  if (isFollowing) {
-    // unfollow
-    await supabase
-      .from('followers')
-      .delete()
-      .eq('follower_id', currentUserId)
-      .eq('following_id', profile.id)
+      setClaimedIds((claims || []).map(c => c.listing_id))
 
-    setIsFollowing(false)
-  } else {
-    // follow
-    await supabase.from('followers').insert({
-      follower_id: currentUserId,
-      following_id: profile.id,
-    })
+      // 4️⃣ tjek follow-status
+      if (currentUserId && currentUserId !== p.id) {
+        const { data: followRow } = await supabase
+          .from('followers')
+          .select('id')
+          .eq('follower_id', currentUserId)
+          .eq('following_id', p.id)
+          .maybeSingle()
 
-    setIsFollowing(true)
-  }
-}
-
+        setIsFollowing(!!followRow)
+      }
 
       setLoading(false)
     }
 
-    fetchProfile()
-  }, [username])
+    load()
+  }, [username, currentUserId])
+
+  /* ---------- FOLLOW / UNFOLLOW ---------- */
+  async function handleFollow() {
+    if (!currentUserId || !profile) return
+
+    if (isFollowing) {
+      await supabase
+        .from('followers')
+        .delete()
+        .eq('follower_id', currentUserId)
+        .eq('following_id', profile.id)
+
+      setIsFollowing(false)
+    } else {
+      await supabase.from('followers').insert({
+        follower_id: currentUserId,
+        following_id: profile.id,
+      })
+
+      setIsFollowing(true)
+    }
+  }
 
   if (loading) return <main className="page">Loader…</main>
   if (!profile) return <main className="page">Profil ikke fundet</main>
 
+  /* ---------- FILTER ---------- */
   const filteredListings = listings.filter(l => {
     const isSold = claimedIds.includes(l.id)
     if (filter === 'active') return !isSold
@@ -119,7 +128,6 @@ async function handleFollow() {
       {/* HEADER */}
       <section className="profile-header">
         <div className="profile-left">
-
           {profile.avatar_url ? (
             <img
               className="profile-avatar"
@@ -146,11 +154,10 @@ async function handleFollow() {
         </div>
 
         {currentUserId && currentUserId !== profile.id && (
-  <button className="follow-btn" onClick={handleFollow}>
-    {isFollowing ? 'Følger' : 'Følg'}
-  </button>
-)}
-
+          <button className="follow-btn" onClick={handleFollow}>
+            {isFollowing ? 'Følger' : 'Følg'}
+          </button>
+        )}
       </section>
 
       {profile.bio && (
@@ -167,7 +174,11 @@ async function handleFollow() {
             onClick={() => setFilter(t)}
             className={`tab ${filter === t ? 'active' : ''}`}
           >
-            {t === 'all' ? 'Annoncer' : t === 'active' ? 'Aktive' : 'Solgte'}
+            {t === 'all'
+              ? 'Annoncer'
+              : t === 'active'
+              ? 'Aktive'
+              : 'Solgte'}
           </button>
         ))}
       </div>
@@ -194,8 +205,6 @@ async function handleFollow() {
           )
         })}
       </section>
-
     </main>
   )
 }
-
