@@ -2147,3 +2147,41 @@ html {
   justify-content: center;
 }
 
+/* =====================================================
+   AUTH TOP BAR – SAFE OVERRIDE
+===================================================== */
+
+/* Slå bottom nav helt fra */
+.bottom-nav {
+  display: none !important;
+}
+
+/* Plads til topbar */
+.app-content {
+  padding-top: 56px;
+}
+
+/* Topbar container */
+.auth-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  height: 56px;
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(15,17,21,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Desktop: tag højde for sidebar */
+@media (min-width: 1024px) {
+  .auth-topbar {
+    margin-left: 240px;
+  }
+}
