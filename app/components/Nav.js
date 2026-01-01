@@ -165,6 +165,7 @@ export default function Nav({ openAuth }) {
       </nav>
 
       {/* MOBILE */}
+      {/*
       <div className="mobile-topbar">
         <div className="mobile-logo">CardSwap</div>
         <button
@@ -175,7 +176,10 @@ export default function Nav({ openAuth }) {
           ☰
         </button>
       </div>
+      */}
 
+      
+      {/*
       {menuOpen && (
         <>
           <div
@@ -195,6 +199,7 @@ export default function Nav({ openAuth }) {
           </aside>
         </>
       )}
+        */}
     </>
   )
 }
