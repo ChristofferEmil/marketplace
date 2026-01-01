@@ -1,11 +1,7 @@
-'use client'
-
-import { useState } from 'react'
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import Nav from "./components/Nav"
 import AuthRecoveryRedirect from "@/app/components/AuthRecoveryRedirect"
-import AuthModal from "./components/AuthModal"
+import AppClientShell from "./components/AppClientShell"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,30 +25,16 @@ export const viewport = {
 }
 
 export default function RootLayout({ children }) {
-  const [authOpen, setAuthOpen] = useState(false)
-  const [authMode, setAuthMode] = useState('login')
-
   return (
     <html lang="da">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthRecoveryRedirect />
 
-        <Nav
-          openAuth={(mode) => {
-            setAuthMode(mode)
-            setAuthOpen(true)
-          }}
-        />
-
-        <AuthModal
-          open={authOpen}
-          mode={authMode}
-          onClose={() => setAuthOpen(false)}
-        />
-
         <div className="app-shell">
           <main className="app-content">
-            {children}
+            <AppClientShell>
+              {children}
+            </AppClientShell>
           </main>
         </div>
       </body>
