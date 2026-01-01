@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
-export default function Nav() {
+export default function Nav({ openAuth }) {
   const pathname = usePathname()
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState(null) // ✅ NY
@@ -132,12 +132,25 @@ export default function Nav() {
       )}
 
       {!user ? (
-        <Link href="/login" className={pathname === '/login' ? 'active' : ''}>
-          Login
-        </Link>
-      ) : (
-        <button onClick={logout}>Logout</button>
-      )}
+  <>
+    <button
+      className="nav-link"
+      onClick={() => openAuth('login')}
+    >
+      Log ind
+    </button>
+
+    <button
+      className="nav-link nav-primary"
+      onClick={() => openAuth('signup')}
+    >
+      Opret konto
+    </button>
+  </>
+) : (
+  <button onClick={logout}>Log ud</button>
+)}
+
     </>
   )
 
