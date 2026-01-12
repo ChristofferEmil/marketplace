@@ -1,8 +1,5 @@
 'use client'
 
-/* =====================================================
-   IMPORTS
-===================================================== */
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
@@ -24,66 +21,48 @@ export default function CreateListingForm({
   const router = useRouter()
 
   /* =====================================================
-     STATE – GENERELT OPSLAG
+     STATE – GENERELT
   ===================================================== */
   const [saving, setSaving] = useState(false)
-
   const [title, setTitle] = useState(initialData?.title ?? '')
   const [description, setDescription] = useState(initialData?.description ?? '')
   const [image, setImage] = useState(null)
   const [tags, setTags] = useState(initialData?.tags ?? [])
 
   /* =====================================================
-     STATE – KORT I OPSLAGET (DET VIGTIGE FUNDAMENT)
-     👉 HVER LINJE = ÉT KORT
-     👉 HER SKAL AI / SCANNING SENERE IND
+     STATE – KORT I OPSLAGET (VIGTIG DEL)
+     👇 HER skal AI senere skrive til
   ===================================================== */
   const [items, setItems] = useState([
     { card_number: '', name: '', price: '' },
   ])
 
   /* =====================================================
-     HELPERS – TAGS
-  ===================================================== */
-  const toggleTag = tag =>
-    setTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    )
-
-  /* =====================================================
-     HELPERS – KORT-LINJER (ITEMS)
-     👉 Brug disse når vi senere:
-       - indsætter AI-resultater
-       - retter kort manuelt
-       - tilføjer stand, sprog m.m.
+     KORT-HJÆLPEFUNKTIONER
+     (bruges i UI og submit)
   ===================================================== */
   const addItem = () =>
-    setItems(prev => [
-      ...prev,
-      { card_number: '', name: '', price: '' },
-    ])
+    setItems(prev => [...prev, { card_number: '', name: '', price: '' }])
 
-  const removeItem = index =>
-    setItems(prev => prev.filter((_, i) => i !== index))
+  const removeItem = idx =>
+    setItems(prev => prev.filter((_, i) => i !== idx))
 
-  const updateItem = (index, field, value) =>
+  const updateItem = (idx, key, value) =>
     setItems(prev =>
-      prev.map((item, i) =>
-        i === index ? { ...item, [field]: value } : item
+      prev.map((it, i) =>
+        i === idx ? { ...it, [key]: value } : it
       )
     )
 
   /* =====================================================
-     SUBMIT – OPRET OPSLAG + GEM KORT
+     SUBMIT
   ===================================================== */
   const submit = async e => {
     e.preventDefault()
     if (saving) return
     setSaving(true)
 
-    /* ---------- AUTH CHECK ---------- */
+    // 🔐 Auth check
     const {
       data: { session },
     } = await supabase.auth.getSession()
@@ -99,7 +78,6 @@ export default function CreateListingForm({
 
     if (image) {
       const fileName = `${Date.now()}-${image.name}`
-
       const { error } = await supabase.storage
         .from('listings')
         .upload(fileName, image)
@@ -110,23 +88,30 @@ export default function CreateListingForm({
         return
       }
 
-      image_url =
-        supabase.storage.from('listings')
-          .getPublicUrl(fileName).data.publicUrl
+      const { data } = supabase.storage
+        .from('listings')
+        .getPublicUrl(fileName)
+
+      image_url = data.publicUrl
     }
 
-    /* ---------- OPRET LISTING ---------- */
-    const { data, error } = await supabase
-      .from('listings')
-      .insert({
-        title,
-        description,
-        image_url,
-        tags,
-        user_id: session.user.id,
-      })
-      .select()
-      .single()
+    /* ---------- LISTING ---------- */
+    const payload = {
+      title,
+      description,
+      image_url,
+      tags: tags.length ? tags : null,
+    }
+
+    const query =
+      mode === 'edit'
+        ? supabase.from('listings').update(payload).eq('id', listingId)
+        : supabase.from('listings').insert({
+            ...payload,
+            user_id: session.user.id,
+          })
+
+    const { data, error } = await query.select().single()
 
     if (error) {
       alert(error.message)
@@ -134,31 +119,30 @@ export default function CreateListingForm({
       return
     }
 
-    /* ---------- GEM KORTENE (listing_items) ---------- */
-    await supabase.from('listing_items').insert(
-      items.map(item => ({
-        listing_id: data.id,
-        card_number: item.card_number || null,
-        name: item.name,
-        price: item.price ? Number(item.price) : null,
-      }))
-    )
+    /* ---------- LISTING ITEMS (KORT) ---------- */
+    if (items.length) {
+      await supabase.from('listing_items').insert(
+        items.map(it => ({
+          listing_id: data.id,
+          card_number: it.card_number || null,
+          name: it.name,
+          price: it.price ? Number(it.price) : null,
+        }))
+      )
+    }
 
-    /* ---------- REDIRECT ---------- */
-    onSaved
-      ? onSaved(data)
-      : router.push(`/listings/${data.id}`)
+    onSaved ? onSaved(data) : router.push(`/listings/${data.id}`)
   }
 
   /* =====================================================
-     UI
+     RENDER
   ===================================================== */
   return (
     <div className="form-card">
-      <h1>Create listing</h1>
+      <h1>{mode === 'edit' ? 'Rediger opslag' : 'Opret opslag'}</h1>
 
       <form onSubmit={submit}>
-        {/* ---------- BASIS INFO ---------- */}
+        {/* BASISTEKST */}
         <input
           placeholder="Titel"
           value={title}
@@ -172,36 +156,41 @@ export default function CreateListingForm({
           onChange={e => setDescription(e.target.value)}
         />
 
+        {/* BILLEDE */}
         <input
           type="file"
           accept="image/*"
           onChange={e => setImage(e.target.files[0])}
         />
 
-        {/* ---------- TAGS ---------- */}
+        {/* TAGS */}
         <div className="chip-group">
-          {TAGS.map(tag => (
+          {TAGS.map(t => (
             <button
-              key={tag}
+              key={t}
               type="button"
-              className={`chip ${tags.includes(tag) ? 'active' : ''}`}
-              onClick={() => toggleTag(tag)}
+              className={`chip ${tags.includes(t) ? 'active' : ''}`}
+              onClick={() =>
+                setTags(prev =>
+                  prev.includes(t)
+                    ? prev.filter(x => x !== t)
+                    : [...prev, t]
+                )
+              }
             >
-              {tag}
+              {t}
             </button>
           ))}
         </div>
 
-        {/* =================================================
-           KORT-LISTE (CENTRAL DEL AF PLATFORMEN)
-           👉 Hver række = ét kort
-           👉 Her kommer AI-forslag senere
-        ================================================= */}
+        {/* =============================
+            KORT-LISTE (CENTRAL DEL)
+           ============================= */}
         <h3>Kort i opslaget</h3>
 
-        {items.map((item, index) => (
+        {items.map((it, idx) => (
           <div
-            key={index}
+            key={idx}
             style={{
               display: 'grid',
               gridTemplateColumns: '80px 1fr 100px auto',
@@ -211,17 +200,17 @@ export default function CreateListingForm({
           >
             <input
               placeholder="#"
-              value={item.card_number}
+              value={it.card_number}
               onChange={e =>
-                updateItem(index, 'card_number', e.target.value)
+                updateItem(idx, 'card_number', e.target.value)
               }
             />
 
             <input
               placeholder="Kortnavn"
-              value={item.name}
+              value={it.name}
               onChange={e =>
-                updateItem(index, 'name', e.target.value)
+                updateItem(idx, 'name', e.target.value)
               }
               required
             />
@@ -229,17 +218,14 @@ export default function CreateListingForm({
             <input
               placeholder="Pris"
               type="number"
-              value={item.price}
+              value={it.price}
               onChange={e =>
-                updateItem(index, 'price', e.target.value)
+                updateItem(idx, 'price', e.target.value)
               }
             />
 
             {items.length > 1 && (
-              <button
-                type="button"
-                onClick={() => removeItem(index)}
-              >
+              <button type="button" onClick={() => removeItem(idx)}>
                 ✕
               </button>
             )}
@@ -250,9 +236,8 @@ export default function CreateListingForm({
           + Tilføj kort
         </button>
 
-        {/* ---------- SUBMIT ---------- */}
         <button className="submit-btn" disabled={saving}>
-          {saving ? 'Gemmer…' : 'Create listing'}
+          {saving ? 'Gemmer…' : 'Opret opslag'}
         </button>
       </form>
     </div>
