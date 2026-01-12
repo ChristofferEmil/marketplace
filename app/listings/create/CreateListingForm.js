@@ -1,25 +1,20 @@
 'use client'
 
+/* =====================================================
+   IMPORTS
+===================================================== */
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
-const SERIES = [
-  'Base Set',
-  'Jungle',
-  'Fossil',
-  'Team Rocket',
-  'Neo Genesis',
-  'Neo Discovery',
-  'Neo Revelation',
-  'Neo Destiny',
-]
-
-const CONDITIONS = ['MT', 'NM', 'EX', 'GD', 'LP', 'PL', 'PO']
+/* =====================================================
+   KONSTANTER (kan udvides senere)
+===================================================== */
 const TAGS = ['Holo', 'Reverse', '1st Edition', 'Shadowless', 'Promo']
 
-
-
+/* =====================================================
+   COMPONENT
+===================================================== */
 export default function CreateListingForm({
   mode = 'create',
   initialData = null,
@@ -28,64 +23,83 @@ export default function CreateListingForm({
 }) {
   const router = useRouter()
 
-const [saving, setSaving] = useState(false)
-  const [changeImage, setChangeImage] = useState(false)
+  /* =====================================================
+     STATE – GENERELT OPSLAG
+  ===================================================== */
+  const [saving, setSaving] = useState(false)
 
   const [title, setTitle] = useState(initialData?.title ?? '')
   const [description, setDescription] = useState(initialData?.description ?? '')
   const [image, setImage] = useState(null)
-
-  const [series, setSeries] = useState(initialData?.series ?? [])
-  const [condition, setCondition] = useState(initialData?.condition ?? '')
   const [tags, setTags] = useState(initialData?.tags ?? [])
 
-  const [allowClaim, setAllowClaim] = useState(initialData?.allow_claim ?? false)
-  const [allowAuction, setAllowAuction] = useState(initialData?.allow_auction ?? false)
-
-  const [claimPrice, setClaimPrice] = useState(initialData?.claim_price ?? '')
-  const [startingBid, setStartingBid] = useState(initialData?.starting_bid ?? '')
-  const [auctionEnd, setAuctionEnd] = useState(
-    initialData?.auction_ends_at
-      ? initialData.auction_ends_at.slice(0, 16)
-      : ''
-  )
-
-
+  /* =====================================================
+     STATE – KORT I OPSLAGET (DET VIGTIGE FUNDAMENT)
+     👉 HVER LINJE = ÉT KORT
+     👉 HER SKAL AI / SCANNING SENERE IND
+  ===================================================== */
   const [items, setItems] = useState([
-  { card_number: '', name: '', price: '' },
-])
+    { card_number: '', name: '', price: '' },
+  ])
 
-
-  const toggleSeries = s =>
-    setSeries(prev =>
-      prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]
-    )
-
-  const toggleTag = t =>
+  /* =====================================================
+     HELPERS – TAGS
+  ===================================================== */
+  const toggleTag = tag =>
     setTags(prev =>
-      prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
     )
 
- const submit = async e => {
-  e.preventDefault()
-  if (saving) return
+  /* =====================================================
+     HELPERS – KORT-LINJER (ITEMS)
+     👉 Brug disse når vi senere:
+       - indsætter AI-resultater
+       - retter kort manuelt
+       - tilføjer stand, sprog m.m.
+  ===================================================== */
+  const addItem = () =>
+    setItems(prev => [
+      ...prev,
+      { card_number: '', name: '', price: '' },
+    ])
 
-  setSaving(true)
+  const removeItem = index =>
+    setItems(prev => prev.filter((_, i) => i !== index))
 
-  const {
-  data: { session },
-} = await supabase.auth.getSession()
+  const updateItem = (index, field, value) =>
+    setItems(prev =>
+      prev.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      )
+    )
 
-if (!session?.user) {
-  alert('You must be logged in')
-  setSaving(false)
-  return
-}
+  /* =====================================================
+     SUBMIT – OPRET OPSLAG + GEM KORT
+  ===================================================== */
+  const submit = async e => {
+    e.preventDefault()
+    if (saving) return
+    setSaving(true)
 
+    /* ---------- AUTH CHECK ---------- */
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    if (!session?.user) {
+      alert('You must be logged in')
+      setSaving(false)
+      return
+    }
+
+    /* ---------- IMAGE UPLOAD ---------- */
     let image_url = initialData?.image_url ?? null
 
     if (image) {
       const fileName = `${Date.now()}-${image.name}`
+
       const { error } = await supabase.storage
         .from('listings')
         .upload(fileName, image)
@@ -96,60 +110,23 @@ if (!session?.user) {
         return
       }
 
-      const { data } = supabase.storage
-        .from('listings')
-        .getPublicUrl(fileName)
-
-      image_url = data.publicUrl
+      image_url =
+        supabase.storage.from('listings')
+          .getPublicUrl(fileName).data.publicUrl
     }
 
-    const payload = {
-      title,
-      description,
-      image_url,
-      series: series.length ? series : null,
-      condition: condition || null,
-      tags: tags.length ? tags : null,
-      allow_claim: allowClaim,
-      claim_price: allowClaim ? Number(claimPrice) : null,
-      allow_auction: allowAuction,
-      starting_bid: allowAuction ? Number(startingBid) : null,
-      auction_ends_at: allowAuction ? new Date(auctionEnd).toISOString() : null,
-    }
-
-    const query =
-      mode === 'edit'
-        ? supabase.from('listings').update(payload).eq('id', listingId)
-        : supabase.from('listings').insert({
-            ...payload,
-            user_id: session.user.id,
-          })
-
-    const { data, error } = await query.select().single()
-
-
-
-
-// 📦 Kort-linjer (items)
-const [items, setItems] = useState([
-  { card_number: '', name: '', price: '' },
-])
-
-const addItem = () =>
-  setItems(prev => [...prev, { card_number: '', name: '', price: '' }])
-
-const removeItem = (idx) =>
-  setItems(prev => prev.filter((_, i) => i !== idx))
-
-const updateItem = (idx, key, value) =>
-  setItems(prev =>
-    prev.map((it, i) => (i === idx ? { ...it, [key]: value } : it))
-  )
-
-
-
-
-
+    /* ---------- OPRET LISTING ---------- */
+    const { data, error } = await supabase
+      .from('listings')
+      .insert({
+        title,
+        description,
+        image_url,
+        tags,
+        user_id: session.user.id,
+      })
+      .select()
+      .single()
 
     if (error) {
       alert(error.message)
@@ -157,202 +134,126 @@ const updateItem = (idx, key, value) =>
       return
     }
 
+    /* ---------- GEM KORTENE (listing_items) ---------- */
+    await supabase.from('listing_items').insert(
+      items.map(item => ({
+        listing_id: data.id,
+        card_number: item.card_number || null,
+        name: item.name,
+        price: item.price ? Number(item.price) : null,
+      }))
+    )
 
-// 🧾 Gem kortene i listing_items
-await supabase.from('listing_items').insert(
-  items.map(it => ({
-    listing_id: data.id,      // 👈 ID på opslaget
-    card_number: it.card_number || null,
-    name: it.name,
-    price: it.price ? Number(it.price) : null,
-  }))
-)
-
-
-
+    /* ---------- REDIRECT ---------- */
     onSaved
       ? onSaved(data)
       : router.push(`/listings/${data.id}`)
   }
 
+  /* =====================================================
+     UI
+  ===================================================== */
   return (
     <div className="form-card">
-      <h1>{mode === 'edit' ? 'Rediger opslag' : 'Create listing'}</h1>
+      <h1>Create listing</h1>
 
       <form onSubmit={submit}>
-        <input value={title} onChange={e => setTitle(e.target.value)} required />
-        <textarea value={description} onChange={e => setDescription(e.target.value)} />
+        {/* ---------- BASIS INFO ---------- */}
+        <input
+          placeholder="Titel"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          required
+        />
 
+        <textarea
+          placeholder="Beskrivelse"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        />
 
+        <input
+          type="file"
+          accept="image/*"
+          onChange={e => setImage(e.target.files[0])}
+        />
 
-        {mode === 'edit' && initialData?.image_url && (
-  <div style={{ marginBottom: 12 }}>
-    <img
-      src={initialData.image_url}
-      alt="Nuværende billede"
-      style={{ maxWidth: '100%', borderRadius: 8 }}
-    />
-
-    {!changeImage ? (
-      <button
-        type="button"
-        onClick={() => setChangeImage(true)}
-        style={{ marginTop: 8 }}
-      >
-        Skift billede
-      </button>
-    ) : (
-      <button
-        type="button"
-        onClick={() => {
-          setChangeImage(false)
-          setImage(null)
-        }}
-        style={{ marginTop: 8 }}
-      >
-        Annuller
-      </button>
-    )}
-  </div>
-)}
-
-{(mode === 'create' || changeImage) && (
-  <div style={{ marginBottom: 12 }}>
-    <input
-      type="file"
-      accept="image/*"
-      onChange={e => setImage(e.target.files[0])}
-    />
-  </div>
-)}
-
-
-
+        {/* ---------- TAGS ---------- */}
         <div className="chip-group">
-          {TAGS.map(t => (
+          {TAGS.map(tag => (
             <button
-              key={t}
+              key={tag}
               type="button"
-              className={`chip ${tags.includes(t) ? 'active' : ''}`}
-              onClick={() => toggleTag(t)}
+              className={`chip ${tags.includes(tag) ? 'active' : ''}`}
+              onClick={() => toggleTag(tag)}
             >
-              {t}
+              {tag}
             </button>
           ))}
         </div>
 
+        {/* =================================================
+           KORT-LISTE (CENTRAL DEL AF PLATFORMEN)
+           👉 Hver række = ét kort
+           👉 Her kommer AI-forslag senere
+        ================================================= */}
+        <h3>Kort i opslaget</h3>
 
-{/* 🧾 Kort-liste */}
-<div style={{ marginTop: 12 }}>
-  <h3>Kort i opslaget</h3>
+        {items.map((item, index) => (
+          <div
+            key={index}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '80px 1fr 100px auto',
+              gap: 8,
+              marginBottom: 8,
+            }}
+          >
+            <input
+              placeholder="#"
+              value={item.card_number}
+              onChange={e =>
+                updateItem(index, 'card_number', e.target.value)
+              }
+            />
 
-  {items.map((it, idx) => (
-    <div
-      key={idx}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr auto',
-        gap: 8,
-        alignItems: 'center',
-        marginBottom: 8,
-      }}
-    >
-      <input
-        placeholder="#nr"
-        value={it.card_number}
-        onChange={e => updateItem(idx, 'card_number', e.target.value)}
-        style={{ maxWidth: 80 }}
-      />
+            <input
+              placeholder="Kortnavn"
+              value={item.name}
+              onChange={e =>
+                updateItem(index, 'name', e.target.value)
+              }
+              required
+            />
 
-      <input
-        placeholder="Kortnavn"
-        value={it.name}
-        onChange={e => updateItem(idx, 'name', e.target.value)}
-        required
-      />
+            <input
+              placeholder="Pris"
+              type="number"
+              value={item.price}
+              onChange={e =>
+                updateItem(index, 'price', e.target.value)
+              }
+            />
 
-      <input
-        placeholder="Pris"
-        type="number"
-        value={it.price}
-        onChange={e => updateItem(idx, 'price', e.target.value)}
-        style={{ maxWidth: 90 }}
-      />
+            {items.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeItem(index)}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        ))}
 
-      {items.length > 1 && (
-        <button type="button" onClick={() => removeItem(idx)}>
-          ✕
+        <button type="button" onClick={addItem}>
+          + Tilføj kort
         </button>
-      )}
-    </div>
-  ))}
 
-  <button type="button" onClick={addItem}>
-    + Tilføj kort
-  </button>
-</div>
-
-
-
-<h3>Kort i opslag</h3>
-
-{items.map((it, i) => (
-  <div key={i} style={{ display: 'flex', gap: 8 }}>
-    <input
-      placeholder="#"
-      value={it.card_number}
-      onChange={e => {
-        const copy = [...items]
-        copy[i].card_number = e.target.value
-        setItems(copy)
-      }}
-      style={{ width: 60 }}
-    />
-
-    <input
-      placeholder="Kortnavn"
-      value={it.name}
-      onChange={e => {
-        const copy = [...items]
-        copy[i].name = e.target.value
-        setItems(copy)
-      }}
-      required
-    />
-
-    <input
-      placeholder="Pris (valgfri)"
-      value={it.price}
-      onChange={e => {
-        const copy = [...items]
-        copy[i].price = e.target.value
-        setItems(copy)
-      }}
-      style={{ width: 100 }}
-    />
-  </div>
-))}
-
-<button
-  type="button"
-  onClick={() =>
-    setItems([...items, { card_number: '', name: '', price: '' }])
-  }
->
-  + Tilføj kort
-</button>
-
-
-
-
+        {/* ---------- SUBMIT ---------- */}
         <button className="submit-btn" disabled={saving}>
-  {saving
-    ? 'Gemmer…'
-    : mode === 'edit'
-      ? 'Gem ændringer'
-      : 'Create listing'}
-</button>
-
+          {saving ? 'Gemmer…' : 'Create listing'}
+        </button>
       </form>
     </div>
   )
