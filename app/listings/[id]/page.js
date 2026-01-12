@@ -84,10 +84,11 @@ function toggleItem(item) {
       setListing(listingData)
 
       const { data: itemData } = await supabase
-        .from('listing_items')
-        .select('*')
-        .eq('listing_id', id)
-        .order('id')
+  .from('listing_items')
+  .select('*')
+  .eq('listing_id', id)
+  .order('card_number', { ascending: true })
+
 
       setItems(itemData || [])
 
