@@ -145,6 +145,7 @@ async function send() {
   if (data) {
     setMessages(prev => [...prev, data])
     setText('')
+    setSelectedItems([]) // ryd valgte kort
   }
 }
 
