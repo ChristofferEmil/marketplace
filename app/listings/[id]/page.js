@@ -320,14 +320,16 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
         <strong>Chat</strong>
         <div className="chat chat-scroll">
           {messages.map(m => (
-            <div
-              key={m.id}
-              className={`bubble ${
-                m.sender_id === user?.id ? 'me' : 'them'
-              }`}
-            >
-              {m.content}
-            </div>
+           <div
+  key={m.id}
+  className={`bubble ${
+    m.sender_id === user?.id ? 'me' : 'them'
+  }`}
+  style={{ whiteSpace: 'pre-line' }}
+>
+  {m.content}
+</div>
+
           ))}
           <div ref={bottomRef} />
         </div>
