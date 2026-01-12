@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
+/* ---------------- TIME AGO ---------------- */
 function timeAgo(date) {
   const seconds = Math.floor((Date.now() - new Date(date)) / 1000)
   const intervals = [
@@ -22,12 +23,16 @@ function timeAgo(date) {
   return 'lige nu'
 }
 
+/* ---------------- PAGE ---------------- */
 export default function ListingDetailPage() {
   const { id } = useParams()
   const bottomRef = useRef(null)
 
+  /* ---------- STATE ---------- */
   const [listing, setListing] = useState(null)
   const [user, setUser] = useState(null)
+
+  const [items, setItems] = useState([])
 
   const [messages, setMessages] = useState([])
   const [text, setText] = useState('')
@@ -44,46 +49,59 @@ export default function ListingDetailPage() {
   useEffect(() => {
     if (!id) return
 
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data?.user ?? null)
-    })
+    const load = async () => {
+      const { data: auth } = await supabase.auth.getUser()
+      setUser(auth?.user ?? null)
 
-    supabase
-      .from('listings')
-      .select('*')
-      .eq('id', id)
-      .single()
-      .then(({ data }) => setListing(data))
+      const { data: listingData } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('id', id)
+        .single()
 
-    supabase
-      .from('messages')
-      .select('*')
-      .eq('listing_id', id)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => setMessages(data || []))
+      setListing(listingData)
 
-    supabase
-      .from('listing_questions')
-      .select('*')
-      .eq('listing_id', id)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => setQuestions(data || []))
+      const { data: itemData } = await supabase
+        .from('listing_items')
+        .select('*')
+        .eq('listing_id', id)
+        .order('id')
 
-    supabase
-      .from('claims')
-      .select('id')
-      .eq('listing_id', id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) setIsClaimed(true)
-      })
+      setItems(itemData || [])
+
+      const { data: msgData } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('listing_id', id)
+        .order('created_at')
+
+      setMessages(msgData || [])
+
+      const { data: qData } = await supabase
+        .from('listing_questions')
+        .select('*')
+        .eq('listing_id', id)
+        .order('created_at')
+
+      setQuestions(qData || [])
+
+      const { data: claim } = await supabase
+        .from('claims')
+        .select('id')
+        .eq('listing_id', id)
+        .maybeSingle()
+
+      setIsClaimed(!!claim)
+    }
+
+    load()
   }, [id])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  /* ---------- SUBMIT QUESTION ---------- */
+  /* ---------- QUESTION ---------- */
   async function submitQuestion(e) {
     e.preventDefault()
     if (!questionText.trim() || !user || !listing) return
@@ -136,15 +154,12 @@ export default function ListingDetailPage() {
 
     setClaimLoading(true)
 
-    const { error: claimError } = await supabase
-      .from('claims')
-      .insert({
-        listing_id: id,
-        claimer_id: user.id,
-      })
+    const { error } = await supabase.from('claims').insert({
+      listing_id: id,
+      claimer_id: user.id,
+    })
 
-    if (claimError) {
-      console.error(claimError)
+    if (error) {
       alert('Kunne ikke claime opslaget')
       setClaimLoading(false)
       return
@@ -159,7 +174,6 @@ export default function ListingDetailPage() {
 
     setIsClaimed(true)
     setClaimLoading(false)
-    alert('Kortet er nu claimed. Skriv til sælgeren i chatten.')
   }
 
   /* ---------- GUARD ---------- */
@@ -171,16 +185,15 @@ export default function ListingDetailPage() {
     )
   }
 
+  /* ---------- UI ---------- */
   return (
     <main className="page page-detail hide-bottom-nav">
-      {/* IMAGE */}
       {listing.image_url && (
         <div className="detail-image">
           <img src={listing.image_url} alt={listing.title} />
         </div>
       )}
 
-      {/* DETAILS */}
       <section className="detail-content">
         <h1>{listing.title}</h1>
         {listing.description && (
@@ -188,27 +201,45 @@ export default function ListingDetailPage() {
         )}
       </section>
 
-      {/* Q&A */}
+      {/* -------- CARD LIST -------- */}
+      {items.length > 0 && (
+        <section style={{ marginTop: 24 }}>
+          <h3>Kort i opslaget</h3>
+
+          {items.map(it => (
+            <label
+              key={it.id}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '24px 60px 1fr auto',
+                gap: 8,
+                alignItems: 'center',
+                padding: '6px 0',
+              }}
+            >
+              <input type="checkbox" />
+              <span>{it.card_number || '-'}</span>
+              <span>{it.name}</span>
+              {it.price && <strong>{it.price} kr.</strong>}
+            </label>
+          ))}
+        </section>
+      )}
+
+      {/* -------- Q&A -------- */}
       <section style={{ marginTop: 32 }}>
         <h3>Spørgsmål & svar</h3>
 
         {questions.length === 0 && <p>Ingen spørgsmål endnu</p>}
 
-        {questions.map(q => {
-          const isSeller = q.user_id === listing.user_id
+        {questions.map(q => (
+          <div key={q.id} style={{ marginBottom: 12 }}>
+            <p>{q.text}</p>
+            <small>{timeAgo(q.created_at)}</small>
+          </div>
+        ))}
 
-          return (
-            <div key={q.id} style={{ marginBottom: 12 }}>
-              <p>{q.text}</p>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <small>{timeAgo(q.created_at)}</small>
-                {isSeller && <span className="badge">Sælger</span>}
-              </div>
-            </div>
-          )
-        })}
-
-        {user && !isClaimed ? (
+        {user && !isClaimed && (
           <form onSubmit={submitQuestion}>
             <textarea
               value={questionText}
@@ -218,14 +249,10 @@ export default function ListingDetailPage() {
             />
             <button type="submit">Send spørgsmål</button>
           </form>
-        ) : (
-          <p style={{ opacity: 0.7 }}>
-            Opslaget er solgt – Q&A er lukket.
-          </p>
         )}
       </section>
 
-      {/* CHAT */}
+      {/* -------- CHAT -------- */}
       <section className="card card-detail chat-card">
         <strong>Chat</strong>
         <div className="chat chat-scroll">
@@ -243,7 +270,6 @@ export default function ListingDetailPage() {
         </div>
       </section>
 
-      {/* CHAT INPUT */}
       <div className="chat-input chat-input-fixed">
         <input
           value={text}
@@ -256,22 +282,13 @@ export default function ListingDetailPage() {
         </button>
       </div>
 
-      {/* CLAIM */}
-      <div style={{ marginTop: 16 }}>
-        <button
-          className="action-btn primary"
-          onClick={handleClaim}
-          disabled={isOwner || isClaimed || claimLoading}
-        >
-          {isOwner
-            ? 'Dit opslag'
-            : isClaimed
-            ? 'Allerede claimed'
-            : claimLoading
-            ? 'Claimer…'
-            : 'Claim'}
-        </button>
-      </div>
+      <button
+        className="action-btn primary"
+        onClick={handleClaim}
+        disabled={isOwner || isClaimed || claimLoading}
+      >
+        {isOwner ? 'Dit opslag' : isClaimed ? 'Allerede claimed' : 'Claim'}
+      </button>
     </main>
   )
 }
