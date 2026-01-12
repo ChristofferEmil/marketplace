@@ -221,15 +221,15 @@ async function send() {
   }
 
   const itemsText = selectedItems
-    .map(it => {
-      const number = it.card_number ? `#${it.card_number} ` : ''
-      const price = it.price ? ` – ${it.price} kr.` : ''
-      return `• ${number}${it.name}${price}`
-    })
-    .join('\n')
+  .map(it => {
+    const number = it.card_number ? `#${it.card_number} ` : ''
+    return `• ${number}${it.name}`
+  })
+  .join('\n')
 
-  return `${text}\n\nValgte kort:\n${itemsText}`
+return `${text}\n\nValgte kort:\n${itemsText}`
 }
+
 
 
   /* ---------- GUARD ---------- */
