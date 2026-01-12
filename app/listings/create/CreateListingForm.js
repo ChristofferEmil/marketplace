@@ -66,12 +66,15 @@ const [saving, setSaving] = useState(false)
 
   setSaving(true)
 
-  const { data: auth } = await supabase.auth.getUser()
-  if (!auth?.user) {
-    alert('You must be logged in')
-    setSaving(false)
-    return
-  }
+  const {
+  data: { session },
+} = await supabase.auth.getSession()
+
+if (!session?.user) {
+  alert('You must be logged in')
+  setSaving(false)
+  return
+}
 
     let image_url = initialData?.image_url ?? null
 
@@ -113,7 +116,7 @@ const [saving, setSaving] = useState(false)
         ? supabase.from('listings').update(payload).eq('id', listingId)
         : supabase.from('listings').insert({
             ...payload,
-            user_id: auth.user.id,
+            user_id: session.user.id,
           })
 
     const { data, error } = await query.select().single()
