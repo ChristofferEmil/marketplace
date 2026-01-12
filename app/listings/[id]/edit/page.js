@@ -17,6 +17,34 @@ export default function EditListingPage() {
   const [loading, setLoading] = useState(true)
   const [currentUserId, setCurrentUserId] = useState(null)
 
+
+  // =======================
+// MESSAGE + SELECTED ITEMS STATE
+// =======================
+const [message, setMessage] = useState("")
+const [selectedItems, setSelectedItems] = useState([])
+
+
+// =======================
+// TOGGLE CARD SELECTION
+// =======================
+function toggleItem(item) {
+  setSelectedItems(prev => {
+    const exists = prev.find(i => i.id === item.id)
+
+    if (exists) {
+      // fjern kort
+      return prev.filter(i => i.id !== item.id)
+    }
+
+    // tilføj kort
+    return [...prev, item]
+  })
+}
+
+
+
+
   useEffect(() => {
     if (!id) return
 

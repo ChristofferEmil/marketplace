@@ -45,6 +45,28 @@ export default function ListingDetailPage() {
 
   const isOwner = user && listing && user.id === listing.user_id
 
+const [message, setMessage] = useState("")
+const [selectedItems, setSelectedItems] = useState([])
+
+
+// =======================
+// TOGGLE CARD SELECTION
+// =======================
+function toggleItem(item) {
+  setSelectedItems(prev => {
+    const exists = prev.find(i => i.id === item.id)
+
+    if (exists) {
+      // fjern kort
+      return prev.filter(i => i.id !== item.id)
+    }
+
+    // tilføj kort
+    return [...prev, item]
+  })
+}
+
+
   /* ---------- LOAD DATA ---------- */
   useEffect(() => {
     if (!id) return
@@ -217,7 +239,11 @@ export default function ListingDetailPage() {
                 padding: '6px 0',
               }}
             >
-              <input type="checkbox" />
+              <input
+             type="checkbox"
+              onChange={() => console.log(it)}
+              />
+
               <span>{it.card_number || '-'}</span>
               <span>{it.name}</span>
               {it.price && <strong>{it.price} kr.</strong>}
