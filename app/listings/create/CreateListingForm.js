@@ -121,11 +121,48 @@ if (!session?.user) {
 
     const { data, error } = await query.select().single()
 
+
+
+
+// 📦 Kort-linjer (items)
+const [items, setItems] = useState([
+  { card_number: '', name: '', price: '' },
+])
+
+const addItem = () =>
+  setItems(prev => [...prev, { card_number: '', name: '', price: '' }])
+
+const removeItem = (idx) =>
+  setItems(prev => prev.filter((_, i) => i !== idx))
+
+const updateItem = (idx, key, value) =>
+  setItems(prev =>
+    prev.map((it, i) => (i === idx ? { ...it, [key]: value } : it))
+  )
+
+
+
+
+
+
     if (error) {
       alert(error.message)
       setSaving(false)
       return
     }
+
+
+// 🧾 Gem kortene i listing_items
+await supabase.from('listing_items').insert(
+  items.map(it => ({
+    listing_id: data.id,      // 👈 ID på opslaget
+    card_number: it.card_number || null,
+    name: it.name,
+    price: it.price ? Number(it.price) : null,
+  }))
+)
+
+
 
     onSaved
       ? onSaved(data)
@@ -197,6 +234,60 @@ if (!session?.user) {
             </button>
           ))}
         </div>
+
+
+{/* 🧾 Kort-liste */}
+<div style={{ marginTop: 12 }}>
+  <h3>Kort i opslaget</h3>
+
+  {items.map((it, idx) => (
+    <div
+      key={idx}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr auto',
+        gap: 8,
+        alignItems: 'center',
+        marginBottom: 8,
+      }}
+    >
+      <input
+        placeholder="#nr"
+        value={it.card_number}
+        onChange={e => updateItem(idx, 'card_number', e.target.value)}
+        style={{ maxWidth: 80 }}
+      />
+
+      <input
+        placeholder="Kortnavn"
+        value={it.name}
+        onChange={e => updateItem(idx, 'name', e.target.value)}
+        required
+      />
+
+      <input
+        placeholder="Pris"
+        type="number"
+        value={it.price}
+        onChange={e => updateItem(idx, 'price', e.target.value)}
+        style={{ maxWidth: 90 }}
+      />
+
+      {items.length > 1 && (
+        <button type="button" onClick={() => removeItem(idx)}>
+          ✕
+        </button>
+      )}
+    </div>
+  ))}
+
+  <button type="button" onClick={addItem}>
+    + Tilføj kort
+  </button>
+</div>
+
+
+
 
         <button className="submit-btn" disabled={saving}>
   {saving
