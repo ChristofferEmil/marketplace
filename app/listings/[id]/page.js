@@ -227,7 +227,8 @@ async function send() {
   })
   .join('\n')
 
-return `${text}\n\nValgte kort:\n${itemsText}`
+return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
+
 }
 
 
