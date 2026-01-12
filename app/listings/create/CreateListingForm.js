@@ -50,6 +50,12 @@ const [saving, setSaving] = useState(false)
       : ''
   )
 
+
+  const [items, setItems] = useState([
+  { card_number: '', name: '', price: '' },
+])
+
+
   const toggleSeries = s =>
     setSeries(prev =>
       prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]
@@ -285,6 +291,56 @@ await supabase.from('listing_items').insert(
     + Tilføj kort
   </button>
 </div>
+
+
+
+<h3>Kort i opslag</h3>
+
+{items.map((it, i) => (
+  <div key={i} style={{ display: 'flex', gap: 8 }}>
+    <input
+      placeholder="#"
+      value={it.card_number}
+      onChange={e => {
+        const copy = [...items]
+        copy[i].card_number = e.target.value
+        setItems(copy)
+      }}
+      style={{ width: 60 }}
+    />
+
+    <input
+      placeholder="Kortnavn"
+      value={it.name}
+      onChange={e => {
+        const copy = [...items]
+        copy[i].name = e.target.value
+        setItems(copy)
+      }}
+      required
+    />
+
+    <input
+      placeholder="Pris (valgfri)"
+      value={it.price}
+      onChange={e => {
+        const copy = [...items]
+        copy[i].price = e.target.value
+        setItems(copy)
+      }}
+      style={{ width: 100 }}
+    />
+  </div>
+))}
+
+<button
+  type="button"
+  onClick={() =>
+    setItems([...items, { card_number: '', name: '', price: '' }])
+  }
+>
+  + Tilføj kort
+</button>
 
 
 
