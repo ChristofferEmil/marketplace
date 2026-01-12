@@ -45,7 +45,7 @@ export default function ListingDetailPage() {
 
   const isOwner = user && listing && user.id === listing.user_id
 
-const [message, setMessage] = useState("")
+
 const [selectedItems, setSelectedItems] = useState([])
 
 
@@ -150,25 +150,29 @@ function toggleItem(item) {
     }
   }
 
-  /* ---------- CHAT ---------- */
-  async function send() {
-    if (!user || !text) return
+ /* ---------- CHAT ---------- */
+async function send() {
+  if (!user || !text) return
 
-    const { data } = await supabase
-      .from('messages')
-      .insert({
-        listing_id: id,
-        sender_id: user.id,
-        content: text,
-      })
-      .select()
-      .single()
+  const finalMessage = buildFinalMessage()
+  console.log(finalMessage)
 
-    if (data) {
-      setMessages(prev => [...prev, data])
-      setText('')
-    }
+  const { data } = await supabase
+    .from('messages')
+    .insert({
+      listing_id: id,
+      sender_id: user.id,
+      content: finalMessage,
+    })
+    .select()
+    .single()
+
+  if (data) {
+    setMessages(prev => [...prev, data])
+    setText('')
   }
+}
+
 
   /* ---------- CLAIM ---------- */
   async function handleClaim() {
@@ -197,6 +201,24 @@ function toggleItem(item) {
     setIsClaimed(true)
     setClaimLoading(false)
   }
+
+
+  function buildFinalMessage() {
+  if (selectedItems.length === 0) {
+    return text
+  }
+
+  const itemsText = selectedItems
+    .map(it => {
+      const number = it.card_number ? `#${it.card_number} ` : ''
+      const price = it.price ? ` – ${it.price} kr.` : ''
+      return `• ${number}${it.name}${price}`
+    })
+    .join('\n')
+
+  return `${text}\n\nValgte kort:\n${itemsText}`
+}
+
 
   /* ---------- GUARD ---------- */
   if (!listing) {
