@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
-export default function Nav({ openAuth }) {
+export default function Nav() {
   const pathname = usePathname()
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState(null) // ✅ NY
@@ -133,23 +133,24 @@ export default function Nav({ openAuth }) {
 
       {!user ? (
   <>
-    <button
-      className="nav-link"
-      onClick={() => openAuth('login')}
+    <Link
+      href="/login"
+      className={pathname === '/login' ? 'active' : ''}
     >
       Log ind
-    </button>
+    </Link>
 
-    <button
-      className="nav-link nav-primary"
-      onClick={() => openAuth('signup')}
+    <Link
+      href="/signup"
+      className={pathname === '/signup' ? 'active' : ''}
     >
       Opret konto
-    </button>
+    </Link>
   </>
 ) : (
   <button onClick={logout}>Log ud</button>
 )}
+
 
     </>
   )
@@ -169,22 +170,20 @@ export default function Nav({ openAuth }) {
       <div className="mobile-topbar">
         <div className="mobile-logo">CardSwap</div>
         <div className="mobile-topbar-right">
-          {!user && openAuth && (
-            <>
-              <button
-                className="mobile-auth-btn"
-                onClick={() => openAuth('login')}
-              >
-                Log ind
-              </button>
-              <button
-                className="mobile-auth-btn mobile-auth-btn-primary"
-                onClick={() => openAuth('signup')}
-              >
-                Opret
-              </button>
-            </>
-          )}
+         {!user && (
+  <>
+    <Link href="/login" className="mobile-auth-btn">
+      Log ind
+    </Link>
+    <Link
+      href="/signup"
+      className="mobile-auth-btn mobile-auth-btn-primary"
+    >
+      Opret
+    </Link>
+  </>
+)}
+
           <button
             className="burger-btn"
             onClick={() => setMenuOpen(true)}
