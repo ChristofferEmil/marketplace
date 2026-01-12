@@ -123,6 +123,37 @@ function toggleItem(item) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+
+
+ /* ---------- CHAT ---------- */
+async function send() {
+  if (!user || !text) return
+
+  const finalMessage = buildFinalMessage()
+  console.log(finalMessage)
+
+  const { data } = await supabase
+    .from('messages')
+    .insert({
+      listing_id: id,
+      sender_id: user.id,
+      content: finalMessage,
+    })
+    .select()
+    .single()
+
+  if (data) {
+    setMessages(prev => [...prev, data])
+    setText('')
+  }
+}
+
+
+
+
+
+
+
   /* ---------- QUESTION ---------- */
   async function submitQuestion(e) {
     e.preventDefault()
@@ -150,28 +181,7 @@ function toggleItem(item) {
     }
   }
 
- /* ---------- CHAT ---------- */
-async function send() {
-  if (!user || !text) return
 
-  const finalMessage = buildFinalMessage()
-  console.log(finalMessage)
-
-  const { data } = await supabase
-    .from('messages')
-    .insert({
-      listing_id: id,
-      sender_id: user.id,
-      content: finalMessage,
-    })
-    .select()
-    .single()
-
-  if (data) {
-    setMessages(prev => [...prev, data])
-    setText('')
-  }
-}
 
 
   /* ---------- CLAIM ---------- */
