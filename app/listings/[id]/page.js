@@ -239,10 +239,12 @@ function toggleItem(item) {
                 padding: '6px 0',
               }}
             >
-              <input
-             type="checkbox"
-              onChange={() => console.log(it)}
-              />
+             <input
+  type="checkbox"
+  checked={selectedItems.some(i => i.id === it.id)}
+  onChange={() => toggleItem(it)}
+/>
+
 
               <span>{it.card_number || '-'}</span>
               <span>{it.name}</span>
