@@ -1272,12 +1272,54 @@ body.filter-open {
     justify-content: space-between;
   }
 
+  .mobile-logo {
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+  }
+
+  .mobile-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mobile-auth-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .mobile-auth-btn:not(.mobile-auth-btn-primary) {
+    color: var(--muted);
+  }
+
+  .mobile-auth-btn:not(.mobile-auth-btn-primary):active {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .mobile-auth-btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .mobile-auth-btn-primary:active {
+    background: rgba(79,124,255,0.8);
+  }
+
   .burger-btn {
     background: none;
     border: none;
     color: white;
     font-size: 24px;
     cursor: pointer;
+    margin-left: 4px;
   }
 }
 

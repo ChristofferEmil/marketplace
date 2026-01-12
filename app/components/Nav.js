@@ -165,21 +165,39 @@ export default function Nav({ openAuth }) {
       </nav>
 
       {/* MOBILE */}
-      {/*
+      
       <div className="mobile-topbar">
         <div className="mobile-logo">CardSwap</div>
-        <button
-          className="burger-btn"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open menu"
-        >
-          ☰
-        </button>
+        <div className="mobile-topbar-right">
+          {!user && openAuth && (
+            <>
+              <button
+                className="mobile-auth-btn"
+                onClick={() => openAuth('login')}
+              >
+                Log ind
+              </button>
+              <button
+                className="mobile-auth-btn mobile-auth-btn-primary"
+                onClick={() => openAuth('signup')}
+              >
+                Opret
+              </button>
+            </>
+          )}
+          <button
+            className="burger-btn"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            ☰
+          </button>
+        </div>
       </div>
-      */}
+      
 
       
-      {/*
+      
       {menuOpen && (
         <>
           <div
@@ -199,7 +217,7 @@ export default function Nav({ openAuth }) {
           </aside>
         </>
       )}
-        */}
+        
     </>
   )
 }

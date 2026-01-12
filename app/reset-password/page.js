@@ -22,8 +22,9 @@ export default function ResetPasswordPage() {
   async function handleSubmit(e) {
     e.preventDefault()
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email)
-
+    const { error } = await supabase.auth.updateUser({
+      password,
+    })
 
     if (error) {
       setError(error.message)

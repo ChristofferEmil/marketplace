@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Nav from './Nav'
 import AuthModal from './AuthModal'
-import AuthTopBar from './AuthTopBar'
+
 
 export default function AppClientShell({ children }) {
   const [authOpen, setAuthOpen] = useState(false)
@@ -11,14 +11,14 @@ export default function AppClientShell({ children }) {
 
   return (
     <>
-      <AuthTopBar
+     
+
+      <Nav
         openAuth={(mode) => {
           setAuthMode(mode)
           setAuthOpen(true)
         }}
       />
-
-      <Nav />
 
       <AuthModal
         open={authOpen}
