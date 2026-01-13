@@ -216,14 +216,21 @@ export default function CreateListingForm({
               required
             />
 
-            <input
-  type="text"
-  placeholder="Stand (fx EX, LP, NM)"
+           <select
   value={it.condition || ''}
   onChange={e =>
     updateItem(idx, 'condition', e.target.value)
   }
-/>
+>
+  <option value="">Stand</option>
+  <option value="NM">NM – Near Mint</option>
+  <option value="EX">EX – Excellent</option>
+  <option value="GD">GD – Good</option>
+  <option value="LP">LP – Light Played</option>
+  <option value="PL">PL – Played</option>
+  <option value="PO">PO – Poor</option>
+</select>
+
 
 
 
