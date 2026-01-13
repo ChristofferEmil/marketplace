@@ -376,7 +376,13 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
   </div>
 
   {/* Input */}
-  <div style={{ display: 'flex', gap: 8 }}>
+  <div
+  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
+  }}
+>
     <textarea
       value={text}
       onChange={e => setText(e.target.value)}
@@ -394,13 +400,16 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
     />
 {selectedItems.length > 0 && (
   <div
-    style={{
-      marginTop: 8,
-      padding: 8,
-      background: '#f7f7f7',
-      borderRadius: 6,
-      fontSize: 14,
-    }}
+  style={{
+  marginTop: 4,
+  padding: 8,
+  background: '#ececec',
+  borderRadius: 6,
+  fontSize: 14,
+  color: '#222',
+}}
+
+
   >
     <strong>Valgte kort:</strong>
     <ul style={{ margin: '6px 0 0 0', paddingLeft: 16 }}>
