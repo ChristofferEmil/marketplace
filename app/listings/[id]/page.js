@@ -287,13 +287,14 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
 />
 
 
-         <span
+   <span
   style={{
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    display: 'flex',
+    gap: 6,
+    alignItems: 'center',
   }}
 >
+
   {it.name}
   {it.condition && (
     <span style={{ opacity: 0.7, marginLeft: 6 }}>
