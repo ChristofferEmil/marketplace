@@ -217,11 +217,14 @@ export default function CreateListingForm({
             />
 
             <input
-            type="text"
-            placeholder="Stand (fx EX, LP, NM)"
-            value={item.condition || ''}
-             onChange={e => updateItem(index, { condition: e.target.value })}
-            />
+  type="text"
+  placeholder="Stand (fx EX, LP, NM)"
+  value={it.condition || ''}
+  onChange={e =>
+    updateItem(idx, 'condition', e.target.value)
+  }
+/>
+
 
 
             <input
