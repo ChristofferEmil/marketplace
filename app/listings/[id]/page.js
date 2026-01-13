@@ -287,7 +287,13 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
 />
 
 
-             <span>
+         <span
+  style={{
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  }}
+>
   {it.name}
   {it.condition && (
     <span style={{ opacity: 0.7, marginLeft: 6 }}>
@@ -295,6 +301,7 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
     </span>
   )}
 </span>
+
 
 {it.price && <strong>{it.price} kr.</strong>}
 
