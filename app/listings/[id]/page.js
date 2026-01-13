@@ -271,42 +271,39 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
 
           {items.map(it => (
             <label
-              key={it.id}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '24px 60px 1fr auto',
-                gap: 8,
-                alignItems: 'center',
-                padding: '6px 0',
-              }}
-            >
-             <input
-  type="checkbox"
-  checked={selectedItems.some(i => i.id === it.id)}
-  onChange={() => toggleItem(it)}
-/>
-
-
-   <span
+  key={it.id}
   style={{
-    display: 'flex',
-    gap: 6,
+    display: 'grid',
+    gridTemplateColumns: '24px minmax(0, 1fr) auto',
+    gap: 8,
     alignItems: 'center',
+    padding: '6px 0',
   }}
 >
+  <input
+    type="checkbox"
+    checked={selectedItems.some(i => i.id === it.id)}
+    onChange={() => toggleItem(it)}
+  />
 
-  {it.name}
-  {it.condition && (
-    <span style={{ opacity: 0.7, marginLeft: 6 }}>
-      ({it.condition})
-    </span>
-  )}
-</span>
+  <div
+    style={{
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    }}
+  >
+    {it.name}
+    {it.condition && (
+      <span style={{ opacity: 0.7, marginLeft: 6 }}>
+        ({it.condition})
+      </span>
+    )}
+  </div>
 
+  {it.price && <strong>{it.price} kr.</strong>}
+</label>
 
-{it.price && <strong>{it.price} kr.</strong>}
-
-            </label>
           ))}
         </section>
       )}
