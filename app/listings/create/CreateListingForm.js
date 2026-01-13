@@ -34,7 +34,7 @@ export default function CreateListingForm({
      👇 HER skal AI senere skrive til
   ===================================================== */
   const [items, setItems] = useState([
-    { card_number: '', name: '', price: '' },
+    { card_number: '', name: '', condition: '',price: '' },
   ])
 
   /* =====================================================
@@ -214,6 +214,14 @@ export default function CreateListingForm({
               }
               required
             />
+
+            <input
+            type="text"
+            placeholder="Stand (fx EX, LP, NM)"
+            value={item.condition || ''}
+             onChange={e => updateItem(index, { condition: e.target.value })}
+            />
+
 
             <input
               placeholder="Pris"
