@@ -392,6 +392,34 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
         fontFamily: 'inherit',
       }}
     />
+{selectedItems.length > 0 && (
+  <div
+    style={{
+      marginTop: 8,
+      padding: 8,
+      background: '#f7f7f7',
+      borderRadius: 6,
+      fontSize: 14,
+    }}
+  >
+    <strong>Valgte kort:</strong>
+    <ul style={{ margin: '6px 0 0 0', paddingLeft: 16 }}>
+      {[...selectedItems]
+        .sort((a, b) => {
+          const aNum = parseInt(a.card_number, 10)
+          const bNum = parseInt(b.card_number, 10)
+          return aNum - bNum
+        })
+        .map(it => (
+          <li key={it.id}>
+            {it.card_number && `#${it.card_number} `}{it.name}
+            {it.condition && ` (${it.condition})`}
+          </li>
+        ))}
+    </ul>
+  </div>
+)}
+
     <button
       onClick={send}
       disabled={!user || !text}
