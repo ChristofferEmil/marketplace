@@ -157,6 +157,7 @@ async function send() {
 
 
   /* ---------- QUESTION ---------- */
+  {/*
   async function submitQuestion(e) {
     e.preventDefault()
     if (!questionText.trim() || !user || !listing) return
@@ -182,7 +183,7 @@ async function send() {
       setQuestionText('')
     }
   }
-
+*/}
 
 
 
@@ -308,7 +309,9 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
         </section>
       )}
 
+      
       {/* -------- Q&A -------- */}
+     {/*
       <section style={{ marginTop: 32 }}>
         <h3>Spørgsmål & svar</h3>
 
@@ -333,6 +336,8 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
           </form>
         )}
       </section>
+*/}
+      
 
       {/* -------- CHAT -------- */}
       <section className="card card-detail chat-card">
