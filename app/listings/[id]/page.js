@@ -340,37 +340,71 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
       
 
       {/* -------- CHAT -------- */}
-      <section className="card card-detail chat-card">
-        <strong>Chat</strong>
-        <div className="chat chat-scroll">
-          {messages.map(m => (
-           <div
-  key={m.id}
-  className={`bubble ${
-    m.sender_id === user?.id ? 'me' : 'them'
-  }`}
-  style={{ whiteSpace: 'pre-line' }}
+   {/* -------- MESSAGE BOX -------- */}
+<section
+  className="card card-detail"
+  style={{
+    marginTop: 24,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12,
+  }}
 >
-  {m.content}
-</div>
+  <strong>Skriv besked</strong>
 
-          ))}
-          <div ref={bottomRef} />
-        </div>
-      </section>
-
-      <div className="chat-input chat-input-fixed">
-        <input
-          value={text}
-          onChange={e => setText(e.target.value)}
-          placeholder={user ? 'Skriv besked…' : 'Log ind for at chatte'}
-          disabled={!user}
-        />
-        <button onClick={send} disabled={!user || !text}>
-          Send
-        </button>
+  {/* Messages */}
+  <div
+    className="chat chat-scroll"
+    style={{
+      maxHeight: 300,
+      overflowY: 'auto',
+      paddingRight: 4,
+    }}
+  >
+    {messages.map(m => (
+      <div
+        key={m.id}
+        className={`bubble ${
+          m.sender_id === user?.id ? 'me' : 'them'
+        }`}
+        style={{ whiteSpace: 'pre-line' }}
+      >
+        {m.content}
       </div>
+    ))}
+    <div ref={bottomRef} />
+  </div>
 
+  {/* Input */}
+  <div style={{ display: 'flex', gap: 8 }}>
+    <textarea
+      value={text}
+      onChange={e => setText(e.target.value)}
+      placeholder={user ? 'Skriv en besked til sælger…' : 'Log ind for at skrive'}
+      disabled={!user}
+      rows={3}
+      style={{
+        flex: 1,
+        resize: 'vertical',
+        padding: 8,
+        borderRadius: 6,
+        border: '1px solid #ccc',
+        fontFamily: 'inherit',
+      }}
+    />
+    <button
+      onClick={send}
+      disabled={!user || !text}
+      style={{ alignSelf: 'flex-end' }}
+    >
+      Send
+    </button>
+  </div>
+</section>
+
+
+
+{/*
       <button
         className="action-btn primary"
         onClick={handleClaim}
@@ -378,6 +412,9 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
       >
         {isOwner ? 'Dit opslag' : isClaimed ? 'Allerede claimed' : 'Claim'}
       </button>
+      */}
+
+
     </main>
   )
 }
