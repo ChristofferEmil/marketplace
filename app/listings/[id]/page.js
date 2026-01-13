@@ -289,6 +289,12 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
 
               <span>{it.card_number || '-'}</span>
               <span>{it.name}</span>
+              {it.condition && (
+  <span style={{ opacity: 0.7 }}>
+    ({it.condition})
+  </span>
+)}
+
               {it.price && <strong>{it.price} kr.</strong>}
             </label>
           ))}
