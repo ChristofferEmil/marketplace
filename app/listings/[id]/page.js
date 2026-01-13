@@ -220,12 +220,18 @@ async function send() {
     return text
   }
 
-  const itemsText = selectedItems
+  const itemsText = [...selectedItems]
+  .sort((a, b) => {
+    const aNum = parseInt(a.card_number, 10)
+    const bNum = parseInt(b.card_number, 10)
+    return aNum - bNum
+  })
   .map(it => {
     const number = it.card_number ? `#${it.card_number} ` : ''
     return `• ${number}${it.name}`
   })
   .join('\n')
+
 
 return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
 
