@@ -127,7 +127,7 @@ export default function CreateListingForm({
           card_number: it.card_number || null,
           name: it.name,
           price: it.price ? Number(it.price) : null,
-          condition: item.condition || null,
+          condition: it.condition || null,
         }))
       )
     }
