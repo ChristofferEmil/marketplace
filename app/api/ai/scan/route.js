@@ -21,32 +21,27 @@ export async function POST(req) {
         {
           role: "user",
           content: [
-            {
-              type: "input_text",
-              text: `
+  {
+    type: "input_text",
+    text: `
 You are scanning a Pokémon trading card.
 
-Your task:
-- Identify the Pokémon name
-- Identify the card number as printed on the card (e.g. 25/102)
+Identify:
+- Pokémon name
+- Card number as printed (e.g. 25/102)
 
-Rules:
-- If the name is visible or highly likely, return it.
-- If the number is partially visible, make a best guess.
-- Only return empty strings if the card cannot be identified at all.
-
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON:
 {
   "name": "",
   "card_number": ""
 }
-              `,
-            },
-            {
-              type: "input_image",
-              image_url: image,
-            },
-          ],
+    `,
+  },
+  {
+    type: "input_image",
+    image_base64: image.replace(/^data:image\/\w+;base64,/, ""),
+  },
+],
         },
       ],
     })
