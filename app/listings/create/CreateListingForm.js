@@ -314,40 +314,54 @@ const [cameraStream, setCameraStream] = useState(null)
 
     {/* CAMERA PLACEHOLDER */}
     <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        aspectRatio: '3 / 4',
-        background: '#000',
-        borderRadius: 8,
-        marginBottom: 12,
-      }}
-    >
-      {/* RAMME */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: '10%',
-          border: '2px solid rgba(255,255,255,0.8)',
-          borderRadius: 8,
-        }}
-      />
+  style={{
+    position: 'relative',
+    width: '100%',
+    aspectRatio: '3 / 4',
+    background: '#000',
+    borderRadius: 8,
+    overflow: 'hidden',
+  }}
+>
+  <video
+    ref={videoRef}
+    playsInline
+    muted
+    autoPlay
+    style={{
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+    }}
+  />
 
-      {/* GUIDE TEKST */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 8,
-          width: '100%',
-          textAlign: 'center',
-          color: '#fff',
-          fontSize: 14,
-          opacity: 0.9,
-        }}
-      >
-        Læg kortet inden for rammen
-      </div>
-    </div>
+  {/* RAMME */}
+  <div
+    style={{
+      position: 'absolute',
+      inset: '10%',
+      border: '2px solid rgba(255,255,255,0.85)',
+      borderRadius: 8,
+      pointerEvents: 'none',
+    }}
+  />
+
+  {/* GUIDE */}
+  <div
+    style={{
+      position: 'absolute',
+      bottom: 8,
+      width: '100%',
+      textAlign: 'center',
+      color: '#fff',
+      fontSize: 14,
+      opacity: 0.9,
+    }}
+  >
+    Læg kortet inden for rammen
+  </div>
+</div>
+
 
     {/* ACTIONS */}
     <div style={{ display: 'flex', gap: 8 }}>
