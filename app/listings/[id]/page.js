@@ -401,17 +401,17 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
 {selectedItems.length > 0 && (
   <div
   style={{
-  marginTop: 6,
-  padding: 0,
-  background: 'transparent',
-  borderRadius: 0,
+  marginTop: 8,
+  paddingLeft: 2,
   fontSize: 14,
-  color: '#333',
+  color: '#111',
 }}
+
   >
-   <strong style={{ fontWeight: 500, opacity: 0.7 }}>
-  Valgte kort:
+   <strong style={{ display: 'block', marginBottom: 4 }}>
+  Valgte kort
 </strong>
+
     <ul style={{ margin: '6px 0 0 0', paddingLeft: 16 }}>
       {[...selectedItems]
         .sort((a, b) => {
