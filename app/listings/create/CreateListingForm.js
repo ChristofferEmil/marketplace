@@ -97,11 +97,9 @@ async function testSendImage() {
 
   console.log('API STATUS', res.status)
 
-  const data = await res.json()
-  console.log('API DATA', data)
+ const data = await res.json()
+console.log('RAW AI DATA:', data)
 
-  setScanName(data.name || '')
-  setScanNumber(data.card_number || '')
 }
 
 
