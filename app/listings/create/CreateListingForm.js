@@ -47,6 +47,36 @@ function stopCamera() {
 }
 
 
+
+
+
+function captureFrame() {
+  const video = videoRef.current
+  if (!video) return
+
+  const canvas = document.createElement('canvas')
+  canvas.width = video.videoWidth
+  canvas.height = video.videoHeight
+
+  const ctx = canvas.getContext('2d')
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+  const imageDataUrl = canvas.toDataURL('image/jpeg', 0.9)
+
+  if (scanStep === 0) {
+    setFrontImage(imageDataUrl)
+    setScanStep(1)
+  } else {
+    setBackImage(imageDataUrl)
+  }
+}
+
+
+
+
+
+
+
   /* =====================================================
      STATE – GENERELT
   ===================================================== */
@@ -367,14 +397,7 @@ const [cameraStream, setCameraStream] = useState(null)
     <div style={{ display: 'flex', gap: 8 }}>
       <button
         type="button"
-        onClick={() => {
-          if (scanStep === 0) {
-            setFrontImage(true) // placeholder
-            setScanStep(1)
-          } else {
-            setBackImage(true) // placeholder
-          }
-        }}
+        onClick={captureFrame}
       >
         Tag billede
       </button>
