@@ -412,9 +412,15 @@ const [cameraStream, setCameraStream] = useState(null)
 >
   Videre
 </button>
-
       )}
     </div>
+
+
+    <div style={{ marginTop: 8, fontSize: 13, opacity: 0.7 }}>
+  {frontImage ? 'Forside taget' : 'Tag billede af forside'}
+  {frontImage && !backImage && ' – nu bagside'}
+</div>
+
   </div>
 )}
 
@@ -434,25 +440,36 @@ const [cameraStream, setCameraStream] = useState(null)
   >
     <h3>Bekræft kort</h3>
 
-    {/* BILLEDER (PLACEHOLDERS) */}
     <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-      <div
-        style={{
-          width: 80,
-          aspectRatio: '3 / 4',
-          background: '#eee',
-          borderRadius: 6,
-        }}
-      />
-      <div
-        style={{
-          width: 80,
-          aspectRatio: '3 / 4',
-          background: '#eee',
-          borderRadius: 6,
-        }}
-      />
-    </div>
+  {frontImage && (
+    <img
+      src={frontImage}
+      alt="Forside"
+      style={{
+        width: 80,
+        aspectRatio: '3 / 4',
+        objectFit: 'cover',
+        borderRadius: 6,
+        border: '1px solid #ccc',
+      }}
+    />
+  )}
+
+  {backImage && (
+    <img
+      src={backImage}
+      alt="Bagside"
+      style={{
+        width: 80,
+        aspectRatio: '3 / 4',
+        objectFit: 'cover',
+        borderRadius: 6,
+        border: '1px solid #ccc',
+      }}
+    />
+  )}
+</div>
+
 
     {/* AUTO-UDFYLDTE FELTER (PLACEHOLDER) */}
     <input
