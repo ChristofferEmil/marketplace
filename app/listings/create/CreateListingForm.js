@@ -74,6 +74,30 @@ function captureFrame() {
 
 
 
+async function testSendImage() {
+  if (!frontImage) return
+
+  const res = await fetch('/api/ai/scan', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      image: frontImage,
+    }),
+  })
+
+  const data = await res.json()
+  console.log('AI route response:', data)
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -469,6 +493,13 @@ const [cameraStream, setCameraStream] = useState(null)
     />
   )}
 </div>
+
+
+{/* ⬇️ INDSÆT HER */}
+<button type="button" onClick={testSendImage}>
+  Test send billede
+</button>
+
 
 
     {/* AUTO-UDFYLDTE FELTER (PLACEHOLDER) */}
