@@ -400,19 +400,25 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
     />
 {selectedItems.length > 0 && (
   <div
-  style={{
-  marginTop: 8,
-  paddingLeft: 2,
-  fontSize: 14,
-  color: '#111',
-}}
-
+    style={{
+      marginTop: 6,
+      paddingTop: 6,
+      borderTop: '1px solid rgba(255,255,255,0.15)',
+      fontSize: 14,
+      color: 'rgba(255,255,255,0.85)',
+    }}
   >
-   <strong style={{ display: 'block', marginBottom: 4 }}>
-  Valgte kort
-</strong>
+    <div
+      style={{
+        fontSize: 12,
+        opacity: 0.6,
+        marginBottom: 4,
+      }}
+    >
+      Valgte kort
+    </div>
 
-    <ul style={{ margin: '6px 0 0 0', paddingLeft: 16 }}>
+    <ul style={{ margin: 0, paddingLeft: 16 }}>
       {[...selectedItems]
         .sort((a, b) => {
           const aNum = parseInt(a.card_number, 10)
@@ -420,14 +426,16 @@ return `${text.trim()}\n\n\nValgte kort:\n${itemsText}`
           return aNum - bNum
         })
         .map(it => (
-          <li key={it.id}>
-            {it.card_number && `#${it.card_number} `}{it.name}
+          <li key={it.id} style={{ marginBottom: 2 }}>
+            {it.card_number && `#${it.card_number} `}
+            {it.name}
             {it.condition && ` (${it.condition})`}
           </li>
         ))}
     </ul>
   </div>
 )}
+
 
     <button
       onClick={send}
