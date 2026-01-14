@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
@@ -19,6 +19,33 @@ export default function CreateListingForm({
   onSaved,
 }) {
   const router = useRouter()
+
+
+
+
+  
+  async function startCamera() {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: {
+      facingMode: { ideal: 'environment' },
+    },
+    audio: false,
+  })
+
+  if (videoRef.current) {
+    videoRef.current.srcObject = stream
+    videoRef.current.play()
+  }
+
+  setCameraStream(stream)
+}
+
+function stopCamera() {
+  if (!cameraStream) return
+  cameraStream.getTracks().forEach(track => track.stop())
+  setCameraStream(null)
+}
+
 
   /* =====================================================
      STATE – GENERELT
@@ -45,6 +72,11 @@ const [backImage, setBackImage] = useState(null)
 
 
 const [showScanConfirm, setShowScanConfirm] = useState(false)
+
+
+const videoRef = useRef(null)
+const [cameraStream, setCameraStream] = useState(null)
+
 
 
 
@@ -242,14 +274,16 @@ const [showScanConfirm, setShowScanConfirm] = useState(false)
     </button>
 
     <button
-      type="button"
-      onClick={() => {
-        setShowCameraModePicker(false)
-        setShowAiScan(true)
-      }}
-    >
-      ✨ AI scan
-    </button>
+  type="button"
+  onClick={() => {
+    setShowCameraModePicker(false)
+    setShowAiScan(true)
+    startCamera()
+  }}
+>
+  ✨ AI scan
+</button>
+
   </div>
 )}
 
