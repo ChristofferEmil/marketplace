@@ -22,6 +22,11 @@ export default function CreateListingForm({
 
 
 
+const [scanName, setScanName] = useState('')
+const [scanNumber, setScanNumber] = useState('')
+
+
+
 
   
   async function startCamera() {
