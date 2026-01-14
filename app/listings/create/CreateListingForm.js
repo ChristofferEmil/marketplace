@@ -29,6 +29,26 @@ export default function CreateListingForm({
   const [image, setImage] = useState(null)
   const [tags, setTags] = useState(initialData?.tags ?? [])
 
+
+   /* =====================================================
+     STATE - vælg om billedebibliotek eller kamera
+  ===================================================== */
+  const [showImageSourcePicker, setShowImageSourcePicker] = useState(false)
+  const [showCameraModePicker, setShowCameraModePicker] = useState(false)
+
+
+
+  const [showAiScan, setShowAiScan] = useState(false)
+const [scanStep, setScanStep] = useState(0) // 0 = forside, 1 = bagside
+const [frontImage, setFrontImage] = useState(null)
+const [backImage, setBackImage] = useState(null)
+
+
+const [showScanConfirm, setShowScanConfirm] = useState(false)
+
+
+
+
   /* =====================================================
      STATE – KORT I OPSLAGET (VIGTIG DEL)
      👇 HER skal AI senere skrive til
@@ -157,12 +177,280 @@ export default function CreateListingForm({
           onChange={e => setDescription(e.target.value)}
         />
 
-        {/* BILLEDE */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={e => setImage(e.target.files[0])}
-        />
+
+
+
+
+       {/* BILLEDE */}
+<input
+  type="file"
+  accept="image/*"
+  style={{ display: 'none' }}
+  id="image-input"
+/>
+
+<button
+  type="button"
+  onClick={() => setShowImageSourcePicker(true)}
+>
+  Tilføj billede
+</button>
+
+
+
+
+
+{showImageSourcePicker && (
+  <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+    <button
+      type="button"
+      onClick={() => {
+        setShowImageSourcePicker(false)
+        // næste trin: åbne billedebibliotek
+        document.getElementById('image-input')?.click()
+      }}
+    >
+      📁 Billedebibliotek
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setShowImageSourcePicker(false)
+        setShowCameraModePicker(true)
+      }}
+    >
+      📷 Kamera
+    </button>
+  </div>
+)}
+
+
+
+
+
+{showCameraModePicker && (
+  <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+    <button
+      type="button"
+      onClick={() => {
+        setShowCameraModePicker(false)
+        alert('Almindeligt kamera (kommer senere)')
+      }}
+    >
+      📷 Kamera
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setShowCameraModePicker(false)
+        setShowAiScan(true)
+      }}
+    >
+      ✨ AI scan
+    </button>
+  </div>
+)}
+
+
+
+
+{showAiScan && (
+  <div
+    style={{
+      marginTop: 24,
+      padding: 16,
+      border: '1px solid #ddd',
+      borderRadius: 8,
+    }}
+  >
+    {/* HEADER */}
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: 12,
+        fontWeight: 600,
+      }}
+    >
+      <span>{scanStep === 0 ? 'Forside' : 'Bagside'}</span>
+      <span>{scanStep + 1}/2</span>
+    </div>
+
+    {/* CAMERA PLACEHOLDER */}
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        aspectRatio: '3 / 4',
+        background: '#000',
+        borderRadius: 8,
+        marginBottom: 12,
+      }}
+    >
+      {/* RAMME */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: '10%',
+          border: '2px solid rgba(255,255,255,0.8)',
+          borderRadius: 8,
+        }}
+      />
+
+      {/* GUIDE TEKST */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 8,
+          width: '100%',
+          textAlign: 'center',
+          color: '#fff',
+          fontSize: 14,
+          opacity: 0.9,
+        }}
+      >
+        Læg kortet inden for rammen
+      </div>
+    </div>
+
+    {/* ACTIONS */}
+    <div style={{ display: 'flex', gap: 8 }}>
+      <button
+        type="button"
+        onClick={() => {
+          if (scanStep === 0) {
+            setFrontImage(true) // placeholder
+            setScanStep(1)
+          } else {
+            setBackImage(true) // placeholder
+          }
+        }}
+      >
+        Tag billede
+      </button>
+
+      {scanStep === 1 && frontImage && backImage && (
+        <button
+  type="button"
+  onClick={() => {
+    setShowAiScan(false)
+    setShowScanConfirm(true)
+  }}
+>
+  Videre
+</button>
+
+      )}
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+{showScanConfirm && (
+  <div
+    style={{
+      marginTop: 24,
+      padding: 16,
+      border: '1px solid #ddd',
+      borderRadius: 8,
+    }}
+  >
+    <h3>Bekræft kort</h3>
+
+    {/* BILLEDER (PLACEHOLDERS) */}
+    <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+      <div
+        style={{
+          width: 80,
+          aspectRatio: '3 / 4',
+          background: '#eee',
+          borderRadius: 6,
+        }}
+      />
+      <div
+        style={{
+          width: 80,
+          aspectRatio: '3 / 4',
+          background: '#eee',
+          borderRadius: 6,
+        }}
+      />
+    </div>
+
+    {/* AUTO-UDFYLDTE FELTER (PLACEHOLDER) */}
+    <input
+      type="text"
+      placeholder="Kortnavn"
+      defaultValue="Pikachu"
+      style={{ width: '100%', marginBottom: 8 }}
+    />
+
+    <input
+      type="text"
+      placeholder="Kortnummer"
+      defaultValue="25/102"
+      style={{ width: '100%', marginBottom: 8 }}
+    />
+
+    {/* MANUELLE FELTER */}
+    <select style={{ width: '100%', marginBottom: 8 }}>
+      <option value="">Stand</option>
+      <option value="NM">NM – Near Mint</option>
+      <option value="EX">EX – Excellent</option>
+      <option value="LP">LP – Light Played</option>
+      <option value="PL">PL – Played</option>
+      <option value="PO">PO – Poor</option>
+    </select>
+
+    <input
+      type="number"
+      placeholder="Pris"
+      style={{ width: '100%', marginBottom: 12 }}
+    />
+
+    {/* ACTIONS */}
+    <div style={{ display: 'flex', gap: 8 }}>
+      <button
+        type="button"
+        onClick={() => {
+          setShowScanConfirm(false)
+          setShowAiScan(true)
+        }}
+      >
+        Næste kort
+      </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          setShowScanConfirm(false)
+          alert('Kort klar til at blive tilføjet (næste trin)')
+        }}
+      >
+        Tilføj kort
+      </button>
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         {/* TAGS */}
         <div className="chip-group">

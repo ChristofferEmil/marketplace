@@ -29,6 +29,7 @@ export default function ListingsPage() {
   const [auctionOnly, setAuctionOnly] = useState(false)
   const [conditions, setConditions] = useState([])
   const [sort, setSort] = useState('newest')
+  
 
   useEffect(() => {
     const fetchListings = async () => {
