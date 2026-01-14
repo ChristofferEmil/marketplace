@@ -80,7 +80,14 @@ function captureFrame() {
 
 
 async function testSendImage() {
-  if (!frontImage) return
+  console.log('TEST KNAP KLIKKEDET')
+
+  if (!frontImage) {
+    console.log('INGEN FRONTIMAGE')
+    return
+  }
+
+  console.log('SENDER BILLEDE TIL API')
 
   const res = await fetch('/api/ai/scan', {
     method: 'POST',
@@ -88,11 +95,15 @@ async function testSendImage() {
     body: JSON.stringify({ image: frontImage }),
   })
 
+  console.log('API STATUS', res.status)
+
   const data = await res.json()
+  console.log('API DATA', data)
 
   setScanName(data.name || '')
   setScanNumber(data.card_number || '')
 }
+
 
 
 
