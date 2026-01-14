@@ -26,11 +26,14 @@ export async function POST(req) {
               text: `
 You are scanning a Pokémon trading card.
 
-From the image, extract ONLY:
-- card name
-- card number (exactly as printed, e.g. 25/102)
+Your task:
+- Identify the Pokémon name
+- Identify the card number as printed on the card (e.g. 25/102)
 
-If you are unsure, return an empty string.
+Rules:
+- If the name is visible or highly likely, return it.
+- If the number is partially visible, make a best guess.
+- Only return empty strings if the card cannot be identified at all.
 
 Return ONLY valid JSON in this format:
 {
