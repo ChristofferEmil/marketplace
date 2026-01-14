@@ -79,17 +79,16 @@ async function testSendImage() {
 
   const res = await fetch('/api/ai/scan', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      image: frontImage,
-    }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: frontImage }),
   })
 
   const data = await res.json()
-  console.log('AI route response:', data)
+
+  setScanName(data.name || '')
+  setScanNumber(data.card_number || '')
 }
+
 
 
 
