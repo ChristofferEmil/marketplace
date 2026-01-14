@@ -51,11 +51,23 @@ Return ONLY valid JSON in this format:
       ],
     })
 
-    const text = response.output_text
+    const text =
+  response.output?.[0]?.content?.[0]?.text || ''
+
+
+let parsed = { name: '', card_number: '' }
+
+try {
+  parsed = JSON.parse(text)
+} catch (e) {
+  console.error('AI did not return valid JSON:', text)
+}
 
 return Response.json({
-  raw: text,
+  name: parsed.name || '',
+  card_number: parsed.card_number || '',
 })
+
 
   } catch (err) {
     console.error(err)
