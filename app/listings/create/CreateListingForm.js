@@ -501,20 +501,23 @@ const [cameraStream, setCameraStream] = useState(null)
 
 
 
-    {/* AUTO-UDFYLDTE FELTER (PLACEHOLDER) */}
-    <input
-      type="text"
-      placeholder="Kortnavn"
-      defaultValue="Pikachu"
-      style={{ width: '100%', marginBottom: 8 }}
-    />
+    {/* AUTO-UDFYLDTE FELTER */}
+<input
+  type="text"
+  placeholder="Kortnavn"
+  value={scanName}
+  onChange={e => setScanName(e.target.value)}
+  style={{ width: '100%', marginBottom: 8 }}
+/>
 
-    <input
-      type="text"
-      placeholder="Kortnummer"
-      defaultValue="25/102"
-      style={{ width: '100%', marginBottom: 8 }}
-    />
+<input
+  type="text"
+  placeholder="Kortnummer"
+  value={scanNumber}
+  onChange={e => setScanNumber(e.target.value)}
+  style={{ width: '100%', marginBottom: 8 }}
+/>
+
 
     {/* MANUELLE FELTER */}
     <select style={{ width: '100%', marginBottom: 8 }}>
