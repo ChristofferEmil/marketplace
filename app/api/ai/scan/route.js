@@ -52,12 +52,11 @@ Return ONLY valid JSON in this format:
     })
 
     const text = response.output_text
-    const parsed = JSON.parse(text)
 
-    return Response.json({
-      name: parsed.name || "",
-      card_number: parsed.card_number || "",
-    })
+return Response.json({
+  raw: text,
+})
+
   } catch (err) {
     console.error(err)
     return Response.json({
